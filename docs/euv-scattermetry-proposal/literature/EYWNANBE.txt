@@ -1,0 +1,214 @@
+EUV-angle resolved scatter (EUV-ARS): a new tool for the
+characterization of nanometre structures
+Analı ́a Ferna ́ndez Herreroa, Heiko Mentzela, Victor Soltwischa, Sina Jaroslawzewa, Christian Laubisa, and Frank Scholzea
+aPhysikalisch-Technische Bundesanstalt, Abbestr. 2-12, 10587 Berlin, Germany
+ABSTRACT
+The advance of the semiconductor industry requires new metrology methods, which can deal with smaller and more complex nanostructures. Particularly for inline metrology a rapid, sensitive and non destructive method is needed. Small angle X-ray scattering under grazing incidence has already been investigated for this application and delivers significant statistical information which tracks the profile parameters as well as their variations, i.e. roughness. However, it suffers from the elongated footprint at the sample. The advantage of EUV radiation, with its longer wavelengths, is that larger incidence angles can be used, resulting in a significant reduction of the beam footprint. Targets with field sizes of 100 μm and smaller are accessible with our experimental set-up. We present a new experimental tool for the measurement of small structures based on the capabilities of soft X-ray and EUV scatterometry at the PTB soft X-ray beamline at the electron storage ring BESSY II. PTB’s soft X-ray radiometry beamline uses a plane grating monochromator, which covers the spectral range from 0.7 nm to 25 nm and was especially designed to provide highly collimated radiation. An area detector covers the scattered radiation from a grazing exit angle up to an angle of 30◦ above the sample horizon and the fluorescence emission can be detected with an energy dispersive X-ray silicon drift detector. In addition, the sample can be rotated and linearly moved in vacuum. This new set-up will be used to explore the capabilities of EUV-scatterometry for the characterization of nanometre-sized structures.
+Keywords: EUV, soft X-ray, CD-metrology, scatterometry, composition analysis
+1. INTRODUCTION
+The decreasing sizes and the increasing complexity of the nanostructures in the last decades have motivated the development of new metrology solutions.1 As the critical dimensions shrink, any imperfection of the structures even plays a more important role over the total structure during the process control.2 A reliable measurement technique must be sensitive to tiny variations of small features. Scanning techniques, with their advantage of measuring in real space, have been very useful for the determination of the critical dimensions of the features but for relevant statistical information this procedure is tedious, and its applicability for the determination of parameters from complex structures is limited.
+Scattering metrology methods play a very important role in the development of new tools because they allow a rapid and destruction-free investigation of nanostructures, and are sensitive to 3D structures. Scattering techniques can be based on transmission3, 4 or reflection, being the latest a more suitable technique for the investigation of the nanostructured surfaces, due to the enhancement of the signal when an incidence angle close to the critical angle is used. Grazing incidence small angle X-ray scattering (GISAXS) is a well established technique for the analysis of nanostructures,5, 6 with a high surface sensitivity. However, one of the major drawbacks of this technique is the rather large footprint of the beam compared to the sample size, which leads to a contribution to the scattering signal from the surrounding area. Although this issue has already been addressed for periodic nanostructures in a periodic-and-azimuthal-rotated surrounding area,7 a more general solution is desirable. Another approach would be to use large incidence wavelengths, allowing for larger incidence angles, leading to a decrease of the footprint of the beam in the beam direction without compromising the high surface sensitiveness of the technique. By reducing the sample-detector distance with incidence photon wavelengths in
+Contact: analia.fernandez.herrero@ptb.de
+Metrology, Inspection, and Process Control for Microlithography XXXII, edited by Vladimir A. Ukraintsev, Ofer Adan, Proc. of SPIE Vol. 10585, 105850P © 2018 SPIE · CCC code: 0277-786X/18/$18 · doi: 10.1117/12.2297195
+Proc. of SPIE Vol. 10585 105850P-1
+
+
+the EUV regime, the accessible reciprocal space is comparable to the one in GISAXS. Feature sizes of 25 nm are still observable. However compared to GISAXS the resolution for additional superstructures, along the grating lines, are of a few nanometre while in GISAXS are in the sub-micrometre range. Structure imperfections induce periodic superstructures or diffusely scattered signals,8, 9 that must be also considered in the reconstruction of the structures.10
+However with every scaling step the performance of the low nanometre features do not just depend on the dimensional parameters but also on its composition. A complementary measurement method of the elemental composition, which does not endanger the sample, must be considered for a complete analysis. Grazing incidence techniques are not just relevant in scatterometry, but also useful for material-sensitive analysis.11, 12 Grazingincidence X-ray Fluorescence (GIXRF) is an angular and energy dependent technique which makes use of the modulation of the fluorescence intensity with the X-ray standing wave field, closely related with the sampled structure.13 The combination of the scattering with the fluorescence analyses yields information about the dimensional structure and its composition.
+We show a new measurement tool to be placed in the soft X-ray beamline at PTB in BESSY II, which covers the spectral range from 0.7 nm to 25 nm. It consists of a chamber with a CCD area detector attached which accepts the scattered radiation up to an angle of 30◦. Inside the chamber the sample can be azimuthally rotated and moved towards the CCD plane in vacuum. Also, an energy dispersive X-ray silicon drift detector (SDD) can be introduced, which allow a complementary material-sensitive study and exploits the modulation through the X-rays standing wave field. The combination of both techniques will improve the characterization of nanostructured surfaces.
+2. SOFT X-RAY SCATTEROMETER
+Figure 1: Longitudinal cut of the EUV-angle resolved scatterometer. The dark red line indicates the photon beam travelling towards the sample. After the photon-beam-sample interaction, the scattering signal can be recorded by a CCD area detector.
+The soft X-ray scatterometer is based in the work principles of grazing incidence small angle X-ray scattering and optimized to measure nanostructured surfaces. In figure 1 the complete installation can be observed, the incident beam comes from the left part and travel towards the sample, where it interacts. Then the scattered light is recorded by a CCD. This set-up is optimized to work in the soft X-ray energy range, the larger incidence wavelengths, compared to X-rays, allow steeper incidence angles without compromising the surface sensitivity of the technique. With larger grazing incidence angles, the beam footprint on the sample decreases, which may avoid an over-illumination in the beam direction while still obtaining relevant statistical information. The footprint of the beam in the beam direction varies with the incidence angle, αi, by the factor 1/ tan(αi). The incident photon beam has a size of 0.5 mm by 0.5 mm, and can be reduced by using a combination of pinholes, see light blue insets in figure 1, such that targets fields of 100 μm and smaller are accessible.
+An adequate measurement tool must accomplish the challenge of getting the more and most accurate information in a short time. The accessible amount of information is critical for the reconstruction .14 Comparing to GISAXS, smaller sample-detector distances are needed to investigate comparable reciprocal space with EUV and soft Xray. The sample is placed inside a vacuum chamber at a distance of 40 mm to the detector and can be linearly displaced towards the CDD or perpendicular to it. These two displacement directions allow to analyse several points on the sample. The sample holder can be moved 20 mm towards or away from the detector and 100 mm
+Proc. of SPIE Vol. 10585 105850P-2
+
+
+/
+SO
+parallel to it, allowing to map a (40 x 100) mm2 plane. Also an azimuthal rotation φ of the sample is possible, see figure 3, to align the structures with respect to the incoming beam.
+Figure 2: The red line shows the elastic scattered light, which can be recorded with a CCD. The orange line indicates the inelastic scattering in form of fluorescence emission to be detected with a SDD.
+There is a CCD area detector attached to the vacuum chamber, which covers an exit angle up to 30◦. It is a CCD detector of 2048 pixels by 2048 pixels, with a square pixel of 13.5 μm side. Due to the rotation of the chamber, incidence angles up to 30◦ can be reached, while maintaining the relative angle between the CCD and the sample planes constant. A SDD can be attached next to the sample normal, see figure 2
+Let ki be an incoming wave vector that impinges the sample under an angle αi to the surface. It gets scattered under the exit angles αf and θf , see figure 3. The elastic scattered vector q~ is given by the momentum transfer,
+
+
+qx qy qz
+
+ = 2π
+λ
+
+
+cos(θf ) cos(αf ) − cos(αi) sin(θf ) cos(αf ) sin(αf ) + sin(αi)
+
+ . (1)
+ki
+φ
+azimuthal rotation
+incident beam qx
+qy
+qz
+αi lamellar
+grating
+αf
+θf
+kf
+Figure 3: An incident wave vector, ki impinges the sample and is scattered with an angle αi and θf . The sample is a lamellar grating, and the scattering pattern is dominated by the orders of diffractions, i.e. the intersection of the grating truncation rods with the Ewald sphere.
+Scatterometry is not a direct measurement technique. The reconstruction of the profiles of the investigated nanostructures must be performed by solving the so-called inverse problem. The scattering intensities must be statistically significant for the analysis. The specular reflection from the incoming beam may have much larger intensity than the scattering phenomena to be analysed. For example, for the observation of the roughness-induced scattering, i.e. the diffuse background, which is much less intense than the specular reflection. Therefore a beamstop is placed before the detector, which allows larger exposure times without saturating the detector. The beamstop has a trident form because it is designed to eclipse the specular reflection, which is usually in the center of the CCD. However under certain structural parametric conditions it might be advisable to set the specular reflection at the edge of the chamber, for example for the analysis of larger q-ranges.
+In the geometry described here for the EUV-ARS, with smaller sample-detector distance and larger incidence angles, the investigated qy ranges are comparable to those in GISAXS. However GISAXS allows resolution of the qx in the micrometre range while EUV allows the investigation of nanometre features. The relative orientation of the truncation rods influences the
+Proc. of SPIE Vol. 10585 105850P-3
+
+
+scattering signal, therefore the φ-alignment is crucial for the understanding of the scattering pattern and reconstruction of the structures.
+For the complementary characterization of the nanostructures a SDD detector is attached to the chamber, which allows an investigation of the element composition of the structures. The fluorescence intensity, with respect to the near field intensity distribution, is correlated to the depth distribution and mass density of the elements in the sample. The SDD detector is to be placed at 15◦ to the sample normal.
+To summarize, with this set-up, angles of incidence up to 30 ◦ from the surface can be obtained. The sample can be azimuthally rotated and the distance between CCD and sample optimized. The combination of these degrees of freedom allows to span different frequencies of the reciprocal space of the elastic scattered vector. Inelastic scattering can give rise to a fluorescence signal that can be analysed with a SDD detector placed close to the normal direction of the sample.
+3. FEASIBILITY OF THE EUV-ANGLE RESOLVED SCATTER
+For the applicability of this scatterometer, the accessible q-ranges are analysed for a lamellar grating. In the semiconductor industry, laterally periodic nanostructures like lamellar gratings are of great interest, as they are part of the structural elements of the integrated electronic circuits. The scattering pattern from this samples is given by the intersection of the Ewald sphere with the grating truncation rods, projected into the CCD plane. The grating is measured in conical geometry, i.e. the beam is parallel to the grating lines. Given a lamellar grating with pitch p, the position of the diffraction orders is given by,
+qy = n 2π
+p , (2)
+where n is the order of diffraction.
+5 10 15 20 25 30 αi / °
+100
+200
+300
+400
+500
+600
+incidence energy / eV
+10-6
+10-5
+10-4
+10-3
+10-2
+10-1
+10
+log10(total diff. efficiency)
+Figure 4: Simulated total scattered intensity for a Si-grating with 50 nm pitch, 25 nm linewidth and 60 nm height. The first order of diffraction becomes observable to higher energy and larger angle from the black line. Red line indicates where at least 5 orders of diffraction are observable.
+As it was mentioned in the previous section, the characterization of the nanostructures through their scattering pattern involves to solve the so-called inverse problem. In case of a grating, the main parameters, such as pitch, linewidth and height, must be considered together with the more specific ones: corner rounding, sidewall angle, roughness. This brings up to a minimum set of parameters that must be found. Although the pitch is related to the distance between the diffraction orders in qy, the others must be found in the reconstruction process. Therefore, the number of the observable regular diffraction orders n, usually used for the reconstruction, is critical for a good characterization of the nanostructures. The observable orders of diffraction depend on the reflectance of the structure, the geometrical constraints of the set-up and the pitch of the structure. We have considered a state of the art Si-grating, with 50 nm pitch, 25 nm linewidth and 60 nm height for the investigation
+Proc. of SPIE Vol. 10585 105850P-4
+
+
+Mtn
+i
+1
+,
+.. 1
+9
+of the reliable information that might be extracted from a EUV-scattering pattern: the number of orders of diffraction and their efficiency. Figure 4 shows the total scattered intensity for different incidence angles and photon wavelengths. We considered a threshold of the efficiency at 10−8, for counting the detectable orders of diffraction. The black line in the figure separates the values, where just the specular reflection is observed from those where orders of diffraction can also be detected. A compromise between the reflectance and the orders of diffraction obtained might be found. The red line indicates where at least six orders of diffraction can be measured. An optimal measurement position would be a combination of incidence wavelength and angle under the red curve, with a maximum in intensity. The analysis was done by solving the Maxwell’s equations with a finite-element method, that was already successfully used for the reconstruction of nanostructures measured with GISAXS.14 For this simulation the JCMsuite package15 was used.
+Considering an optimal incidence angle and photon energy from figure 4, the qx ranges can be further investigated. For a grating with roughness the orders of diffraction are damped following a Debye-Waller like factor.10, 16 Less intense scattering phenomena can also reveal the imperfections of a grating. Imperfections appear as superstructures or as diffuse scattering in the scattering pattern. Gratings with a sinusoidal profile along the lines lead to frequencies in the qx range. Given that the period is prough, superstructures are expected at the frequencies,
+qx = m 2π
+prough
+, (3)
+where m is the satellite order.
+In table 1 we investigate which is the minimum frequency that can be measured with GISASXS and EUV. For the comparison, we consider a particular case, of the grating already described. We take an optimal position where a minimum of six orders of diffraction are observable and investigate the minimum frequency measurable in qx. For EUV-ARS we considered an energy of 314 eV (λ = 3.95 nm), an incidence angle of αi = 25◦, and a distance of 30 mm. For the GISAXS calculation we have considered a standard set-up with a detector area of 168.7 mm by 179.4 mm and a photon energy of 8.04 keV. In order to obtain at least six measurable diffraction orders, an incidence angle of αi = 1.4◦ and thus a distance of 4 m is required.
+GISAXS EUV 8.04 keV 314 eV αi / ◦ 1.4 25 qx / nm−1 2π/255 2π/23 Table 1: Comparison between GISAXS and EUV
+a)
+Figure 5: Scanning electron microscopy image of a chirped grating (a) and two (b and c) with periodic roughness.
+We observe that EUV with it steeper incidence angles allow the investigation of smaller structures also in the qx direction. The first satellite order from periodic roughness down to 23 nm might be detectable with EUV, while for GISAXS it is an order of magnitude bigger.
+4. PRELIMINARY RESULTS
+In the following section, we show the first results of the EUV-ARS obtained with a provisional set-up. This approach allowed us to study the applicability of the proposed chamber with real samples. The incidence angle is about 30◦ and the distance between the CCD detector and the sample about 15 mm.
+The set of samples is made up of one lamellar grating where no additional roughness was introduced together with different artificial rough gratings. We investigated two different roughness approaches: line edge roughness (LER) and line width roughness (LWR), and three different roughness models: periodic roughness, chirped roughness and stochastic roughness. In figure 5, the scanning-electron-microscopy-image from three samples with line
+Proc. of SPIE Vol. 10585 105850P-5
+
+
+600
+650
+700
+750
+800
+950 1000 1050 1100 1150
+0 100i0xel 1200 1400 1600
+,111~.I
+0.5
+0.55
+0.5
+E 0.45
+Q 0.4
+0.35
+0.3
+0.25 -0.2 0.1 0.2 0.3
+0.6
+0.55
+0.5
+E 0.45
+Q 0.4
+0.35
+0.3
+0.25 -0.2 -0.1 0.2 0.3
+width roughness can be observed: one with chirped roughness and two with periodic roughness. The periodic roughness gratings have a roughness period of prough = 180 nm and a roughness amplitude σ of 3 nm or 6 nm. The chirped grating design changes its roughness periodicity, from 90 nm to 360 nm along the lines, and has an amplitude of 6 nm.
+Figure 6: The zero order of the scattering image after illumination with the full beam at a photon wavelength of 13.5 nm. Several test fields are visible. The black inset indicated the illuminated area when a 320 μm pinhole is used. The darker shadows on the lines are caused by the imperfections of the fields.
+To first investigate a larger area, we use the full beam with no aperture. This can be used to align the position of the fields to be investigated, but also can be exploited to look for macro-imperfections (compared to the feature sizes), as a kind of topographic imaging. This step facilitates the selection of the illumination areas for the further analysis. In figure 6 the specular reflection of the scattering pattern is shown. It was obtained with this broad beam illumination and with an incoming photon wavelength of 13.5 nm. Several fields, as well as inhomogeneities of the grating targets can be observed. The area selected with a black circle corresponds to the size of the illuminated area in the following measurements, where a pinhole of 320 μm is used.
+Figure 7a shows the recorded scattering pattern, where the diffraction orders from the reference grating are visible, no other relevant scattering signal is observed. The signal is background corrected and converted to incoming photons, taking into account the specifications of CCD. The recorded scattering pattern is converted to the reciprocal space coordinates using the equation 1. By the conversion to reciprocal space coordinates, the periodic parameters can be investigated. In
+(a) CCD image from the reference sample.
+-0.2 -0.1 0 0.1 0.2 0.3 qy / nm -1
+0.25
+0.3
+0.35
+0.4
+0.45
+0.5
+0.55
+qz / nm -1
+0 0.5 1 1.5 2 2.5 3 3.5 log 10 (Counts)
+(b) Chirped roughness model, σ = 6 nm
+0 0.5 1 1.5 2 2.5 3 3.5 log 10 (Counts)
+(c) On the top the scattering pattern from a grating with periodic LWR with a roughness amplitude σ = 3 nm. At the bottom, with amplitude of σ = 6 nm.
+Figure 7: On the left, the scattering pattern from the reference sample (a) and a sample with chirped roughness(b). On the right, two samples with periodic roughness and two different roughness amplitudes.
+Proc. of SPIE Vol. 10585 105850P-6
+
+
+7000
+6000
+5000
+ct$ 4000 72'
+3000
+2000
+1000
+II
+II
+II
+II
+IAI
+0 100 200 300 2n/qX / nm
+400
+5000
+4000
+3000
+N
+m 2000
+1000
+o 100 200 300 2n/qX / nm
+400
+figure 7 the scattering pattern in qz-qy coordinates from a sample with LWR chirped roughness (b) and two with periodic LWR roughness (c) are shown. The patterns show the main diffraction orders, commonly used for the reconstruction of the grating line profiles, periodic in qy, and also less intense spots which represent the roughness pitch, see equation 3.
+The pitch and pitch of the roughness of the samples cause the formation of discrete scattering spots. The roughness pitch, along the lines, does not cause a periodic modulation of the signal in qz but in qx. This results in superstructures at qx = 2π/prough frequencies, the so-called satellite orders. For periodic samples this distribution has been already investigated,17, 18 where just one frequency is observed. In cases where more than one periodicity along the lines is present, as it is in the chirped samples, more frequencies are observed.
+(a) Scattering pattern from the chirped grating in qx-qy reciprocal space. Integrated area around qy = 0 is indicated in red. The curve along qx is shown below.
+(b) qx dependency of the scattered intensity, at the zero order of diffraction, qy = 0. LER is shown in red and LWR in black. On the left the samples with periodic roughness are shown.The solid line corresponds to a roughness amplitude σ= 3 nm, the dotted one is for σ= 6 nm. On the right, for the samples with chirped roughness, frequencies are detected between 90 nm and 360 nm. Figure 8: qx dependency of the scattered intensity.
+Another projection can help for the understanding of the rough patterns, figure 8a shows the scattering pattern in qx-qy coordinates of the sample with chirped roughness. In this representation, the roughness periodicity along the lines corresponds to the frequency distribution along qx. If we integrate the signal around qy= 0, we obtain the intensity for the main roughness frequencies, i.e. periodicities, of the grating. In figure 8b, we compare the modulation of the intensity in qx for the two different roughness models: periodic and chirped. As we can see in figure 7a the reference grating shows no satellite orders. The periodic grating, on the left of figure 8b shows just one frequency at qx = 2π/prough. For LWR this frequency is observable at qy = 0. For LER this can just be observed for qy 6= 0/p as it was already reported.9, 16, 17, 19 A larger roughness amplitude σ leads
+Proc. of SPIE Vol. 10585 105850P-7
+
+
+to larger scattered intensity in the qx plane. For the chirped grating more frequencies are observable. They were designed with a variable roughness period from 90 nm to 360 nm. An intensity distribution covering the frequencies from 0.0175 nm−1 to 0.0698 nm−1 is expected. This range is covered by our set-up, see figure 8. This demonstrates that scatterometry is a sensitive technique to the imperfections and according to the presence of the superstructures at qy = 0 in the scattering pattern the roughness models can be distinguished. As well the amplitude of the roughness influences the intensity of those scattering contributions.
+1 1.05 1.1 1.15 1.2 1.25 1.3 1.35 1.4 1.45 1.5 qz / nm -1
+0
+0.5
+1
+1.5
+2
+2.5
+3
+Intensity / arb. u.
+× 10 5
+reference chirped random
+Figure 9: Dependency of the scattered intensity of the zero order with qz.
+Although this preliminary set-up does not allow changes on the incident angles, we can tune the energy of the incoming photon beam for a variation in qz. By exploring the intensity modulation in the qz component of the reciprocal space, the height of the line can be investigated. Figure 9 shows the modulation of the intensity in qz. The step-size was chosen to be 2 eV, for a fast measurement while following the modulation on qz. According to this, the characteristic height of the structure is about 80 nm.
+Complementary measurements where done by other methods, like scanning electron microscopy, obtaining comparable results. These results can be found at the contribution from S. Levi.20
+5. CONCLUSION
+We have exposed the feasibility of a new measurement tool based on the necessities of process control of lithographic samples. This new tool exploits the advantages of grazing incidence techniques and allows the investigation of nanostructured surfaces by scatterometry and fluorescence. This scatterometry technique is similar to GISAXS but large incidence angles at larger wavelengths allow smaller footprints without compromising the surface sensitiveness. Similar qy ranges are obtained with both methods. However EUV scatterometry also allows the investigation of the nm-regime in the qx. The SDD attached to the scatterometer makes possible a complementary compositional analysis.21
+ACKNOWLEDGMENTS
+This project has received funding from the Electronic Component Systems for European Leadership Joint Undertaking under grant agreement No. 621280. This Joint Undertaking receives support from the European Union’s Horizon 2020 research and innovation programme and Netherlands, France, Belgium, Germany, Czech Republic, Austria, Hungary, Israel.
+REFERENCES
+[1] Bunday, B., “HVM metrology challenges towards the 5nm node,” Proc. SPIE 9778, 97780E–97780E–34 (2016). [2] Sunday, D. F., List, S., Chawla, J. S., and Kline, R. J., “Determining the shape and periodicity of nanostructures using small-angle x-ray scattering,” Journal of Applied Crystallography 48(5), 1355–1363 (2015). [3] Jones, R. L., Hu, T., Lin, E. K., Wu, W.-L., Kolb, R., Casa, D. M., Bolton, P. J., and Barclay, G. G., “Small angle x-ray scattering for sub-100 nm pattern characterization,” Applied Physics Letters 83(19), 4059–4061 (2003). [4] Hu, T., Jones, R. L., li Wu, W., Lin, E. K., Lin, Q., Keane, D., Weigand, S., and Quintana, J., “Small angle x-ray scattering metrology for sidewall angle and cross section of nanometer scale line gratings,” Journal of Applied Physics 96(4), 1983–1987 (2004).
+Proc. of SPIE Vol. 10585 105850P-8
+
+
+[5] Yan, M. and Gibaud, A., “On the intersection of grating truncation rods with the ewald sphere studied by grazing-incidence small-angle x-ray scattering,” Journal of Applied Crystallography 40(6), 1050–1055 (2007). [6] Mu ̈ller-Buschbaum, P., “Gisaxs and gisans as metrology technique for understanding the 3d morphology of block copolymer thin films,” European Polymer Journal 81, 470 – 493 (2016). [7] Pflu ̈ger, M., Soltwisch, V., Probst, J., Scholze, F., and Krumrey, M., “Grazing-incidence small-angle x-ray scattering (GISAXS) on small periodic targets using large beams,” IUCrJ 4(4) (2017). [8] Soltwisch, V., Haase, A., Wernecke, J., Probst, J., Schoengen, M., Burger, S., Krumrey, M., and Scholze, F., “Correlated diffuse x-ray scattering from periodically nanostructured surfaces,” Physical Review B 94(3), 035419 (2016). [9] Fern ́andez Herrero, A., Pfl ̈uger, M., Probst, J., Scholze, F., and Soltwisch, V., “Characteristic diffuse scattering from distinct line roughnesses,” Journal of Applied Crystallography 50, 1766–1772 (Dec 2017). [10] Henn, M.-A., Heidenreich, S., Gross, H., Rathsfeld, A., Scholze, F., and B ̈ar, M., “Improved grating reconstruction by determination of line roughness in extreme ultraviolet scatterometry,” Opt. Lett. 37, 5229–5231 (Dec 2012). [11] von Bohlen, A., “Total reflection x-ray fluorescence and grazing incidence x-ray spectrometry tools for micro- and surface analysis. a review,” Spectrochimica Acta Part B: Atomic Spectroscopy 64(9), 821 – 832 (2009). [12] Ingerle, D., Meirer, F., Pepponi, G., Demenev, E., Giubertoni, D., Wobrauschek, P., and Streli, C., “Combined evaluation of grazing incidence x-ray fluorescence and x-ray reflectivity data for improved profiling of ultra-shallow depth distributions,” Spectrochimica Acta Part B: Atomic Spectroscopy 99, 121 – 128 (2014). [13] Reinhardt, F., Nowak, S. H., Beckhoff, B., Dousse, J.-C., and Schoengen, M., “Grazing incidence x-ray fluorescence of periodic structures - a comparison between x-ray standing waves and geometrical optics calculations,” J. Anal. At. Spectrom. 29, 1778–1784 (2014). [14] Soltwisch, V., Fern ́andez Herrero, A., Pflu ̈ger, M., Haase, A., Probst, J., Laubis, C., Krumrey, M., and Scholze, F., “Reconstructing detailed line profiles of lamellar gratings from GISAXS patterns with a Maxwell solver,” Journal of Applied Crystallography 50, 1524–1532 (Oct 2017).
+[15] Pomplun, J., Burger, S., Zschiedrich, L., and Schmidt, F., “Adaptive finite element method for simulation of optical nano structures,” physica status solidi (b) 244(10), 3419–3434 (2007). [16] Kato, A. and Scholze, F., “Effect of line roughness on the diffraction intensities in angular resolved scatterometry,” Applied Optics 49(31), 6102–6110 (2010). [17] Wang, C., Jones, R. L., Lin, E. K., Wu, W.-L., Rice, B. J., Choi, K.-W., Thompson, G., Weigand, S. J., and Keane, D. T., “Characterization of correlated line edge roughness of nanoscale line gratings using small angle x-ray scattering,” Journal of Applied Physics 102(2), 024901 (2007). [18] Kato, A., Burger, S., and Scholze, F., “Analytical modeling and three-dimensional finite element simulation of line edge roughness in scatterometry,” Appl. Opt. 51(27), 6457–6464 (2012). [19] Freychet, G., Cadoux, C., Blancquaert, Y., Rey, S., Maret, M., and Gergaud, P., “A study of lateral roughness evaluation through critical-dimension small angle x-ray scattering (cd-saxs),” Proc.SPIE 9778, 9778 – 9778 – 8 (2016). [20] Levi, S., “Lines roughness holistic metrology sensitivity study supported by euv mask designed with induced roughness,” Proc.SPIE 10585 (2018). [21] Soltwisch, V., H ̈onicke, P., Kayser, Y., Eilbracht, J., Probst, J., Scholze, F., and Beckhoff, B., “Element sensitive reconstruction of nanostructured surfaces with finite elements and grazing incidence soft X-ray fluorescence,” ArXiv e-prints (Jan. 2018).
+Proc. of SPIE Vol. 10585 105850P-9

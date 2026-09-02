@@ -1,0 +1,439 @@
+Phaseless inverse scattering with a parametrized spatial spectral volume integral equation for finite scatterers in the soft x-ray regime
+Citationforpublishedversion(APA): Eijsvogel, S., Dilz, R., Bojanic, R., & van Beurden, M. C. (2024). Phaseless inverse scattering with a parametrized spatial spectral volume integral equation for finite scatterers in the soft x-ray regime. Journalofthe OpticalSocietyofAmericaA,Optics,ImageScienceandVision, 41(11), 2076-2089. https://doi.org/10.1364/JOSAA.515382
+DOI: 10.1364/JOSAA.515382
+Documentstatusanddate: Published: 01/11/2024
+DocumentVersion: Author’s version before peer-review
+Pleasecheckthedocumentversionofthispublication:
+• A submitted manuscript is the version of the article upon submission and before peer-review. There can be important differences between the submitted version and the official published version of record. People interested in the research are advised to contact the author for the final version of the publication, or visit the DOI to the publisher's website. • The final author version and the galley proof are versions of the publication after peer review. • The final published version features the final layout of the paper including the volume, issue and page numbers. Link to publication
+Generalrights Copyright and moral rights for the publications made accessible in the public portal are retained by the authors and/or other copyright owners and it is a condition of accessing publications that users recognise and abide by the legal requirements associated with these rights.
+• Users may download and print one copy of any publication from the public portal for the purpose of private study or research. • You may not further distribute the material or use it for any profit-making activity or commercial gain • You may freely distribute the URL identifying the publication in the public portal.
+If the publication is distributed under the terms of Article 25fa of the Dutch Copyright Act, indicated by the “Taverne” license above, please follow below link for the End User Agreement: www.tue.nl/taverne
+Takedownpolicy If you believe that this document breaches copyright please contact us at: openaccess@tue.nl providing details and we will investigate your claim.
+Download date: 23. 6月. 2025
+
+
+Research Article Journal of the Optical Society of America A 1
+Phaseless inverse scattering with a parametrized spatial spectral volume integral equation for finite scatterers in the soft X-ray regime
+S. EIJSVOGEL1,*, R. J. DILZ1, R. BOJANIC ́ 1, AND M. C. VAN BEURDEN1
+1Faculty of Electrical Engineering, Eindhoven University of Technology, 5612 AP Eindhoven, The Netherlands *Corresponding author: s.eijsvogel@tue.nl; This manuscript is submitted to the Journal of the Optical Society of America A as an article.
+Compiled February 19, 2024
+Soft X-ray wafer metrology experiments are characterized by low signal-to-noise ratios and lack phase information, which both cause difficulties with the accurate three-dimensional profiling of small geometrical features of structures on a wafer. To this end, we extend an existing phase-based inverse-scattering method to demonstrate a sub-nanometer and noise-robust reconstruction of the targets by synthetic soft X-ray scatterometry experiments. The targets are modeled as three-dimensional finite dielectric scatterers embedded in a planarly layered medium, where a scatterer’s geometry and spatial permittivity distribution are described by a uniform polygonal cross-section along its height. Each cross-section is continuously parametrized by its vertices and homogeneous permittivity. The combination of this parametrization of the scatterers and the employed Gabor frames ensure that the underlying linear system of the spatial spectral Maxwell solver is continuously differentiable with respect to the parameters for phaseless inverse scattering problems. In synthetic demonstrations, we demonstrate the accurate and noise-robust reconstruction of the parameters without any regularization term. Most of the vertex parameters are retrieved with an error of less than λ/13 with λ = 13.5 nm, when the ideal sensor model with shot noise detects at least 5 photons per sensor pixel. This corresponds to a signal-to-noise ratio of 3.5 dB. These vertex parameters are retrieved with an accuracy of λ/90 when the signal-to-noise ratio is increased to 10 dB, or approximately 100 photons per pixel. The material parameters are retrieved with errors ranging from 0.05% to 5% for signal-to-noise
+ratios between 10 dB to 3.5 dB. © 2024 Optical Society of America
+http://dx.doi.org/10.1364/ao.XX.XXXXXX
+1. INTRODUCTION
+The feature sizes of next-generation integrated circuits (ICs) are estimated to be smaller than a few nanometers [1]. As a result, the estimated production tolerances are in the sub-nanometer range [2]. According to [3–6], soft X-ray (SXR) scatterometry is a promising solution for accurate and non-invasive wafer metrology for the next generation of ICs. Especially SXR’s short wavelength from approximately 10 nm up to 30 nm facilitates improved monitoring accuracy with respect to scatterometry based on visible light. Furthermore, most materials are neartransparent in the SXR-regime [7], which yields the possibility to profile the three-dimensional (3D) structures characterizing an IC [3]. However, SXR scatterometry is not without challenges. For instance, a coherent SXR source for wafer metrology is limited in its photon flux output [8], i.e. a low photon count. This leads to metrology measurements plagued by shot noise [9]. Additionally, the combination of this limited photon flux and near-transparent materials results in low signal-to-noise ratios
+(SNR) for the metrology measurements in the SXR regime. Additionally, the measured signals are typically intensity-only [10], since phase measurements are difficult due to the short wavelength [11]. Thus, SXR scatterometry is a potentially precise metrology technique for next-generation ICs, but the associated measurements are plagued by noise and a lack of phase information. Consequently, it is challenging to achieve accurate profiling of the three-dimensional structures of an IC by SXR scatterometry. In [12], we demonstrated a frequency-domain inversescattering method for the consistent reconstruction of several structures on a wafer, i.e. parts of an IC, via synthetic optical scatterometry data with phase information. This method boils down to a Gauss-Newton method in combination with a Maxwell solver in the form of the spatial spectral volume integral equation (VIE) [13], where the structures on parts of the wafer are modeled as three-dimensional (3D) finite dielectric scatterers. This spatial spectral Maxwell solver plays a key role within the inverse-scattering method: its linear system is
+
+
+Research Article Journal of the Optical Society of America A 2
+continuously differentiable with respect to the geometrical and material parameters of 3D finite dielectric scatterers, owing to the employed Gabor-frame expansion and the continuously differentiable and parsimonious parametrization of these scatterers by their uniform polygon-shaped cross-section along their height. As a result, the parameters of multiple scatterers are reconstructed, without regularization term, with an error of only a twenty-fifth of the illumination wavelength for the geometrical parameters and a relative error of 0.4% for the material parameters, respectively, at a SNR of 10 dB. This was the best-case scenario, since this inverse-scattering method was tested with SNRs ranging from -6 dB up to 10 dB. Extending this inversescattering method to enable intensity-only reconstructions seems to be a viable and promising solution for a noise-robust and accurate reconstruction of 3D finite dielectric scatterers via SXR scatterometry measurements. According to [Ch. 8, 14], there are two categories of methods for phaseless inverse scattering problems. A method from the first category employs a phase-retrieval algorithm onto the phaseless measurement data, e.g. [15–18], such that a phasebased inverse-scattering method can be employed afterwards. The second category boils down to accepting the lack of phase information and incorporating the phaseless measurement data directly into a non-linear optimization framework. Methods from the second category typically suffer from an increased instability for the reconstruction process with respect to methods from the first category [19]. Nevertheless, the first category also has disadvantages. For instance, the requirement of a phase-retrieval algorithm increases the computational workload. Further, phase retrieval has to be precise, otherwise the reconstruction process of the scatterers becomes contaminated by phase-retrieval errors [Ch. 8, 14]. The latter disadvantage is especially relevant, since the number of robust phase-retrieval algorithms in the low-photon count regime, i.e. Poisson phase retrieval, is limited in literature [20], and it is not clear whether this phase-retrieval algorithm can be generalized to the phaseless measurement data of interest. So, it seems that the direct incorporation of phaseless measurement data in the reconstruction method from [12] is the most feasible solution, since it potentially prevents an increased workload and overcomes the obstacle of severe phase-retrieval errors. Challenged by high shot noise levels and a lack of phase information, we propose to extend the inverse-scattering method in [12] for sub-nanometer-accuracy reconstruction of the geometry and spatial permittivity distribution of 3D finite dielectric scatterers and we demonstrate its performance via independently generated synthetic SXR scatterometry experiments. To this end, the Gabor frames within the spatial spectral VIE, the scatterers’ continuous parametrization, and Wirtinger calculus are combined such that the exact first-order partial derivatives with respect to the parameters can be computed, despite the lack of phase information. As a result, the existing framework of the inverse-scattering method in [12] can be used for synthetic phaseless inverse scattering problems. Subsequently, we provide numerical evidence of accurate and noise-robust parameter reconstruction in independent synthetic inverse scattering problems without the use of phase information or a regularization term. The geometrical and material parameters of multiple scatterers are then reconstructed with an error of only λ/90 for the geometrical parameters and a relative error 0.05% for the material parameters, when the SNR is 10 dB. This paper is organized as follows. Section 2 introduces the geometrical description for forward scattering problems and in
+verse scattering problems. Further, it also introduces the scatterers with their continuous parametrization. In Section 3, the key definitions of the spatial spectral VIE for the forward scattering problem are introduced, while Section 4 describes the employed sensor and noise models for the far-field data. Section 5 contains the key details of the inverse-scattering framework based on the spatial spectral VIE together with the parameter derivatives. The parameter-retrieval demonstrations by the inverse-scattering framework are discussed in Section 6. This is followed by the conclusions in Section 7.
+2. SCATTERING SETUP
+A. Geometrical description
+The description for a scattering setup starts with a planarly layered background medium that consists of NL − 1 homogeneous isotropic dielectric layers, see Fig. 1. This layered background medium is placed between two dielectric half-spaces in the zdirection of the Cartesian coordinate system. The layer interfaces are positioned at z = zn with layer index n = 1, . . . , NL−1, to distinguish between the layers. The top half-space and bottom half-space have indices n = 0 and n = NL, respectively. The relative permittivities of the layers and half-spaces are described by εrb,n. In this case, three-dimensional (3D) finite dielectric scatterers are located in a single layer, i.e. layer n. In Fig. 1, these scatterers are contained in a wire-frame box with volume [−Wx, Wx] × [−Wy, Wy] × [zmin, zmax]. We refer to this box as the simulation domain D. Observations of the electric fields take place in the top halfspace, because we choose to only detect the electric fields reflected from the scatterers on the surface of a half-sphere. This is measurement domain M. Albeit not visible in Fig. 1, the distance between domains D and M is sufficiently large, such that we only deal with the far-field response of the scatterers.
+B. Scatterers
+Following the work in [21], the geometry of a 3D finite dielectric scatterer and its associated spatial permittivity distribution are formed by its polygon-shaped cross-section in the transverse xt-plane with xt = (x, y). In other words, a scatterer has the form of a cylinder with a uniform polygon-shaped cross-section along its height. Here, the cross-section of a scatterer is formed by the coordinates of its vertices xis = (xis, yis) for i = 1, 2, . . . , Ls
+Fig. 1. Simulation domain D contains the finite dielectric scatterers embedded in a single layer of the layered background medium. The surface of the half-sphere in the top half-space acts as measurement domain M.
+
+
+Research Article Journal of the Optical Society of America A 3
+in a counter-clockwise direction. The index s = 1, . . . , S is to distinguish between all S scatterers in domain D. Now, the spatial permittivity distribution of a scatterer occupies subdomain Ds of simulation domain D. Further, we assume that each scatterer has a homogeneous and isotropic permittivity that we can describe by a relative permittivity function ε(xt, z). However, a more suitable solution is to describe the permittivity of a scatterer by the following contrast function
+χs(xt, z) =
+(
+εsr/εrb,n − 1 (xt, z) ∈ Ds
+0 (xt, z) ∈ R3 \ Ds, (1)
+since it has finite support. In this work, the spatial spectral VIE [13] is used, since it computes the electric fields reflected from the scatterers embedded in a layered background medium in a computationally efficient manner via a mixed-domain representation, namely the spatial and spectral domain, suited to layered media. The computational efficiency of this frequencydomain solver hinges on the employed Gabor-frame expansion in the xt-plane, since it facilitates fast and accurate Fourier transformations from the spatial to spectral domain and vice versa. Therefore, the contrast function in Eq. (1) for each scatterer also needs to be expanded in these Gabor frames in the xt-plane. To this end, we employ the method in [22], which computes the Gabor coefficients of Eq. (1) in the spectral domain. This ensures an efficient evaluation of these coefficients, owing to a continuous and analytic spectral-domain equivalent of Eq. (1) per scatterer that solely depends on the vertices of its cross-section and the contrast scalar χssc = εsr/εrb,n − 1. From now on, we treat the vertices and contrast scalars of all S scatterers as independent parameters, which we gather in a parameter vector P as
+PT = (p1, ..., pNp )
+= (x11, y11, . . . , x1L1 , y1L1 , χs1c, . . . , x1S, y1S, . . . , xSLs , ySLs , χsSc).
+(2)
+The total number of parameters is Np. Noteworthy, the analytic spectral-domain equivalent of Eq. (1) is continuously differentiable with respect to the parameters [12]. Another key aspect of this approach is that the geometry of a scatterer’s contrast function and its partial derivatives with respect to the parameters are expanded in Gabor frames, while the Gabor frames are fixed and completely independent of a scatterer’s geometry. Consequently, the boundary of the geometry of a scatterer’s contrast function and its partial derivatives do not suffer from discrete staircasing effects in e.g. contrast-to-voxel-based approaches such as in the discrete dipole approximation [23].
+3. FORWARD SCATTERING PROBLEM FORMULATION
+We employ the spatial spectral VIE for computing the fields scattered from the 3D finite dielectric scatterers. Consequently, we assume that all fields have an ejωt time dependence with ω the angular frequency [pp. 28-29, 24]. A forward scattering problem starts with an incident field Ei(x) that originates from the top half-space. In this work, an incident field is formed by a sum of plane waves that originate from different directions, where each plane wave is defined as
+Ei(x) = Ewe−jk·x, (3)
+with k = (kx, ky, kz) and the complex amplitudes of its Cartesian
+components are gathered in the vector Ew. The dielectric scatterers interact with the incident field and a resulting scattered field
+Es(x) is generated. This way, the total electric field is described as the sum of these two fields, namely E(x) = Ei(x) + Es(x). The spectral-domain Green function G(kt, z|z′) with kt = (kx, ky) is employed for the scattered field, since it incorporates the radiation conditions and the reflection and transmission coefficients of the layered background medium [13, 25, 26]. In domain D, the scattered electric field is evaluated via
+Es(kt, z) =
+Z zmax
+zmin
+G(kt, z|z′)Fxt [J(x′t, z′)](kt, z′)dz′, (4)
+where Fxt [. . .] represents the transverse forward Fourier transformation and the contrast current density is defined as
+J(xt, z) = χ(xt, z)E(xt, z)
+= [χ1(xt, z) + . . . + χS(xt, z)] E(xt, z). (5)
+The spectral-domain Green function in Eq. (4) contains poles and branch cuts [27]. These poles and branch cuts can be evaded by deforming the (real-valued) integration surface of the 2D transverse inverse Fourier transformations to a complex integration manifold. The complex integration manifold also benefits the Gabor-frame expansion, since the branch cuts and poles are difficult to capture accurately in this expansion. The spatial spectral VIE is obtained when E(x) = Ei(x) + Es(x) and Eq. (4) are combined into
+Ei(xt, z) = E(xt, z) − G NF J(x′t, z′) (xt, z), (6)
+where the Green operator G NF is defined as
+G NF J(x′t, z′) (xt, z) = F −1
+kt
+Z zmax
+zmin
+G(kt, z|z′)·
+Fxt J(x′t, z′) (kt, z′)dz′ (xt, z).
+(7)
+The F −1
+kt [. . .] represents the 2D transverse inverse Fourier transformation over kt, performed over the deformed integration manifold. The integral equation formed by Eq. (5) and Eq. (6) is efficiently evaluated in the z-direction owing to a recursive algorithm from [28], based on an expansion of the contrast current density in terms of piecewise-linear functions along z. This VIE has a matrix-vector product with a computational complexity of O(Nxy Nz log Nxy), owing to its discretization [13]. Here, Nxy and Nz are the number of unknowns in Gabor frames and piecewise-linear functions, respectively. We refer to [13] for the explicit details about the discretization and the spectral-domain Green function with the complex integration manifold. As shown in Fig. 1 and described in Section 2, each far-field response is measured in the top half-space at the boundary of a half-sphere, i.e. measurement domain M. To this end, we introduce
+Es(kt, z0) = GFF[J(xt, z′)](kt, z0)
+=
+Z zmax
+zmin
+G(kt, z0|z′)Fxt J(x′t, z′) (kt, z′)dz′, (8)
+which evaluates the response of the scatterers at the top interface of the layered medium at z = z0. The transverse Fourier transformation is now performed without the deformation of the integration manifold. The far-field response can be extracted from Eq. (8) when we only consider the propagating plane waves,
+i.e. the plane waves that satisfy
+q
+k2x + k2y ≤ k0. Here, k0 is the
+wavenumber in the top half-space. The far-field response in Eq. (8) can be converted into a far-field response on measurement domain M via a phase-correction factor [29].
+
+
+Research Article Journal of the Optical Society of America A 4
+4. DETECTION SENSOR MODEL
+Here, an inverse scattering problem boils down to minimizing the differences between the reference far-field responses and the far-field responses as computed by a Maxwell solver for a chosen set of parameter values. Ideally, this is achieved by an accurate estimation of the parameter vector P that represents the permittivity distribution of the scatterers. In a true measurement, the reference far-field responses for an inverse scattering problem are the measured intensity responses of the scatterers during SXR scatterometry. Here, we work with the Maxwell solvers CST Microwave Studio [30], further referred to as CST, and Altair’s FEKO [31] as independent tools to produce a synthetic version of the reference far-field responses generated in a SXR scatterometry experiment. The Maxwell solver chosen in CST is the transmission line matrix (TLM) method, which we use in Section 6B for the generation of the synthetic version of the reference far-field responses. We use the finite element method (FEM) in FEKO to generate this synthetic data in Sections 6C and 6D. The far-field responses computed by CST, FEKO, and the spatial spectral VIE are electric fields expressed in Volt per meter. However, in a measurement setup, a detection sensor such as a charge-coupled device (CCD) camera actually detects the intensity in terms of a photon count per pixel [32]. Further, the quality of these CCD-based measurements is influenced by the number of photons per pixel, due to the appearance of photon shot noise [20], which can be described in terms of a SNR. In an attempt to approximate the characteristics of such CCD measurements [32], we convert the electric field per polarization for each far-field response into a photon count in measurement domain M, via an ideal sensor model from [32]. In the case of CST and FEKO, we start this conversion process by separating the far-field responses in terms of their Eθ (θ, φ) and Eφ(θ, φ) components on measurement domain M for the spherical angles θ and φ. We then employ an orthographic mapping from the spherical angles θ and φ to kt = (kx, ky) = k0 cos(φ) sin(θ), sin(φ) sin(θ) . The following step is the conversion from electric field to photon count as
+Ire f
+u (kt) = Atexp
+2 ̄hωZ0
+Es,re f
+u (kt) 2 . (9)
+The subscript u is used to distinguish between the two polarizations. The other variables are the wavelength λ, the reduced Planck constant  ̄h, the free-space impedance Z0, the area of a pixel A, and the exposure time texp. Since we only consider synthetic inverse scattering problems, we assume that each ktsample of the far-field responses in measurement domain M corresponds to a single pixel of this ideal sensor model. Furthermore, we do require additional steps, since the reference far-field responses currently lack photon shot noise and the resultant of Eq. (9) is a positive real number instead of an integer photon count. Therefore, we apply photon shot noise in the form of Poisson noise [32] per polarization of a reference far-field response. So, the Poisson noise is computed per kt-sample, where the mean value of the Poisson distribution is the detected number of photons. In the case of the spatial spectral VIE, we immediately apply the following conversion
+Iu(kt) = Atexp
+2 ̄hωZ0
+|Esu(kt, z0)|2 , (10)
+where Esu(kt, z0) is obtained via Eq. (8). Here, it is key to note that the argument z0 drops out of the equation, since the phasecorrection factor for transformation of the far-field data from z0 to measurement domain M drops out because of the absolutevalue operation. Further, we continue by denoting Iu(kt) from
+Eq. (10) as Iu(kt, P, Ei) to explicitly highlight the dependency of Iu(kt) on the parameters of the scatterers P and the incident
+field Ei. This dependency on the incident field also holds for the reference far-field responses. For synthetic inverse scattering problems, the area of a pixel and the exposure time are not tied to the specifics of a particular CCD camera. Thus, we are free to change the SNR level of the reference far-field responses by tuning the values of the area of a pixel and exposure time. Here, the SNR level per polarization
+is computed as 10 log10(√μp), where μp is the average number
+of photons per pixel.
+5. INVERSE SCATTERING FORMULATION
+We capture the differences between a single polarization of the reference far-field response and the spatial spectral VIE’s farfield response by a residual ru(kt, P, Ei) as
+ru(kt, P, Ei) =
+q
+Ire f
+u (kt, Ei) −
+q
+Iu(kt, P, Ei). (11)
+This residual is then used to construct a cost functional F(P) ∈ R+, without a regularization term, as
+F(P) = R(P) 2
+M=
+Nh
+∑
+h=1
+2
+u∑=1
+Nv
+v∑=1
+ru(kt,v, P, Eih) 2
+=
+Nh
+∑
+h=1
+2
+u∑=1
+Nv
+v∑=1
+q
+Ire f
+u (kt,v, Eih) −
+q
+Iu(kt,v, P, Eih)
+2 ,
+(12)
+where R(P) ∈ R(2Nh Nv)×1 is the residual vector. Here, the Mnorm consists of the summation of the absolute values over the two polarizations in the far field indicated by index u, the sample points in measurement domain M indicated by index v, and the considered incident fields indicated by index h. The index u is used for referring to either the Eθ-polarization or Eφpolarization. The variable Nh represents the number of incident fields. The Nv sample points are linked to the sampled directions of the scattered field in measurement domain M, such that kt,v refers to the v-th kt-sample. As mentioned in Section 4, each discrete sample direction represents a single pixel of a synthetic CCD camera model. The minimization of Eq. (12) is performed by the GaussNewton method [33], which determines the values of elements of the parameter vector P in an iterative manner. This method
+starts from an initial estimate P0 and it updates the parameter values as
+Pm = Pm−1 + ∆Pm, (13)
+where ∆Pm is the mth update step. This update step requires the solution of the linear system
+Am∆Pm = dm. (14)
+The symmetric matrix Am ∈ RNp×Np with element at row i and column j defined as
+Aim,j = ∂R(P)
+∂ pi
+, ∂R(P)
+∂pj M
+, (15)
+
+
+Research Article Journal of the Optical Society of America A 5
+and the vector dm ∈ RNp×1 with element at row i as
+dim = ∂R(P)
+∂ pi
+, R(P)
+M
+. (16)
+A first-order partial derivative of the residual with respect to a
+single parameter is represented by ∂R(P)
+∂pi and the dot-product
+operation is noted by ⟨·, ·⟩. In [Sec. 4, 12], the formulation of the spatial spectral VIE is exploited such that the first-order partial derivative of the far-field responses for each parameter is obtained as
+∂
+∂p Es(kt, z0) = ∂
+∂p G FF[J(x′t, z′)](kt, z0)
+= GFF[ ∂
+∂p J(x′t, z′)](kt, z0)
+= G FF ∂χ(x′t, z′)
+∂p E(x′t, z′) + χ(x′t, z′) ∂E(x′t, z′)
+∂p (kt, z0).
+(17)
+Since the residual for the inverse-scattering problems, [Eq. (21), 12], hinges on the spatial spectral VIE’s far-field responses, it became also possible to compute the first-order partial derivatives of the residual vector R via this approach. Ideally, we want to reuse this straightforward approach for obtaining the first-order partial derivative of the residual vector R for each parameter. However, the modulus operator in Eq. (9) currently invalidates the interchange of the parameter derivative and Green operator as in Eq. (17), since the modulus operator is a non-analytic operation. As a remedy, we employ Wirtinger calculus [34] to derive real-valued first-order derivatives of the residual. Assuming only real-valued parameters, we write element-wise the
+first-order partial derivatives of the residual vector ∂R(P)
+∂p as
+∂ ru(kt, P, Ei)
+∂p = ∂
+∂p
+q
+Iu(kt, P, Ei)
+=
+s
+Atexp 2 ̄hωZ0
+∂
+∂p GuFF[J(x′t, z′)](kt, z0)
+=
+s
+Atexp 2 ̄hωZ0
+Re
+Esu,∗(kt, z0)GuFF[ ∂
+∂p J(x′t, z′)](kt, z0)
+pEsu(kt, z0)Esu,∗(kt, z0) ,
+(18)
+where a complex conjugation is denoted by ∗ and GuFF[·] represents the u-polarized component of its output. We note the following two details. First, the peak magnitude of the first-order partial derivatives with respect to a vertex parameter is proportional to its vertex coordinates. In contrast, the peak magnitude of the first-order partial derivative with respect to the contrast scalar is equal to 1. To prevent ill-conditioning of the matrix Am, it is key to rescale the first-order partial derivative with respect to the contrast scalar. The rescaling is linked to the window width of the window functions within the Gabor-frame formulation and its value can be found in [Sec. 4, 12]. Second, we precondition the matrix Am by applying diagonal scaling, since this can improve the condition number without a significant computational workload.
+6. PARAMETER RECONSTRUCTION RESULTS
+A. Implementation and computation details
+For the oncoming demonstrations, we used the spatial spectral VIE to obtain the far-field responses Iu(kt,v, P, Ei) in Eq. (12).
+This spatial spectral VIE was developed in FORTRAN. The data structures of the spatial spectral VIE are accessible in Python, owing to a shared-object extension. For the inverse scattering problem, we developed a Gauss-Newton method in Python, such that it can use the data structures from the spatial spectral VIE. The upcoming demonstrations were performed on a single machine equipped with an Intel Xeon Gold 6148 processor with approximately 750 GB of RAM. The peak RAM usage for these demonstrations remained smaller than 6 GB. For all demonstrations, we constructed incident fields as a sum of multiple plane waves, where each plane wave originates from the top half-space with unit amplitude. Further, all plane waves have a wavelength of λ = 13.5 nm, which we assume to be SXR’s wavelength. We compute the propagation direction k and complex amplitude Ew of each plane wave via its angle of incidence and polarization state. We note that only p-polarized plane waves are used in the oncoming demonstrations. The far-field responses are sampled on a kt-grid. This grid is uniformly sampled with a stepsize of 0.04k0 in both the kx and ky directions from -k0 up to k0. This leads to Nv = 1425 samples per polarization of each far-field response within a numerical aperture of 0.85. To evaluate the reconstruction accuracy of the inverse scattering framework, we introduce error definitions based on the parameter type. The reconstruction error regarding material properties of a scatterer in Eq. (2), e.g. contrast scalar χs1c, is
+evaluated as
+Emat =
+v u u t
+∑sS=1 |χsc,SUT
+s − χssc|2 ∑sS=1 |χsc,SUT
+s |2 . (19)
+The superscript SUT refers to the (reference) scatterer under test (SUT). The reconstruction error regarding the geometry of scatterers focuses on the vertices in Eq. (2), namely
+Eshape =
+q
+∑sS=1 ∑Ls
+i=1 |xs,SUT
+i − xis|2 + |ys,SUT
+i − yis|2
+λ . (20)
+Here, we evaluate the reconstruction error of Eq. (20) with respect to the wavelength λ of the SXR source in vacuum, which is 13.5 nm. To get a grasp of the convergence of the geometrical parameters during reconstruction, we evaluate these parameters by the metric
+mrax
+|prm − pm−1
+r|
+λ , (21)
+where variable prm represents one of the Np parameters for iteration m of the Gauss-Newton method. Here, we work with only one stopping criterion for the Gauss-Newton method, namely we always terminate the GaussNewton method after ten iterations. The first reason for this stopping criterion is that we observed a rapid convergence within three up to five Gauss-Newton iterations by the phase-based inverse-scattering framework based on the spatial spectral VIE, see [Sec. 5, 12]. The second reason is that the inverse-scattering framework based on the spatial spectral VIE induces significant wall-clock times. For instance, 7000 seconds were needed in the case of five Gauss-Newton iterations for an inverse scattering problem consisting of two scatterers with 18 parameters, see [Sec. 5B, 12].
+B. Reconstructing multiple scatterers in vacuum
+The first demonstration consists of three quadrilateral dielectric scatterers in vacuum. These three scatterers have a height
+
+
+Research Article Journal of the Optical Society of America A 6
+Table 1. The reference scatterers and their polygon-shaped cross-sections as described by their parameters for the first demonstration.
+χ1 χ2 χ3
+(x1, y1)[nm] (-0.675,-13.5) (14.175,-13.5) (-13.5,10.125)
+(x2, y2)[nm] (14.175,-13.5) (-0.675,-13.5) (13.5,10.125)
+(x3, y3)[nm] (14.175,0) (-0.675,0) (13.5,13.5)
+(x4, y4)[nm] (0.675,0) (-14.175,0) (-13.5,13.5)
+χsc,SUT
+s [-] 0.15 0.1 0.2
+Table 2. Angles of incidence θ and φ, in degrees, for the five plane waves that together form the five instances of the incident field, for the first demonstration. Each plane wave has unit amplitude.
+(θ, φ)1 (θ, φ)2 (θ, φ)3 (θ, φ)4 (θ, φ)5
+Ei1 (0, 0) (70, 45) (70, 135) (70, 200) (70, 270)
+Ei2 (0, 45) (60, 170) (60, 225) (60, 290) (60, 350)
+Ei3 (0, 135) (50, 30) (50, 100) (50, 180) (50, 300)
+Ei4 (0, 0) (50, 30) (50, 100) (70, 200) (70, 270)
+Ei5 (0, 200) (50, 45) (50, 135) (70, 180) (70, 300)
+of 3.375 nm in the z-direction. The contrast function of each scatterer, i.e. χ1, χ2, and χ3, can be described by a uniform crosssection along its height for all considered z-samples ranging from 0 nm up to 3.375 nm. The parameters that represent these three dielectric scatterers can be found in Table 1 and the shape of each cross-section is also displayed in Fig. 2a by the gray polygons. In this demonstration, we only reconstruct the scatterers represented by the contrast functions χ1 and χ2, which leads to an inverse scattering problem described by eighteen parameters: sixteen vertex parameters and two material parameters. These two scatterers are separated by a gap of only 1.35 nm, which is a tenth of the illumination wavelength. Furthermore, the purpose of the scatterer with cross-section χ3 is to make the reconstruction of the other two scatterers more difficult. The three scatterers are illuminated by Nh = 5 incident fields, where each incident field is a superposition of five p-polarized plane waves with each a unit amplitude. The angles of the five plane waves per incident field are displayed in Table 2. To clarify Table 2, the second incident field Ei2 consists of five plane waves, where
+the incident angles (θ, φ) in degrees of the first and fifth plane wave are equal to (0, 45) and (60, 350), respectively. Further, several incident angles for the plane waves are repeating. This is done to reduce the total simulation time for generating the synthetic far-field responses, since the employed Maxwell solver in CST only accepts a single plane wave per full-wave solve of the Maxwell equations. The half-sphere that forms domain M is centered at the origin of the Cartesian coordinate system and its radius is 1.35 m. We employ the same Gabor-frame expansion as in [Sec. 5B, 12] except for the window width for the employed Gaussian window functions, namely X = Y = 16 nm. In the z-direction, we use 41 piecewise-linear functions. We observed a relative l2-error of roughly 0.01 between CST’s far-field re
+sponses and the far-field responses as computed by the spatial spectral VIE. A part of the results from the inverse-scattering framework for the first demonstration are displayed in Fig. 2. This figure displays the reconstruction of the cross-section of the contrast functions χ1 and χ2 during ten Gauss-Newton iterations. The initial estimate values of the cross-section are denoted by circular markers. These initial vertex coordinates were based on the application of a small random perturbation to the reference values, i.e. a Gaussian distribution N (0, 0.2λ) per vertex parameter and a Gaussian distribution N (0, 0.2χssc) per material parameter. This reflects the situation that we already know the approximate value of each parameter, but not the exact one. This closely resembles the information given by the photomask and the deposition process in wafer metrology. The final iteration values for the vertices obtained from the Gauss-Newton method are represented by cross markers, while the reference values of the cross-section are displayed by the gray polygon. Note that the photon count for each polarization of the reference far-field responses is displayed at the top of each sub-figure. Thus, Fig. 2a makes use of reference data, where approximately 142500 photons for each polarization of the far-field responses are detected by the ideal sensor model with shot noise. Further, we make use of 1425 samples per polarization of the far-field, which means that we approximately have 100 photons per pixel on average in Fig. 2a per polarization of a far-field response as data for the Gauss-Newton method. According to [Eq. (13), 32], this results in a SNR of approximately 10 dB for an ideal sensor model with shot noise. The reconstruction error during the iterations of the Gauss-Newton method in terms of Eq. (19) and Eq. (20) are displayed in Fig. 3 per photon count for each polarization of the reference far-field response. Additionally, Fig. 3 also displays the observed maximum step length in the vertex parameters for each iteration of the Gauss-Newton method for all considered photon counts per polarization. By combining Fig. 2 and Fig. 3, we note the following. The inverse-scattering framework consistently reconstructs both scatterers as quadrilateral objects as shown in Fig. 2. Thus, the two scatterers do not merge into a single scatterer for all considered cases, even though they are separated by a gap of only λ/10. In addition, the two reconstructed scatterers do not overlap. Further, this inverse-scattering framework is capable of retrieving the vertex parameters with deviations smaller than λ/90 when an average of 142500 photons per polarization of a far-field measurement is detected, see Fig. 3b. This corresponds to a SNR of 10 dB. Even with only 5 photons per pixel on average (SNR of 3.5 dB), vertex-parameter deviations of approximately λ/13 are retrievable. The reconstruction of the vertex coordinates reduces further to λ/3 in the case of only detecting 0.7 photons per pixel on average, which corresponds to a SNR of -0.8 dB with an ideal sensor model with shot noise. Additionally, Fig. 3c displays that the material parameters can be reconstructed with a relative error of approximately 0.4% when approximately 142500 photons are detected per polarization of the far-field responses. This reconstruction error increases to approximately 20% when this photon count drops down to a mere 1000 photons. Furthermore, the reconstructed material parameters typically underestimate the χssc values for both scatterers when the average number of
+photons per pixel decreases, see the final χssc values in Fig. 3. A probable cause is that the low photon count results in a dominant right-skewed Poisson distribution [35] applied to the reference far-field response, which effectively reduces the detected intensity of the fields scattered by scatterers. Consequently, the
+
+
+Research Article Journal of the Optical Society of America A 7
+(a) (b) (c)
+(d) (e) (f)
+Fig. 2. The reconstruction performance for the first demonstration is displayed for various SNR levels. The initial estimates of the vertex parameters are displayed by circular markers. The dashed line segments represent the progression of the Gauss-Newton method for the vertex parameters, while the cross markers indicate the final vertex parameters of the Gauss-Newton update after the tenth iteration. The line segments that connect the cross markers represent the estimated shape of the quadrilateral scatterers after the final Gauss-Newton update. Note that the actual scatterers, as specified in Table 1, are visualized by the gray polygons. Further, the displayed χssc values are obtained after the tenth Gauss-Newton iteration.
+2 4 6 8 10 Gauss-Newton Iteration [-]
+10-8
+10-6
+10-4
+10-2
+100
+Max[ |pr
+m-pr
+m-1|/ ] [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(a)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Eshape [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(b)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Emat [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(c)
+Fig. 3. The performance of the inverse-scattering framework is displayed for the first demonstration, i.e. multiple scatterers in vacuum, for all ten iterations of the Gauss-Newton method concerning various SNR levels. (a) The observed maximum step length in the vertex parameters is displayed, which is related to Eq. (21). (b) The reconstruction performance regarding the vertex parameters is described by Eq. (20). (c) The reconstruction performance regarding the material parameters is described by Eq. (19).
+inverse scattering method still detects a quadrilateral scatterer, but with a lower reflectivity and, therefore, a lower relative permittivity. We also observe that the reconstruction process in Fig. 3b and Fig. 3c stagnates after seven Gauss-Newton iterations. For the first demonstration, the main observation is that the phaseless inverse-scattering framework is capable of a consistent and accurate parameter reconstruction for multiple scatterers in vacuum without any regularization term. An aver
+age of approximately 5 photons per pixel for each polarization of the far-field responses is needed to obtain a reconstruction error below 10% for Eq. (19) and Eq. (20). This corresponds to a SNR of 3.5 dB for the employed ideal sensor model with only shot noise.
+
+
+Research Article Journal of the Optical Society of America A 8
+C. Reconstructing a scatterer above a dielectric half-space
+For wafer metrology, the structures on a wafer are typically modeled as dielectric scatterers that are either embedded in or placed on top of a stratified background medium [36–38]. Since the spatial spectral VIE is specifically designed for this application, it is certainly interesting to evaluate inverse scattering problems conforming to this wafer-metrology setting. To this end, we need a Maxwell solver that can provide the reference far-field in the case of dielectric scatterers in the presence of a layered background medium. Since the employed Maxwell solver in CST is not capable of evaluating forward scattering problems with dielectric scatterers in a layered background medium, we continue with the Maxwell solver in FEKO as mentioned in Section 4. This Maxwell solver provides the option for solving a forward scattering problem with dielectric scatterers in the presence of a dielectric half-space and a vacuum half-space. To the best of the authors’ knowledge, a current restriction within FEKO is that the dielectric scatterers can not touch or cross the interface between the two half-spaces. Another restriction is currently that the dielectric scatterers need to be located within the vacuum half-space. The second demonstration concerns one quadrilateral dielectric scatterer and an octagonal dielectric scatterer. These two scatterers both have a height of 3 nm. The scatterers are placed in the vacuum top half-space with their height ranging from 20 nm up to -17 nm in the z-direction of the Cartesian coordinate
+Table 3. The reference scatterers and their polygon-shaped cross-sections as described by their parameters for the second demonstration.
+χ4 χ5
+(x1, y1) [nm] (-3, -4) (-12, 12)
+(x2, y2) [nm] (6, -4) (-12, -12)
+(x3, y3) [nm] (6, 4) (12, -12)
+(x4, y4) [nm] (-3, 4) (12, -6)
+(x5, y5) [nm] - (-6, -6)
+(x6, y6) [nm] - (-6, 6)
+(x7, y7) [nm] - (1.5, 6)
+(x8, y8) [nm] - (1.5, 12)
+χsc,SUT
+s [-] 0.15 0.15
+Table 4. Angles of incidence θ and φ, in degrees, for the five plane waves that together form the five instances of the incident field, for the second demonstration. Each plane wave has unit amplitude.
+(θ, φ)1 (θ, φ)2 (θ, φ)3 (θ, φ)4 (θ, φ)5
+Ei1 (0, 0) (50, 45) (50, 135) (50, 200) (50, 270)
+Ei2 (0, 45) (30, 75) (30, 170) (30, 225) (30, 290)
+Ei3 (0, 135) (60, 30) (60, 100) (60, 180) (60, 300)
+Ei4 (0, 0) (30, 30) (30, 100) (50, 200) (50, 270)
+Ei5 (0, 200) (40, 45) (40, 135) (60, 180) (60, 300)
+system. The interface between the half-spaces is located at z = 0. The relative permittivity of the half-space at z < 0 is set to 1.8. We describe the contrast functions of the quadrilateral scatterer and octagonal scatterer by χ4 and χ5 for all considered z-samples ranging from -20 nm to -17 nm, respectively. The parameters of these contrast functions are displayed in Table 3 and the corresponding shapes are observable by the gray polygons in Fig. 4a. Note that the quadrilateral scatterer is partially enclosed by the octagonal scatterer. Further, the minimum distance between the two scatterers is equal to 2 nm, approximately a seventh of the illumination wavelength. Here, we only reconstruct the contrast function of the octagonal dielectric scatterer χ5. The resulting inverse scattering problem is described by seventeen parameters: sixteen vertex parameters and one material parameter. For this inverse scattering problem, we consider Nh = 5 incident fields. All incident fields consist of five plane waves, each with a unit amplitude and p-polarization. The angles of incidence of the plane waves that form the instances of the incident fields are displayed in Table 4. Domain M has the same radius as in the preceding demonstration, but it is now centered at Cartesian coordinate (0,0,-20) nm. The discretization details are as follows: we have changed the window width of the Gaussian window functions of the Gabor-frame expansion to X = Y = 15 nm. Further, we have increased the number of harmonic components to nx, ny ∈ {−10, . . . , 10}, while the number of piecewise-linear functions is changed to 7. The relative l2-error between the farfield responses from FEKO and the spatial spectral VIE ranges between 0.01 and 0.03.
+Fig. 4 displays a part of the results from the inverse-scattering framework for the second demonstration. More specifically, it shows the reconstructed cross-section of the contrast function χ5 during ten Gauss-Newton iterations. The circular markers display the initial estimate values of the cross-section and these initial values are obtained by applying a small perturbation generated by the Gaussian probability distribution N (0, 0.15λ) applied to each of its vertex parameters. The material parameters are obtained by a small perturbation generated by the Gaussian probability distribution N (0, 0.15χssc). The cross markers depict the values for the vertices of the cross-sections after the final iteration. Fig. 5 partially matches the format of Fig. 3. So, Fig. 5a still displays the maximum step length in the vertex parameters observed in each update of the parameters by the Gauss-Newton method. Further, Fig. 5b displays the reconstruction error for the material parameters during the iterations of the Gauss-Newton method in terms of Eq. (19) and its format corresponds to Fig. 3. However, we observed that reconstruction error regarding the geometry of scatterer χ5 via Eq. (20) is dominated by the reconstruction performance of the vertices (x6, y6) up to (x8, y8), which are closest to the quadrilateral object χ4. Therefore, we now choose to evaluate the reconstruction performance of the scatterer χ5 via Eq. (20) by splitting its vertices into two groups, i.e. Fig. 5c shows the performance for (x1, y1) to (x5, y5) and Fig. 5d displays this performance for the vertices (x6, y6) to (x8, y8). This way, we provide a more detailed insight into the reconstruction capabilities of the inverse-scattering framework.
+In Fig. 4, we observe that the octagonal scatterer does not overlap the quadrilateral scatterer for all considered cases, in spite of the partial encapsulation of the quadrilateral scatterer by the octagonal scatterer and the small distance of 2 nm between the two scatterers. Further, Fig. 5c shows that the vertex parameters (x1, y1) up to (x5, y5) are accurately retrieved with deviations smaller λ/120 in the case of detecting 142500 pho
+
+
+Research Article Journal of the Optical Society of America A 9
+(a) (b) (c)
+(d) (e) (f)
+Fig. 4. The reconstruction performance per average photon count per pixel per measurement for the second demonstration. The initial estimates of the vertex parameters are displayed by circular markers. The dashed line segments represent the progression of the Gauss-Newton method for the vertex parameters, while the cross markers represent the vertices after the final Gauss-Newton update. The line segments that connect the cross markers represent the estimated shape of the octagonal scatterer after the final Gauss-Newton update. Note that the actual scatterers, as specified in Table 3, are visualized by the gray polygons. Further, the χssc values represent the material parameters after the final Gauss-Newton update.
+tons per polarization (SNR of 10 dB) of the reference far-field responses. Sub-nanometer accuracy of approximately λ/16 is achieved for these vertex parameters for 7125 photons per polarization (SNR of 3.5 dB). In comparison, the vertex parameters (x6, y6) up to (x8, y8) are retrieved with deviations of approximately λ/50 at a SNR of 10 dB, see Fig. 5d. This accuracy rapidly reduces to λ/5 in the case of detecting 14250 photons per polarization. We conjecture that the reconstruction performance of the vertices (x6, y6) to (x8, y8) is less precise as compared to the vertices (x1, y1) to (x5, y5), because the former set of vertices are closer in each other’s vicinity compared to the vertices (x1, y1) up to (x5, y5). Additionally, we suspect that the small distance between the contrast functions χ4 and χ5 is a probable source for the reduced reconstruction performance of these vertices. In Fig. 5b, we observe that the material parameter is reconstructed with an error of approximately 0.6% given the detection of approximately 142500 photons per polarization of each far-field response. This error further increases to approximately 28% when the photon count per polarization drops to a mere 1000 photons. We notice in Fig. 4 that the material parameters are consistently underestimated when the number of photons is reduced, which also occurred in the first demonstration. Furthermore, Fig. 5a displays that the observed maximum step length in the vertex parameters does not decay further when the SNR is equal to -0.8 dB. This non-converging behavior is caused by the GaussNewton method that does not converge to a single geometry for χ5, but alternates between two slightly different geometries.
+This oscillatory behavior can also be observed in Fig. 5c and Fig. 5d. So, for very high shot-noise levels, the inverse-scattering framework exhibits convergence issues. Overall, this framework is capable of reconstructing a scatterer with a somewhat intricate geometry by means of its vertex and contrast parameters, without requiring phase information and a regularization term, and in the presence of a dielectric half-space. The majority of the vertex parameters are retrieved with sub-nanometer accuracy when the SNR is equal to 3.5 dB or larger, under the assumption of the employed ideal-sensor model with shot noise, while the material parameters are then still retrieved with an error of only 5%.
+D. Reconstructing a scatterer nearby a systematic error
+In this third demonstration, we investigate the possibility of retrieving the parameters of a scatterer without knowing the exact geometrical details of its surroundings. Thus, we evaluate whether the prior knowledge by the parametrization of the scatterer under test is sufficient to retrieve the scatterer’s parameters, while we introduce systematic errors in its vicinity. To this end, we reuse and redo the second demonstration, but we change the parameters for the contrast function of the quadrilateral scatterer χ4 within the spatial spectral VIE. As a result, the spatial spectral VIE consistently computes the far-field responses with a systematic error with respect to the reference far-field response as computed by FEKO of the preceding demonstration in Section C. The adjusted parameter values for the quadrilateral scatterer with the contrast function χ4 are displayed in Table 5.
+
+
+Research Article Journal of the Optical Society of America A 10
+2 4 6 8 10 Gauss-Newton Iteration [-]
+10-10
+10-8
+10-6
+10-4
+10-2
+100
+Max[ |pr
+m-pr
+m-1|/ ] [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(a)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Emat [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(b)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Eshape [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(c)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Eshape [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(d)
+Fig. 5. The performance of the inverse-scattering framework is displayed for the second demonstration, i.e. multiple scatterers placed above a dielectric half-space, for all ten iterations of the Gauss-Newton method, for various SNR levels. (a) The observed maximum step length in the vertex parameters is displayed, which follows Eq. (21). (b) The reconstruction performance regarding the material parameters is displayed by Eq. (19). (c) The reconstruction performance regarding the vertex parameters is displayed by Eq. (20) for the vertices (x1, y1) to (x5, y5) of χ5. (d) The reconstruction performance regarding the vertex parameters is displayed by Eq. (20) for the vertices (x6, y6) to (x8, y8) of χ5.
+These values are obtained by applying a small perturbation generated by the Gaussian probability distribution N (0, 0.025χssc) to each of the vertex parameters of χ4. The contrast scalar is subjected to a small perturbation generated by the Gaussian probability distribution N (0, 0.025χs4c).
+Fig. 6 contains a part of the results of the third demonstration and its format corresponds to that of Fig. 4. So, the reconstruction of the contrast function χ5 for ten Gauss-Newton iterations is shown for various average photon counts per each polarization of the far-field responses. The performance of the inversescattering framework expressed by means of Eq. (19), Eq. (20), and Eq. (21), are displayed in Fig. 7, which has the same format as Fig. 5.
+We observe in Fig. 6 that the octagonal scatterer does not overlap the quadrilateral scatterer for all considered cases. This was also observed in the preceding demonstrations. Furthermore, all vertex parameters are retrieved with sub-nanometer accuracy, i.e. variations smaller than λ/20, in the case of a SNR of at least 8.5 dB. Fig. 7c shows that the majority of the vertex parameters
+are still retrieved with sub-nanometer variations, namely λ/14 for a SNR of 3.5 dB. The reconstruction error in this demonstration for both the vertex parameters and material parameters are larger than the reconstruction errors in the second demonstration. For instance, the second demonstration displays in Fig. 5c an accuracy of λ/120 at a SNR of 10 dB, whereas we observe an accuracy of λ/20 in Fig. 7c. We also see that the material parameters are again underestimated when the SNR is reduced, see Fig. 6, in line with the other demonstrations. So, this last demonstration provides the insight that the inverse-scattering framework is capable of reconstructing a scatterer, in the presence of a systematic error in another scatterer in its vicinity. However, there is an observable decrease in the reconstruction accuracy for the parameters with respect to the demonstration without the systematic error, as shown in Section C.
+7. CONCLUSION
+We presented an extension of a Gauss-Newton inverse-scattering method for a sub-nanometer accurate and noise-robust recon
+
+
+Research Article Journal of the Optical Society of America A 11
+(a) (b) (c)
+(d) (e) (f)
+Fig. 6. The reconstruction performance per average photon count per pixel per measurement for the third demonstration. The initial estimates of the vertex parameters are displayed by circular markers. The dashed line segments represent the progression of the Gauss-Newton method for the vertex parameters, while the cross markers represent the vertices after the final Gauss-Newton update. The line segments that connect the cross markers represent the estimated shape of the octagonal scatterer after the final Gauss-Newton update. The parameters of the octagonal scatterer can be found in Table 3, while the parameters of the quadrilateral scatterer are displayed in Table 5. Both scatterers are visualized by the gray polygons. Further, the χssc values represent the material parameters after the final Gauss-Newton update.
+struction of the geometry and the permittivity distribution of finite dielectric scatterers in the case of phaseless inverse scattering problems in the soft X-ray regime. The geometry and the permittivity distribution of each scatterer were defined by its (assumed) uniform polygon-shaped cross-section along its height.
+Table 5. The reference scatterers and their polygon-shaped cross-sections as described by their parameters for the third demonstration.
+χ4 χ5
+(x1, y1) [nm] (-3.104, -3.757) (-12, 12)
+(x2, y2) [nm] (5.871, -4.287) (-12, -12)
+(x3, y3) [nm] (6.496, 3.933) (12, -12)
+(x4, y4) [nm] (-2.709, 3.791) (12, -6)
+(x5, y5) [nm] - (-6, -6)
+(x6, y6) [nm] - (-6, 6)
+(x7, y7) [nm] - (1.5, 6)
+(x8, y8) [nm] - (1.5, 12)
+χsc,SUT
+s [-] 0.1542 0.15
+Each scatterer was continuously and analytically parametrized by the vertices of its polygon-shaped cross-section and homogeneous relative permittivity. The exploitation of characteristics of the spatial spectral volume integral equation and the parametrization of the scatterers made it possible to compute first-order partial derivatives of the phaseless electric far-field responses with respect to each parameter of the scatterers. Three synthetic demonstrations of accurate and noise-robust parameter reconstruction without any regularization term were provided and discussed. The majority of the vertex coordinates of the scatterers were retrieved with an error of less than λ/13, with λ the soft X-ray wavelength in vacuum, for an average of 5 photons per pixel of the sensor. This corresponds to a SNR of 3.5 dB for an ideal sensor model with shot noise. At an average of 100 photons per pixel, it was shown that the vertex parameters can be retrieved with an accuracy of λ/90. The material parameters were extracted with an error ranging from 0.05% up to 5% for average photon counts of 100 and 5 per pixel, respectively.
+Funding. Dutch Research Council (NWO, project number: P16-08)
+Acknowledgments. This work is part of the NWO-TTW Perspective project LINX with project number P16-08.
+Disclosures. The authors declare no conflicts of interest.
+
+
+Research Article Journal of the Optical Society of America A 12
+2 4 6 8 10 Gauss-Newton Iteration [-]
+10-6
+10-4
+10-2
+100
+Max[ |pr
+m-pr
+m-1|/ ] [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(a)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Emat [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(b)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Eshape [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(c)
+0 2 4 6 8 10 Gauss-Newton Iteration [-]
+10-3
+10-2
+10-1
+100
+Eshape [-]
+142500 photons 71250 photons 14250 photons
+7125 photons 1425 photons 1000 photons
+(d)
+Fig. 7. The performance of the inverse-scattering framework is displayed for the third demonstration, i.e. multiple scatterer placed above the dielectric half-space in combination with a systematic error, for all ten iterations of the Gauss-Newton method given various SNR levels. (a) The observed maximum step length in the vertex parameters is displayed, which follows Eq. (21). (b) The reconstruction performance regarding the material parameters is displayed by Eq. (19). (c) The reconstruction performance regarding the vertex parameters is displayed by Eq. (20) for the vertices (x1, y1) up to (x5, y5) of χ5. (d) The reconstruction performance regarding the vertex parameters is displayed by Eq. (20) for the vertices (x6, y6) up to (x8, y8) of χ5.
+REFERENCES
+1. IEEE, “International roadmap for devices and systems: Lithography,” https://irds.ieee.org/editions/2022/irds%E2%84% A2-2022-lithography (2022). 2. IEEE, “International roadmap for devices and systems: Metrology,” https://irds.ieee.org/editions/2022/irds%E2%84%A2-2022-metrology (2022). 3. C. Porter, T. Coenen, N. Geypen, S. Scholz, L. van Rijswijk, H. Nienhuys, J. Ploegmakers, J. Reinink, H. Cramer, R. van Laarhoven, D. O’Dwyer, P. Smorenburg, A. Invernizzi, R. Wohrwag, H. Jonquiere, J. Einhardt, O. el Gawhary, S. Mathijssen, P. Engblom, H. Chin, W. T. Blanton, S. Ganesan, B. Krist, F. Gstrein, and M. Philips, “Soft x-ray: novel metrology for 3D profilometry and device pitch overlay,” Proc. SPIE 12496, Metrol. Insp. Process. Control. XXXVII (2023). 4. L. M. Lohr, R. Ciesielski, S. Glabisch, S. Schröder, S. Brose, and V. Soltwisch, “Nanoscale grating characterization using EUV scatterometry and soft x-ray scattering with plasma and synchrotron radiation,” Appl. Opt. 62 (2023). 5. R. Ciesielski, L. M. Lohr, H. Mertens, A. Charely, R. de Ruyter, J. Bogdanowicz, P. Hönicke, N. Abbasirad, and V. Soltwisch, “Pushing the
+boundaries of EUV scatterometry: reconstruction of complex nanostructures for next-generation transistor technology,” Proc. SPIE 12496, Metrol. Insp. Process. Control. XXXVII (2023). 6. R. Ciesielski, L. M. Lohr, A. Fernandez Herrero, A. Fischer, A. Grothe, H. Mentzel, F. Scholze, and V. Soltwisch, “A new sample chamber for hybrid detection of scattering and fluorescence, using synchrotron radiation in the soft x-ray and extreme ultraviolet (EUV) spectral range,” Rev. scientific instruments (2023). 7. R. L. Sandberg, A. Paul, D. A. Raymondson, S. Hädrich, D. M. Gaudiosi, J. Holtsnider, R. I. Tobey, O. Cohen, M. M. Murnane, H. C. Kapteyn, C. Song, J. Miao, Y. Liu, and F. Salmassi, “Lensless diffractive imaging using tabletop coherent high-harmonic soft-x-ray beams,” Phys. review letters 99 (2007). 8. S. Hädrich, J. Rothhardt, M. Krebs, S. Demmler, A. Klenke, A. Tünnermann, and J. Limpert, “Single-pass high harmonic generation at high repetition rate and photon flux,” J. Phys. B: At. Mol. Opt. Phys. 49 (2016). 9. W. Koek, B. Florijn, S. Bäumer, R. Kruidhof, and H. Sadeghian, “Shotnoise limited throughput of soft x-ray ptychography for nanometrology applications,” Proc. SPIE 10585, Metrol. Insp. Process. Control. for Microlithogr. XXXII (2018).
+
+
+Research Article Journal of the Optical Society of America A 13
+10. R. Nebling, I. Mochi, D. Kazazis, U. Locans, A. Dejkameh, and Y. Ekinci, “EUV reticle inspection using phase retrieval algorithms: a performance comparison,” Proc. SPIE 11147, Int. Conf. on Extrem. Ultrav. Lithogr. (2019). 11. M. V. Klibanov, “Phaseless inverse scattering problems in three dimensions,” Appl. mathematics (2014). 12. S. Eijsvogel, R. J. Dilz, and M. C. van Beurden, “Inverse scattering with a parametrized spatial spectral volume integral equation for finite scatterers,” J. Opt. Soc. Am. A 40, 1797–1808 (2023). 13. R. J. Dilz, M. G. M. M. van Kraaij, and M. C. van Beurden, “A 3D spatial spectral integral equation method for electromagnetic scattering from finite objects in a layered medium,” Opt. Quant. Electron. 50 (2018). 14. X. Chen, Computational method for electromagnetic inverse scattering (Wiley, 2018). 15. R. W. Gerchberg and W. O. Saxton, “A practical algorithm for the determination of the phase from image and diffraction plane pictures,” Optik 35 (1972). 16. J. R. Fienup, “Phase retrieval algorithms: a comparison,” Appl. Opt. 21 (1982). 17. D. Luke, “Relaxed averaged alternating reflections for diffraction imaging,” Inverse Probl. 37 (2004). 18. V. Elser, “Phase retrieval by iterated projections,” J. Opt. Soc. Am. A 20 (2003). 19. H. Ammari, Y. T. Chow, and J. Zou, “Phased and phaseless domain reconstructions in the inverse scattering problem via scattering coefficients,” Appl. mathematics (2019). 20. Z. Li, K. Lange, and A. Fessler, “Poisson phase retrieval in very lowcount regimes,” IEEE Transactions on computational imaging (2022). 21. M. C. van Beurden and I. D. Setija, “Local normal vector field formulation for periodic scattering problems formulated in the spectral domain,” J. Opt. Soc. Am. A 34, 224–234 (2014). 22. S. Eijsvogel, L. Sun, F. Sepehripour, R. J. Dilz, and M. C. van Beurden, “Describing discontinuous finite 3d scattering objects in gabor coefficients: fast and accurate methods,” J. Opt. Soc. Am. A 39, 86–96 (2022). 23. M. Yurkin and A. Hoekstra, “The discrete dipole approximation: An overview and recent developments,” J. Quant. spectroscopy & radiative transfer 106 (2007). 24. R. J. Dilz, “A spatial spectral domain integral equation solver for electromagnetic scattering dielectric layered media,” Ph.D. thesis, Eindhoven University of Technology (2017). 25. R. J. Dilz and M. C. van Beurden, “An efficient complex spectral path formulation for simulating the 2D TE scattering problem in a layered medium using Gabor frames.” J. Comput. Phys. 50, 528—-542 (2017). 26. R. J. Dilz, M. G. M. M. van Kraaij, and M. C. van Beurden, “The 2D TM scattering problem for finite objects in a dielectric stratified medium employing gabor frames in a domain integral equation.” J. Opt. Soc. Am. A 8, 1315—-1321 (2017). 27. K. Michalski and J. R. Mosig, “Multilayered media green’s functions in integral equation formulations,” IEEE transactions on Antennas Propag. (1997). 28. I. Gohberg and I. Koltracht., “Numerical solution of integral equations, fast algorithms and krein-sobolev equation,” Numer. mathematics 47, 237–288 (1985). 29. L. Novotny and B. Hecht, Principles of Nano-Optics (Cambridge University Press, 2012), 1st ed. 30. F. Hirtenfelder, “Effective antenna simulations using CST MICROWAVE STUDIO,” Int. ITG Conf. on Antennas p. 239 (2007). 31. A. G. Aguilar, J. van Tonder, U. Jakobus, and F. Illenseer, “Overview of recent advances in the electromagnetic field solver FEKO,” Eur. Conf. on Antennas Propag. (EuCap) (2015). 32. EMVA, “Standard for Characterization of Image Sensors and Cameras,” https://www.emva.org/wp-content/uploads/EMVA1288-3.0.pdf (2016). 33. R. Flecther, Practical methods of optimization (Wiley, 1987). 34. R. F. H. Fischer, Precoding and Signal Shaping for Digital Transmission (Wiley, 2002). 35. N. Bähler, M. El Helou, E. Objois, K. Okumu ̧s, and S. Süsstrunk, “Pogain: Poisson-gaussian image noise modeling from paired samples,”
+IEEE Signal Process. Lett. 29 (2019). 36. M. G. Moharam and T. K. Gaylord, “Rigorous coupled-wave analysis of planar-grating diffraction,” J. Opt. Soc. Am. 71 (1981). 37. S. Burger, R. Kohle, L. Zschiedrich, W. Gao, F. Schmidt, R. Marz, and C. Nolscher, “Benchmark of FEM, waveguide and FDTD algorithms for rigorous mask simulation,” 25th Annu. BACUS Symp. on Photomask Technol. 599216 8880 (2005). 38. M. C. van Beurden, “A spectral volume integral equation method for arbitrary bi-periodic gratings with explicit Fourier factorization,” Prog. Electromagn. Res. B 36 (2012).

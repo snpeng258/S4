@@ -1,0 +1,423 @@
+Broadband extreme ultraviolet zero-order
+Scatterometry for nanostructure metrology
+Peter Kraus
+Advanced Research Center for Nanolithography (ARCNL) https://orcid.org/0000-0002-2989-5560
+Francesco Corazza Advanced Research Center for Nanolithography (ARCNL)
+Emmanouil Kechaoglou Advanced Research Center for Nanolithography (ARCNL)
+Leo Guery Advanced Research Center for Nanolithography (ARCNL)
+Zhonghui Nie Advanced Research Center for Nanolithography (ARCNL)
+Parikshit Phadke Advanced Research Center for Nanolithography (ARCNL)
+Carl Lehmann Advanced Research Center for Nanolithography (ARCNL) https://orcid.org/0009-0000-0716-0902
+Roland Bliem Advanced Research Center for Nanolithography https://orcid.org/0000-0002-8714-8942
+Article
+Keywords:
+Posted Date: August 19th, 2025
+DOI: https://doi.org/10.21203/rs.3.rs-7215343/v1
+License:   This work is licensed under a Creative Commons Attribution 4.0 International License. Read Full License
+Additional Declarations: There is NO Competing Interest.
+
+
+Broadband extreme ultraviolet zero-order
+Scatterometry for nanostructure metrology
+Francesco Corazza1, Emmanouil Kechaoglou1, Leo Guery1, Zhonghui Nie1, Parikshit Phadke1, Carl Stefan Lehmann1, Roland Bliem1,3, and Peter M. Kraus1,2,*
+1Advanced Research Center for Nanolithography, Science Park 106, 1098 XG Amsterdam, The Netherlands 2Department of Physics and Astronomy, and LaserLaB, Vrije Universiteit, De Boelelaan 1081, 1081 HV Amsterdam, The Netherlands 3Van der Waals–Zeeman Institute, Institute of Physics, University of Amsterdam, Science Park 904, 1098 XH Amsterdam, The Netherlands *p.kraus@arcnl.nl
+ABSTRACT
+The continuous shrinkage of the Critical Dimension in nanoscale fabrication demands new short-wavelength nanometrology approaches. Most industrial metrology is carried out on periodic structures to increase diffraction efficiencies and lower costs. Vice versa, performing short-wavelength spectroscopy on well-known structures allows reconstructing both amplitude and phase of reflected light, greatly increasing the information content of a measurement. Here, we introduce a table-top High-Harmonic Generation scatterometry approach operating in the extreme ultraviolet range. Our method exploits the typically overlooked 0th diffraction order, which, despite lacking spatially encoded information, carries valuable spectrally encoded information and provides the highest diffraction efficiency. This approach constitutes a fast, reliable and non-destructive method for nanostructure metrology. Relative reflectivity measured in a grazing incidence reflection configuration goes beyond the need for an absolute calibration of the setup, and the morphology reconstruction protocol hereby presented makes this approach robust against fabrication imperfections. Rigorous Coupled-Wave Analysis simulations underpin a library-based inverse reconstruction approach, demonstrating precise determination of critical dimensions and groove heights on Silicon grating structures with nanometer-scale accuracy of 10 nm for critical dimension and 1 nm for groove height within 70% confidence intervals. Extreme-ultraviolet high-harmonic-generation based scatterometry leverages diffraction from structures with at-wavelength features and delivers sensitivities and accuracies to structural details far below the diffraction limit.
+1 Introduction
+The recent development of nanostructure fabrication has significantly advanced both science and technology1–3, and nowadays constitutes the core of high-performance processors. The current state-of-the-art fabrication techniques rely on nanolithography, enabling reliable patterning of features down to 3 nm on Silicon wafers4,5. These extremely small dimensions push conventional optical inspection methods to their limits and require dedicated metrology techniques to ensure fabrication quality and consistency at the nanoscale. The fabrication process control commonly employs characterization techniques such as Scanning Electron Microscopy (SEM)6–8, Atomic Force Microscopy (AFM)9–11, and optical profilometry12–14. However, these methods can be a challenge for in-line inspection during nanofabrication because of their low acquisition speed and for inducing wafer damage. Furthermore, most of these approaches are only sensitive to the sample surface, leaving three-dimensional characterization of complex structures an open challenge. Scatterometry offers an alternative path to conventional imaging-based metrology techniques15,16, enabling precise characterization of nanoscale structures. The evaluation of the diffraction patterns created by light scattered off periodic samples enables the extraction of detailed structural information below the diffraction limit. By solving the inverse scattering problem, it becomes possible to reconstruct the morphology of the sample with sub-wavelength detail17–21. For this reason, scatterometry is highly useful both in fundamental research and industrial metrology applications as three-dimensional profilometry, where precision and non-invasive analysis are essential22. The use of short wavelengths in scatterometry, such as extreme ultraviolet (XUV) or soft X-ray radiation, significantly enhances the sensitivity to feature sizes. At these wavelengths, single scattering is typically dominant and offers modest correlations between parameters and enabling simultaneous, reliable characterization of multiple structural properties, even for complex geometries19,23–25. In this framework, the 0th diffraction order is typically overlooked in scatterometry, in favor of higher
+
+
+diffraction orders, as it does not inherently provide spatially encoded information within the diffraction pattern. However, the 0th diffraction order carries spectrally encoded information and provides the largest diffraction efficiency compared to higher orders. Together with the high brightness of High-Harmonic Generation (HHG), this can be exploited to extract morphological information from a nanostructured sample with high signal-to-noise ratio and fast acquisition, highlighting its potential in nanoscale metrology.
+In this paper, we present a spectroscopic scatterometry method on the 0th diffraction order, based on HHG26,27 as a precise and non-destructive metrology tool for nanostructures. Utilizing the coherent XUV radiation produced through HHG we characterize the relative reflectivity of the target. The scatterometry inverse problem for morphology reconstruction is approached in the shape of a library search problem through the comparison between experimental and simulated data. In this work, Rigorous Coupled-Wave Analysis (RCWA) is employed to model diffraction for periodic mono-dimensional gratings with a square cross-section. We confine our parameters reconstruction problem to the linewidth and groove height, and we demonstrate the reliability of this method by successfully reconstructing nanostructure morphologies with nanometer-level precision.
+2 Methods
+2.1 Nanostructured samples
+In this work, each scatterometry target consists of two nanoscale line gratings with a rectangular profile etched into a Silicon substrate, as shown by the cross-section in Figure 1. These two gratings feature lines along two perpendicular directions, allowing access to two distinct diffraction conditions for each grating morphology, as shown in Figure 2 c) and d). The samples are designed and fabricated in-house on Silicon via Electron Beam Lithography (see Supplementary Methods). Both gratings are realized in a single write-field, covering a total area of 500 × 500 μm to accommodate the large beam spot size in the grazing incidence configuration. The complete morphology (p) of a grating is relatively complex and can be described as a collection of parameters:
+p = {pitch, CD, GH, SWA, LR, ER, ...} (1)
+which includes average Critical Dimension (CD), Groove Height (GH), Side-Wall Angle (SWA) and Line Roughness (LR), Edge Roundness (ER) and more. However, for the experiments discussed here, the target designs were chosen to reduce the morphology complexity in good approximation to p = {CD, groove}. This simplification is possible by assuming prior knowledge of the pitch, employing a fabrication process that minimizes SWA, and selecting a relatively large pitch to render LR negligible.
+The work presented in the following was carried out on a set of 36 different metrology targets with 700 nm pitch, including six different groove heights between 80 and 130 nm and three different CDs. The morphology p of each target was characterized with both Atomic Force Microscopy and Scanning Electron Microscopy.
+After the fabrication process, the samples were characterized via X-Ray Photoelectron Spectroscopy (XPS) which measured a 1
+.2 ± 0.1 nm thick native oxide layer on the surface. The thickness was measured by comparing the atomic percent ratios of the native oxide and pure Si signals from the Si-2p core region28.
+400 nm
+Figure 1. Grating profile acquired with a SEM imaging of a target with 92 nm groove height and 350 nm CD. The cross section was obtained by capping a portion of the sample with Ion-Beam-Induced Deposition followed by Ion Milling.
+2.2 Experimental setup
+The experimental setup consists of a laser and a series of vacuum chambers, dedicated to the HHG source, focusing of the XUV light and the interaction with the sample, and the XUV spectrometer. An overview of the setup is provided in Figure 2.
+2/13
+
+
+Gas cell
+Toroidal Mirror
+Sample
+θ Al Filter
+XUV spectrometer
+Al Filter + Grating
+CCD
+Ne
+Neon
+10
+Si substrate φ = 90°
+φ = 0°
+a
+bc
+d
+Figure 2. a) Schematic representation of the experimental setup. b) Visualization of the data acquisition routine, where the yellow markers indicate the XUV beam positions on the sample. c) Planar diffraction scheme with periodicity direction (green arrow) and projected beam propagation direction (violet arrow). d) Conical diffraction scheme with periodicity direction (green arrow) and projected beam propagation direction (violet arrow). In both c) and d) the azimuthal angle φ is shown, defined as the angle formed between the pairs of arrows.
+The primary source is a Ti:Sapphire laser system at 800 nm (Solstice ACE, Spectra Physics), 40 fs pulse duration with a repetition rate of 2 kHz. Approximately 3 W are utilized for High Harmonic Generation. The beam pointing is actively stabilized and focused into a 3 mm long gas cell reaching ∼ 1015 W/cm2 peak intensity. The cell is supplied with gas by a mass-flow controller that ensures a stable flow and pressure in the generation region. The HHG apparatus can be switched between two configurations to allow some tunability over the XUV spectrum: one dedicated to an ordinary HHG regime, characterized by a discrete harmonics spectrum, and one where the generation conditions are tweaked to obtain a continuum-like spectrum29 (details in Supplementary Methods). For the hereby presented experiments, Neon was chosen as the HHG medium to generate a photon flux in the 11 to 35 nm wavelength range. The infrared laser light used to drive the HHG process is afterwards filtered out with a pin-hole and a pair of 200 nm thick metallic films made of Aluminum (see Figure 2). A gold-coated toroidal mirror focuses the XUV beam onto the sample with a spot size of approximately 50 μm. The samples are mounted in a custom holder onto a 4-axis (x, y, z, θ ) vacuum compatible stage, with a closed-loop controller. The HHG beam impinges on the sample with a 78◦ angle of incidence, and the reflected 0th diffraction order is sieved out of the diffraction pattern with a pinhole after the sample. The 0th order is subsequently diffracted by a flat-field XUV blazed grating at grazing incidence onto an XUV sensitive CCD with a sensor cooled to a temperature of −90◦ C.
+2.3 Measurement procedure
+The measurement process involves recording reflected 0th diffraction order from a set of locations on the nanostructured sample and from a pristine flat surface location on the same sample, as shown in Figure 2 b). The orientation of the targets was chosen to match the azimuthal angles of φ = 0◦ and φ = 90◦, where φ is defined as the angle between the target periodicity direction and the beam propagation direction projected on the sample plane. These two configurations correspond to the planar diffraction regime and conical diffraction regime, shown in Figure 2 c) and Figure 2 d) respectively. The concept revolves
+3/13
+
+
+around collecting a series of spectra from both the structured and unstructured portions of the samples. These spectra are averaged to minimize the impact of structural imperfections and nanoparticles, as averaging helps to reduce random noise and smooth out variations caused by localized defects or irregularities. The resulting averaged spectra are then utilized to compute the relative reflectivity change, defined as follows:
+δ Rλ (p) = Sg
+λ (p) SλSi
+= DE0th
+λ (p) RλSi
+(2)
+where Sg
+λ (p) is the measured spectrum of the 0th diffraction order from the grating and carries its morphological information,
+and SλSi is the spectrum of the reflection from the plain Silicon substrate. DE0th
+λ (p) is the 0th diffraction efficiency for the
+morphology p and RλSi is the Silicon reflectivity. All these terms are expressed for a given wavelength wavelength λ . It can
+be demonstrated that the relative reflectivity change defined in Equation 2 corresponds to the ratio between the diffraction efficiency of the diffraction order and the substrate reflectivity. This approach eliminates the necessity of extracting any absolute reflectivity terms, which are often challenging due to the need for precise instrumentation calibration and XUV reference measurements. By focusing on relative changes, the analysis becomes more straightforward and less prone to systematic errors.
+For the sake of comparison and reproducibility, the scatterometry measurements were repeated for both the discrete and the continuum-like HHG regimes, aiming to ensure coherent data overlap for different probing spectral components. The experiments hereby presented were carried out with a 2 s exposure time and by averaging over five spectra per dataset. A series of tests showed that shorter exposure times, down to 100 ms, would also provide a sufficient signal-to-noise ratio to enable reconstruction.
+3 Diffraction modeling
+This section describes the simulation of diffraction from one-dimensional gratings under the assumption of a perfectly homogeneous silicon substrate. Specifically, the silicon density (ρSi), the density of its native oxide (ρSiO2 ), and their respective complex refractive indices are considered spatially uniform. To model diffraction, we focus on infinitely extended structures with a mono-dimensional periodicity, which feature lines with a rectangular cross-section. However, this is not a fundamental limitation. As established in the previous section, the morphology of the grating is simplified to the parameter set p = {CD, groove}, always assuming the pitch to be known. This assumption holds in most practical cases, given that lithographic processes are optimized to ensure minimal periodicity errors. Within the framework of linear optics, the simulation of diffraction relies on solving Maxwell’s equations. Our study employs the Rigorous Coupled-Wave Analysis method, a deterministic and non-iterative approach, where the electromagnetic fields are expanded in the grating region into a series of spatial harmonics, enabling the computation of field distributions in both the grating and surrounding media30,31. This method is inherently stable, avoiding the numerical instabilities often encountered in alternative approaches, and achieves convergence based solely on the number of modes (2N + 1) used in the expansion32,33. Furthermore, the method rigorously conserves energy and ensures that the results converge to physically meaningful values as the number of harmonics is increased. After an evaluation of the convergence conditions and the parameter space of interest, we have opted for N = 100.
+An extensive RCWA-based simulation was conducted to develop a library of diffraction efficiencies over a given spectral range and grating parameters. This library serves as a foundation for reconstructing the nanoscale morphology of the grating structures based on their diffraction signatures. By systematically varying the grating parameters, the simulation captures a comprehensive dataset that correlates specific morphological features with their corresponding diffraction efficiencies. This approach enables the development of robust algorithms to invert the measured diffraction data for precise morphological characterization of nano-structured materials. To develop a method for reconstructing the nanostructure morphology starting from the diffraction efficiencies, we generated a library containing the simulated relative reflectivity changes, as defined in Eq. 2. The library was designed to cover a parameter space that includes gratings with groove heights ranging from 60 to 150 nm, in 2 nm increments, and critical dimensions (CDs) between 200 and 500 nm, in 25 nm increments. The entire framework described in this paper, both in simulation and experiments, revolves around TE polarization, with the electric field oriented parallel to the sample surface. Among the key parameters, the incidence angle θ was chosen to match experimental conditions, set at θ = 78◦. The simulations covered the two azimuthal angles φ = 0◦ and φ = 90◦ to match the planar and conical diffraction regimes, described in the Methods section. These two distinct diffraction conditions are the enabling factor to achieve the separation and independent extraction of CD and groove height from the 0th order spectrum.
+4/13
+
+
+20 30
+60
+80
+100
+120
+140
+Groove height / nm
+a
+20 30
+60
+80
+100
+120
+140 b
+20 30 Wavelength / nm
+200
+300
+400
+500
+CD / nm
+c
+20 30 Wavelength / nm
+200
+300
+400
+500 d
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Diffraction efficiency
+Figure 3. RCWA simulation of 0th spectrally resolved diffraction efficiencies for: a) 300 nm CD in planar diffraction conditions (φ = 0◦), b) 300 nm CD in conical diffraction conditions (φ = 90◦), c) 80 nm groove height in planar diffraction conditions (φ = 0◦), d) 80 nm groove height in conical diffraction conditions (φ = 90◦).
+15 20 25 30
+Wavelength / nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Relative Reflectivity
+a
+{300 nm, 90 nm}
+{330 nm, 90 nm}
+15 20 25 30
+Wavelength / nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0 b {300 nm, 90 nm}
+{300 nm, 93 nm}
+Figure 4. Comparison of the RCWA simulated spectral relative reflectivities for small morphology changes in both diffraction regimes. a) Planar diffraction: comparison of two structures that differ in linewidth by 30 nm. b) Conical diffraction: comparison of two structures that differ in groove height by 3 nm.
+5/13
+
+
+The significance of this approach is illustrated in Figure 3, which showcases a collection of library items as functions of CD and groove heights. In planar diffraction conditions, Figure 3 a) and c), diffraction efficiencies exhibit a dependency on both CD and groove height, complicating the independent extraction of these morphological parameters from a single 0th-order spectrum. Conversely, under conical diffraction conditions the diffraction efficiency profiles are largely independent of CD, as shown in the 3(d), while plot 3(b) highlights a strong dependence on groove height, making this configuration ideal for groove height reconstruction. This effect can be exploited to disentangle the CD and groove height contributions on the 0th order spectrum. The observed spectral behavior differences are attributed to the rectangular profile of the grating lines and their orientation relative to the plane of incidence. In planar diffraction with steep incident angles, grating lines partially shadow neighboring lines, altering the interference conditions underlying diffraction. This shadowing effect is absent when the grating lines are parallel to the incidence plane, as in φ = 90◦, facilitating more reliable groove height measurements. Figure 4 showcases the approach hereby described is sensitive to the nanostructure morphology in high detail. For example, for a morphology difference of 3 nm in groove height (Fig. 4b), the RCWA simulated spectra exhibit a substantial shift (and spectral profile deformation) easily detectable with a conventional grating-based XUV spectrometer. A similar conclusion can be drawn from the planar diffraction regime (Fig. 4a) to evaluate the impact of the Critical Dimension however, the sensitivity emerges to be lower than for the groove height, typically of an order of magnitude. This is an intrinsic limit for 0th order scatterometry that affects the reconstruction precision of transverse features in general, that can only be overcome by collecting more information from other diffraction patterns, such as the second orders for accurate CD reconstruction.
+4 Morphology reconstruction
+The primary objective of this research is the reconstruction of the sample morphology p by analyzing the spectral diffraction efficiency of the 0th order. However, there is no direct analytical solution due to the absence of an easily invertible model that maps measured signals to structural parameters. To circumvent this challenge, an inverse problem approach is employed. Equation 2 details how the measured data is processed to express relative reflectivity changes, which are related to the sample morphology. Among the possible methodologies, we implement a library-based approach that contains simulated reflectivity spectra, generated as described in Section 3. In general terms, the morphology reconstruction process consists of comparing the measured δ Rλ (p) to the simulated spectra stored in the library, with the objective of identifying the parameter set that best matches the experimental results. We report a morphology reconstruction approach based on Least Square Regression (LSR) inspired by published works34,35. We also developed an approach based on features tracking to simplify the inverse problem by narrowing down the simulation space in the library search, delivering a computational advantage and faster convergence.
+4.1 Least square regression
+In practice, the LSR approach is widely used due to its computational efficiency and well-established mathematical framework36. From a data analysis standpoint, one common strategy for implementing LSR involves computing the residuals for each wavelength between the measured relative reflectivity and the items of a simulated library with a set of morphology parameters. The residuals can be defined as:
+ξλ2,p =
+[δ Rλ − Fλ ,p
+]2
+σλ2
+(3)
+where Fλ,p represents the simulated relative reflectivity for the p morphology and σλ2 is the measured variance. The residuals
+are weighted by the inverse of the variance. The inverse problem in scatterometry is often framed as a Least Squares Regression problem:
+pLSR = arg min p ∑
+λ
+ξλ2 (4)
+The method minimizes the sum of squared differences between the measured and simulated reflectivity. Its performance is dependent on the choice of weight factors, which are chosen as the inverse of the variance of measurement errors. However, incorrect assumptions about these weights can introduce systematic biases in the reconstruction and can require modeling additional uncertainty parameters, as already shown in the literature35,37. Typically, this kind of additional parameters cannot be implemented using LSR, but requires a Maximum Likelihood Estimation regression protocol38. In the work hereby presented, we limit the optimization problem to the LSR protocol to prove that 0th order scatterometry can yield precise morphology reconstruction without the need of modeling uncertainty parameters beyond those experimentally measured.
+6/13
+
+
+4.2 Features tracking
+It is possible to exploit the nature of interference to extract sample morphology information without the need to work with a full spectral shape. It can be sufficient to track down some high-interest points, for example, where destructive interference is dominating. Similar ideas were previously implemented in thin-film growth monitoring39 and optical ellipsometry40,41. The features tracking approach offers a complementary method for reconstructing morphology by analyzing the spectral position of distinct features in the relative reflectivity spectrum, such as local maxima and minima. By monitoring the spectral positions of these features, they can be compared with those obtained from simulated datasets in the RCWA library. Importantly, the maxima and minima positions of the library spectra need to be computed only once, allowing these values to serve as an additional dataset within the library itself. This enables an efficient comparison between experimental and simulated spectral features.
+Although features tracking does not offer the same precision and robustness as LSR because it relies on a limited number of spectral points, it remains valuable in specific contexts. One of the main challenges working around experimental data lies in accurately identifying the true wavelength positions of maxima and minima, as measurement noise and uncertainties introduced by the fitting procedures can lead to deviations. Consequently, this method is less reliable for general nanostructure characterization, but it serves as a supplementary tool by providing a priori information to refine the library search input space. Features tracking can be employed as an initial step in the morphology reconstruction process to narrow down library items to a subset that closely matches the experimental data. The more refined reconstruction approaches can then operate on this reduced dataset, leading to a significant reduction in computational effort of more than an order of magnitude. In the following results, features tracking was used for this purpose.
+Within its limited reconstruction capabilities, features tracking is particularly beneficial when dealing with gratings affected by severe surface contamination or structural defects that significantly alter the sample reflectivity and light interference conditions. In such cases, the LSR approaches are not reliable because of the presence of consistent offsets in the experimental spectra, while the position of minima and maxima generally depends only on the average structure morphology.
+5 Experimental results and discussion
+5.1 Data Processing
+The data collection is followed by background subtraction and data elaboration. From the experimental point of view, the process of extraction of the relative reflectivity changes δ Rλ (p) depends on the intrinsic spectral features of the XUV light adopted for the measurement. In the case of an optimal HHG process, the XUV spectrum comprises a series of well-defined discrete peaks. Each peak was individually fitted to a Gaussian curve, and the area under the curve within the 1-sigma width was considered as the signal value for each datapoint. From the spectral point of view, each datapoint was located at the center of each Gaussian curve. Consequently, the relative reflectivity of a given target is obtained by averaging the fitted spectra from different locations on the structured target and dividing it by the average substrate reflection, which is a set of averaged spectra from the unstructured Silicon. Variations in reflectivity were taken into account by calculating the statistical variance between different measured positions on each grating.
+For quasi-continuous XUV spectra, the relative reflectivity was directly derived by dividing the measured zeroth-order spectrum by that obtained from a pristine silicon reference surface. A narrow Gaussian low-pass filter was applied in the Fourier space to minimize artifacts caused by rapid signal oscillations while preserving the overall signal integrity. The beyond phase-matching regime usually presents a photon flux and spectral fluctuations an order of magnitude worse than the discrete spectrum HHG regime. For this reason, we chose to discuss morphology reconstruction results for the optimal HHG regime, while we only use the nearly continuous spectrum HHG to validate the spline polynomial fitting choice as the routine that best describes the measured relative reflectivity signal (see Supplementary Methods).
+5.2 Results
+We have performed the morphology reconstruction experiment for 36 different targets with six different groove heights and 3 different critical dimensions, two replicas of each target. The measurements of relative reflectivity for 4 of the targets are shown in Figures 5, from which it emerges that the measurements match well with the simulations and are a suitable input to perform morphology reconstruction.
+The morphology reconstruction algorithm uses the relationship described in Equation 3 to compute the residuals between the measured data and every point of the simulation space. The residuals are then integrated along the wavelength axis, obtaining the parametric function at the center of the optimization problem.
+7/13
+
+
+20 25 30
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Relative Reflectivity
+Measured signal RCWA Simulation Fitting 1-σ std
+20 25 30
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+ɸ = 0° ɸ = 90°
+ɸ = 0° ɸ = 90° ɸ = 0° ɸ = 90°
+ɸ = 0° ɸ = 90°
+20 25 30
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0 Measured signal RCWA Simulation Fitting 1-σ std
+20 25 30
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+20 25 30 Wavelength / nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0 Measured signal RCWA Simulation Fitting 1-σ std
+20 25 30 Wavelength / nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+20 25 30 Wavelength / nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Relative Reflectivity
+Measured signal RCWA Simulation Fitting 1-σ std
+20 25 30 Wavelength / nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+ɸ = 0° ɸ = 90°
+ab
+cd
+ɸ = 0° ɸ = 90° ɸ = 0° ɸ = 90°
+Relative Reflectivity Relative Reflectivity
+Figure 5. Relative reflectivity measurements plotted against the simulated curves for the two different diffraction regimes. a) Sample with 300 nm CD and 80 nm groove height. b) Sample with 350 nm CD and 108 nm groove height. c) Sample with 92 nm groove height and 400 nm CD. d) Sample with 400 nm CD and 116 nm groove height.
+300 1
+300 2
+350 1
+350 2
+400 1
+400 2
+60 80 100 120 140
+Grooves / nm
+a
+CD n.
+Groove height 80 ± 0.3 nm
+300 1
+300 2
+350 1
+350 2
+400 1
+400 2
+60 80 100 120 140
+Grooves / nm
+b
+CD n.
+Groove height 108 ± 0.3 nm
+300 1
+300 2
+350 1
+350 2
+400 1
+400 2
+60 80 100 120 140
+Groove / nm
+c
+Groove height 116 ± 0.2 nm
+300 1
+300 2
+350 1
+350 2
+400 1
+400 2
+60 80 100 120 140
+Groove / nm
+d
+Groove height 122 ± 0.5 nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Norm. Euclidian Distance
+Figure 6. Results of the groove height reconstruction performed in the conical diffraction regime (φ = 90◦). Rows display the LSR output for different target as normalized euclidean distances to identified solution. The ’CD’ column states the Critical Dimension of every target. The ’n.’ column reports the family id of the target, as two different targets were manufactured per morphology set. The four quadrants show the reconstruction results for four different families of targets with different groove heights. The white dashed lines and the text boxes report the AFM characterization of the samples.
+8/13
+
+
+Figure 6 shows the results of the groove height reconstruction algorithm for the conical diffraction regime, shown in the right-hand side plots of Figure 5 a-d. The colormaps report the normalized residuals in the form of Euclidean distance, defined as the integrated residuals along λ . It follows that smaller values express better overlap between measurements and simulations. The rows report the residuals for the different nanostructures, while the horizontal axis refers to the items of the simulated library. In this context, the horizontal axis contains the possible values of the morphology parameter to be retrieved. The figure also shows with white dashed lines and text boxes the sample characterization measurements performed with the AFM.
+Similarly, Figure 7 contains the CD reconstruction results for the planar diffraction configuration, obtained by using the reconstructed groove height as prior information, on the φ = 0◦ diffraction configuration. In this case, the independent sample characterization was performed with SEM.
+80 1 80 2 92 1 92 2 104 1 104 2 108 1 108 2 116 1 116 2 122 1 122 2
+200 300 400 500
+CD / nm
+GH n.
+CD: 340 ± 2.0 nm
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Norm. Euclidian Distance
+80 1 80 2 92 1 92 2 104 1 104 2 108 1 108 2 116 1 116 2 122 1 122 2
+200 300 400 500
+CD / nm
+GH n.
+CD: 290 ± 2.5 nm
+ab
+Figure 7. Results of the Critical Dimension reconstruction performed in the planar diffraction regime (φ = 0◦). Rows display the LSR output for different target as normalized euclidean distances to identified solution. Data collected form a families of samples with 290 nm CD (a) and 340 nm CD (b). The white dashed lines and the text boxes report the SEM characterization of the CDs.
+5.3 Discussion
+Figure 6 shows the output of the groove height reconstruction protocol, where it emerges that 70% of the retrieved features fall no further than 1 nm away from the benchmark measurement, and over 95% of the output deviates at most by 2 nm. This approach, however, cannot deliver accuracy in feature reconstruction better than the simulation mesh spacing, which was 1 nm for the groove height and 10 nm for the CD in the library used in this work. Figure 7 shows the results of the CD reconstruction. Similarly to the previous case, the reconstruction output looks well localized around the SEM characterization. In this case, the retrieved linewidths exhibit discrepancies of 10 nm for over 70% of the measured structures and over 90% of them fall within 20 nm from the benchmark. From a practical point of view, the CD reconstruction problem using the 0th diffraction order only is more complicated than for out-of-plane features, because the computation of the Euclidean distances in the φ = 0◦ regime are significantly more sensitive to the amplitude of the signal modulations than in the φ = 90◦, collecting larger uncertainty from parameters not modeled in the simulations, such as post-fabrication residues and surface roughness.
+From the results presented in Figure 5, it is possible to observe a mismatch between the simulated and the measured relative reflectivity changes. The reason for this lies in the thin residue that is distributed in a uniform way across the substrate surface. This residue is a leftover from the resist employed in the E-beam lithography fabrication process even after the usual resist stripping steps. We have managed to reduce the impact of this thin layer by performing an additional sample washing step after nanofabrication employing RCA and acid Piranha solutions.
+9/13
+
+
+200 nm
+100nm
+a b Before extra cleaning After extra cleaning RCWA Simulation
+Wavelength / nm
+100 nm
+200 nm
+Relative Reflectivity
+Figure 8. Characterization of the impact of resist residues on the nanostructures. a) Close up SEM image (under a 45◦ angle) of one of the etched trenches of a target, after the resist stripping procedure but before the additional sample cleaning. The resist residue, in a light shade of gray, is distributed all around the etched area. It appears consistent and uniformly distributed. b) SEM close up on one of the grating lines after the additional cleaning step. It is possible to see the residue leftovers in the form of small grains. c) Direct relative reflectivities comparison measured before and after the additional washing procedure.
+The extra cleaning procedure proved effective in reducing the persistent resist layer, as characterized by means of XPS. The results showed that the contamination consists of Carbon, as expected from resist residues, with an average thickness of 0.1 nm, in the form of fractional monolayers. The Carbon residue thickness was measured by comparing the ratio of C-1s and Si-2p atomic percentages. Furthermore, the C-1s region and Auger signals from the XPS analysis showed the presence of both sp2 and sp3 hybridized species in the C film.
+Figure 8 shows the residue layer and its impact on the Relative Reflectivity measurements. From the data shown, it emerges that the residue thickness plays an important role in the local reflectivity of the grating and on the interference conditions that underlie the diffraction process.
+6 Conclusion
+This paper discussed the 0th diffraction order scatterometry technique based on High-Harmonic Generation to characterize the morphology of periodic nanostructures beyond the diffraction limit inherent to imaging techniques. We have demonstrated that groove heights and critical dimensions can be accurately reconstructed from the relative reflectivity spectra, exploiting the library search approach, supported by Rigorous Coupled-Wave Analysis simulations.
+Our experimental campaign was carried out on thirty-six distinct targets and proved how the proposed approach can reliably reconstruct a set of parameters of the target morphology. The results have shown out-of-plane feature reconstruction down to single nanometer precision and 10 nm precision for transverse features.
+The reconstruction results have also shown XUV broadband light can deliver fast, reliable and consistent measurements used to precisely extract structural parameters even in the presence of light contamination on the samples. Furthermore, 0th order scatterometry goes beyond the need for precise absolute reflectivity calibration by focusing on relative changes, showing the potential for integration into semiconductor manufacturing processes.
+Looking forward, the next natural step is the extension of the morphology reconstruction algorithm to the Maximum Likelihood Estimation and automatic differentiation in the Simulator-Based Inference framework, to achieve measurement accuracy beyond the simulation space granularity and to be able to reconstruct a larger number of morphological parameters. Efforts are also directed at merging this technique with ultrafast spectroscopy to allow measurement of functional quantities such as charge mobilities and expanding the boundaries of functional metrology.
+Furthermore, extreme-ultraviolet transient reflectivity has become a valuable tool to monitor attosecond42 and femtosecond dynamics in semiconductors43, interfacial systems44, and strongly correlated materials45. The combination with the spatial sensitivity of our approach will enable spatially resolved probes of electron and lattice dynamics on femto- to attosecond time scales.
+10/13
+
+
+7 Backmatter
+7.1 Funding
+This work was conducted at the Advanced Research Center for Nanolithography, a public-private partnership between the University of Amsterdam (UVA), Vrije Universiteit Amsterdam (VU), Rijksuniversiteit Groningen (RUG), the Netherlands Organization for Scientific Research (NWO), and the semiconductor equipment manufacturer ASML and was (partly) financed by “Toeslag voor topconsortia voor kennis en innovatie (TKI)” from the Dutch Ministry of Economic Affairs and Climate Policy. This manuscript is part of a project that has received funding from Open Technologieprogramma (OTP) by NWO, grant no. 18703. It also got support from the European Research Council (ERC) under the European Union’s Horizon Europe research and innovation programme (grant agreement no. 101041819, ERC Starting Grant ANACONDA) as well as the Vidi research programme HIMALAYA with project number vi.vidi.223.133 financed by NWO.
+7.2 Acknowledgments
+We thank M.G.M.M. van Kraaij for the development of the RCWA routine. We thank S. Witte, M.C. Gouder and R. Kolkowski for helping in the validation of the simulation process. We thank the AMOLF support department for providing and helping with the measurement software, hardware. We thank all the staff from the Nanolab Amsterdam for the nanofabrication know-how.
+7.3 Disclosures
+The authors declare no conflicts of interest.
+7.4 Data Availability Statement
+Data underlying the results hereby presented are available upon reasonable request.
+References
+1. Moore, G. E. et al. Cramming more components onto integrated circuits (1965).
+2. Priolo, F., Gregorkiewicz, T., Galli, M. & Krauss, T. F. Silicon nanostructures for photonics and photovoltaics. Nat. nanotechnology 9, 19–32 (2014).
+3. Waldrop, M. M. The chips are down for moore’s law. Nat. News 530, 144 (2016).
+4. Radhamma, E., Balaji, B., Murthy, A. K. & Naik, R. P. Design analysis and fabrication of finfet using 3 nm technology. In AIP Conference Proceedings, vol. 2519 (AIP Publishing, 2022).
+5. Fu, N., Liu, Y., Ma, X., Chen, Z. et al. Euv lithography: State-of-the-art review. J. Microelectron. Manuf 2, 1–6 (2019).
+6. Asano, M., Ikeda, T., Koike, T. & Abe, H. Evaluation of producer’s and consumer’s risks in scatterometry and scanning electron microscopy metrology for inline critical dimension metrology. J. Micro/Nanolithography, MEMS MOEMS 5, 043006–043006 (2006).
+7. Nakamae, K. Electron microscopy in semiconductor inspection. Meas. Sci. Technol. 32, 052003 (2021).
+8. López de la Rosa, F., Sánchez-Reolid, R., Gómez-Sirvent, J. L., Morales, R. & Fernández-Caballero, A. A review on machine and deep learning for semiconductor defect classification in scanning electron microscope images. Appl. Sci. 11, 9508 (2021).
+9. Pou, P. et al. Structure and stability of semiconductor tip apexes for atomic force microscopy. Nanotechnology 20, 264015 (2009).
+10. Chen, J. & Xu, K. Applications of atomic force microscopy in materials, semiconductors, polymers, and medicine: A minireview. Instrumentation Sci. & Technol. 48, 667–681 (2020).
+11. Zawierta, M. et al. Atomic force microscopy with integrated on-chip interferometric readout. Ultramicroscopy 205, 75–83 (2019).
+12. Chen, L.-C., Duong, D.-H. & Chen, C.-S. Optical 3-d profilometry for measuring semiconductor wafer surfaces with extremely variant reflectivities. Appl. Sci. 9, 2060 (2019).
+13. Deng, F. et al. Three-dimensional surface inspection for semiconductor components with fringe projection profilometry. In Optical Metrology and Inspection for Industrial Applications IV, vol. 10023, 175–186 (SPIE, 2016).
+14. Gallagher, J. C. et al. Detecting defects that reduce breakdown voltage using machine learning and optical profilometry. Sci. Reports 14, 7440 (2024).
+11/13
+
+
+15. Nakasuji, M. et al. Development of coherent extreme-ultraviolet scatterometry microscope with high-order harmonic generation source for extreme-ultraviolet mask inspection and metrology. Jpn. J. Appl. Phys. 51, 06FB09 (2012).
+16. Madsen, M. H. & Hansen, P.-E. Scatterometry—fast and robust measurements of nano-textured surfaces. Surf. Topogr. Metrol. Prop. 4, 023003 (2016).
+17. Esashi, Y. et al. Tabletop extreme ultraviolet reflectometer for quantitative nanoscale reflectometry, scatterometry, and imaging. Rev. Sci. Instruments 94 (2023).
+18. Sherwin, S., Hettermann, M., Houser, D., Long, L. & Naulleau, P. Sub-angstrom critical dimension metrology with euv scatterometry. In Photomask Technology 2024, vol. 13216, 132160V (SPIE, 2024).
+19. Porter, C. et al. Soft x-ray: novel metrology for 3d profilometry and device pitch overlay. In Metrology, Inspection, and Process Control XXXVII, vol. 12496, 412–420 (SPIE, 2023).
+20. Lohr, L. M. et al. Nanoscale grating characterization using euv scatterometry and soft x-ray scattering with plasma and synchrotron radiation. Appl. Opt. 62, 117–132 (2022).
+21. Bahrenberg, L. et al. Characterization of nanoscale gratings by spectroscopic reflectometry in the extreme ultraviolet with a stand-alone setup. Opt. Express 28, 20489–20502 (2020).
+22. Di Palo, N. et al. Attosecond absorption and reflection spectroscopy of solids. APL Photonics 9 (2024).
+23. Klein, C. et al. Optimized euv scatterometry measurements with tunable high harmonic generation and the fisher information matrix. In Metrology, Inspection, and Process Control XXXIX, vol. 13426, 24–25 (SPIE, 2025).
+24. Barnes, B. M. et al. Lab-based multi-wavelength euv diffractometry for critical dimension metrology. In Metrology, Inspection, and Process Control XXXIX, vol. 13426, 399–413 (SPIE, 2025).
+25. Shao, Y. et al. Wavelength-multiplexed multi-mode euv reflection ptychography based on automatic differentiation. Light. Sci. & Appl. 13, 196 (2024).
+26. Li, X., l’Huillier, A., Ferray, M., Lompré, L. & Mainfray, G. Multiple-harmonic generation in rare gases at high laser intensity. Phys. Rev. A 39, 5751 (1989).
+27. Krausz, F. & Ivanov, M. Attosecond physics. Rev. modern physics 81, 163–234 (2009).
+28. Cumpson, P. J. The thickogram: a method for easy film thickness measurement in xps. Surf. Interface Analysis: An Int. J. devoted to development application techniques for analysis surfaces, interfaces thin films 29, 403–406 (2000).
+29. Sun, H.-W. et al. Extended phase matching of high harmonic generation by plasma-induced defocusing. Optica 4, 976–981 (2017).
+30. Moharam, M., Grann, E. B., Pommet, D. A. & Gaylord, T. Formulation for stable and efficient implementation of the rigorous coupled-wave analysis of binary gratings. JOSA a 12, 1068–1076 (1995).
+31. Lalanne, P. Improved formulation of the coupled-wave method for two-dimensional gratings. JOSA A 14, 1592–1598 (1997).
+32. Moharam, M., Pommet, D. A., Grann, E. B. & Gaylord, T. K. Stable implementation of the rigorous coupled-wave analysis for surface-relief gratings: enhanced transmittance matrix approach. J. Opt. Soc. Am. A 12, 1077–1086 (1995).
+33. Li, L. Use of fourier series in the analysis of discontinuous periodic structures. J. Opt. Soc. Am. A 13, 1870–1876 (1996).
+34. Lohr, L. M. et al. Nanoscale grating characterization using euv scatterometry and soft x-ray scattering with plasma and synchrotron radiation. Appl. Opt. 62, 117–132 (2023).
+35. Henn, M.-A. et al. A maximum likelihood approach to the inverse problem of scatterometry. Opt. Express 20, 12771–12786 (2012).
+36. Coulombe, S. A., Minhas, B. K., Raymond, C. J., Sohail H. Naqvi, S. & McNeil, J. R. Scatterometry measurement of sub-0.1 μm linewidth gratings. J. Vac. Sci. & Technol. B: Microelectron. Nanometer Struct. Process. Meas. Phenom. 16, 80–87 (1998).
+37. Herrero, A. F., Pflüger, M., Puls, J., Scholze, F. & Soltwisch, V. Uncertainties in the reconstruction of nanostructures in euv scatterometry and grazing incidence small-angle x-ray scattering. Opt. Express 29, 35580–35591 (2021).
+38. Ruanaidh, J. J. O. & Fitzgerald, W. J. Numerical Bayesian methods applied to signal processing (Springer Science & Business Media, 2012).
+39. Dietz, N. Real-time optical characterization of thin film growth. Mater. Sci. Eng. B 87, 1–22 (2001).
+12/13
+
+
+40. Theodosiou, A., Komodromos, M. & Kalli, K. Accurate and fast demodulation algorithm for multipeak fbg reflection spectra using a combination of cross correlation and hilbert transformation. J. Light. Technol. 35, 3956–3962 (2017).
+41. Chen, X., Liu, S., Zhang, C. & Jiang, H. Improved measurement accuracy in optical scatterometry using correction-based library search. Appl. optics 52, 6726–6734 (2013).
+42. Géneaux, R. et al. Attosecond time-domain measurement of core-level-exciton decay in magnesium oxide. Phys. review letters 124, 207401 (2020).
+43. Kaplan, C. J. et al. Femtosecond tracking of carrier relaxation in germanium with extreme ultraviolet transient reflectivity. Phys. Rev. B 97, 205202 (2018).
+44. Cushing, S. K. et al. Layer-resolved ultrafast extreme ultraviolet measurement of hole transport in a ni-tio2-si photoanode. Sci. advances 6, eaay6650 (2020).
+45. Jager, M. F. et al. Tracking the insulator-to-metal phase transition in vo2 with few-femtosecond extreme uv transient absorption spectroscopy. Proc. Natl. Acad. Sci. 114, 9558–9563 (2017).
+46. McKay, R. X-ray crystallography. Ph.D. thesis, Princeton University (1982).
+47. Zhang, Y. et al. Photoinduced active terahertz metamaterials with nanostructured vanadium dioxide film deposited by sol-gel method. Opt. Express 22, 11070–11078, DOI: 10.1364/OE.22.011070 (2014).
+48. Optica Publishing Group. Optica. https://opg.optica.org.
+49. Forster, P. et al. Changes in atmospheric consituents and in radiative forcing. In Solomon, S. et al. (eds.) Climate Change 2007: The Physical Science Basis. Contribution of Working Group 1 to the Fourth assesment report of Intergovernmental Panel on Climate Change (Cambridge University Press, 2007).
+50. Yelin, D., Oron, D., Thiberge, S., Moses, E. & Silberberg, Y. Multiphoton plasmon-resonance microscopy. Opt. Express 11, 1385–1391, DOI: 10.1364/OE.11.001385 (2003).
+51. Masajada, J., Bacia, M. & Drobczyn ́ski, S. Cluster formation in ferrofluids induced by holographic optical tweezers. Opt. Lett. 38, 3910–3913, DOI: 10.1364/OL.38.003910 (2013).
+52. Dean, B. H., Aronstein, D. L., Smith, S. J., Shiri, R. & Acton, S. D. Phase retrieval algorithm for JWST flight and testbed telescope. In Space Telescopes and Instrumentation I: Optical, Infrared, and Millimeter, vol. 6265, 17, DOI: 10.1117/12.673569 (2006).
+53. Rivers, C. Epipy: Python tools for epidemiology. figshare (2014) [retrieved 13 May 2015], http://dx.doi.org/10.6084/m9. figshare.1005064.
+54. Ku, Y.-S. et al. Euv scatterometer with a high-harmonic-generation euv source. Opt. express 24, 28014–28025 (2016).
+13/13
+
+
+Supplementary Files
+This is a list of supplementary les associated with this preprint. Click to download.
+BroadbandstaticscatterometrySupplementaryMethods.pdf

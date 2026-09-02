@@ -1,0 +1,398 @@
+
+View Online
+
+Export Citation
+PERSPECTIVE | MAY 14 2018
+Perspective: Optical measurement of feature dimensions and shapes by scatterometry
+Special Collection: Materials, Metrology, and Modeling for a Future Beyond CMOS Technology
+Alain C. Diebold ; Andy Antonelli; Nick Keller
+APL Mater. 6, 058201 (2018) https://doi.org/10.1063/1.5018310
+07 October 2025 05:46:25
+
+
+ APL MATERIALS 6, 058201 (2018)
+Perspective: Optical measurement of feature dimensions and shapes by scatterometry
+Alain C. Diebold,1 Andy Antonelli,2 and Nick Keller2
+1SUNY Polytechnic Institute, College of Nanoscale Sciences, 257 Fuller Road, Albany, New York 12203, USA 2Nanometrics, Inc., 1550 Buckeye Drive, Milpitas, California 95035, USA
+(Received 5 December 2017; accepted 2 April 2018; published online 14 May 2018)
+The use of optical scattering to measure feature shape and dimensions, scatterometry, is now routine during semiconductor manufacturing. Scatterometry iteratively improves an optical model structure using simulations that are compared to experimental data from an ellipsometer. These simulations are done using the rigorous coupled wave analysis for solving Maxwell’s equations. In this article, we describe the Mueller matrix spectroscopic ellipsometry based scatterometry. Next, the rigorous coupled wave analysis for Maxwell’s equations is presented. Following this, several example measurements are described as they apply to specific process steps in the fabrication of gate-all-around (GAA) transistor structures. First, simulations of measurement sensitivity for the inner spacer etch back step of horizontal GAA transistor processing are described. Next, the simulated metrology sensitivity for sacrificial (dummy) amorphous silicon etch back step of vertical GAA transistor processing is discussed. Finally, we present the application of plasmonically active test structures for improving the sensitivity of the measurement of metal linewidths. © 2018 Author(s). All article content, except where otherwise noted, is licensed under a Creative Commons Attribution (CC BY) license (http://creativecommons.org/licenses/by/4.0/). https://doi.org/10.1063/1.5018310
+I. INTRODUCTION
+The process of patterning the next generation of structures that become transistors, capacitors, or interconnects continues to challenge the semiconductor industry. A critical aspect of patterning is producing structures with identical feature shape and dimensions across the patterned area and across the wafer. Historically, ellipsometry (single wavelength and spectroscopic) has been a critical part of the process control ecosystem for decades as the workhorse for thin film metrology.1 Critical dimension metrology had strictly been performed by image-based microscopy until critical dimensions dropped below the resolution limit, necessitating the move to critical dimension scanning electron microscopy (CDSEM). The move to scatterometry for critical dimension metrology started with the need to measure structure dimensions that are invisible to top-down approaches, such as re-entrant features and gratings with profiles larger than 90◦. The transition to 3d architectures for DRAM, flash memory, and then logic in the middle to late 2010s really solidified the place of scatterometry (and ellipsometry by extension) in the process control loop. The term scatterometry refers to the use of optical scattering from a period array to determine feature dimensions and shape. Here we discuss scatterometry equipment that uses spectroscopic ellipsometry to measure specular scattering from a periodic array and then compares simulated response to experimental data until the optical model of the shape and dimension matches the data.2 This paper will provide an overview of scatterometry that includes a description of ellipsometry, optical modeling, and application of scatterometry.1 Optical modeling for ellipsometry and scatterometry requires knowledge of the complex refractive index of the nanoscale materials contained in the structure. The complex refractive index (dielectric function) of the materials needs to be known over the wavelength range of the measurement system and be appropriate for the nanoscale dimension of the material. There are now a number of examples of the impact of the film thickness on the
+2166-532X/2018/6(5)/058201/16 6, 058201-1 © Author(s) 2018
+07 October 2025 05:46:25
+
+
+ 058201-2 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+dielectric function for materials that are used in integrated circuits. Examples include metal films,3 semiconductor layers such as silicon4 or germanium, and dielectric films.5 Furthermore, the optical properties of materials such as the gate dielectric layer are a function of process conditions which alter the crystal phase and grain size. In that light, Sec. II discusses the complex refractive index of nanoscale semiconductor materials. The information obtained from an ellipsometric measurement depends on the optical path inside the ellipsometer.2 In this paper, Mueller matrix spectroscopic ellipsometry (MMSE) is described. Ellipsometry is based on the polarized reflection of light from a sample with light polarized parallel to the plane of incidence (P) scattering differently than light polarized perpendicular to the plane of incidence (S). Mueller matrix systems provide both the traditional wavelength dependent psi and del values as well as a 16 element matrix.1,2 The MMSE characterizes the amount of light scattered from P to S and vice versa. The MMSE will be described in Sec. III. Scatterometry measurements are simulated using a Rigorous Coupled Wave Analysis (RCWA)7 method that provides an approximate solution to Maxwell’s equations. The optical model of the structure and the RCWA method are described in Sec. IV. The application of MMSE scatterometry to future gate-all-around transistor structures that are beyond traditional CMOS is presented in Sec. V. Section VI will discuss the use of plasmonically active metal structures to improve the sensitivity of scatterometry to dimensional changes in metal interconnect lines.
+II. THE COMPLEX REFRACTIVE INDEX OF NANOSCALE SEMICONDUCTOR MATERIALS
+RCWA simulations require a model which defines the dimensions and shape of the structure along with the thickness of layers of materials in the structure. Thus, the optical properties of each material layer are a critical part of RCWA simulation. A material’s response to light is represented by its complex refractive index,  ̃n = n + ik. The refractive index is a complex wavelength dependent function where n is the refractive index (the speed of light in the medium) and k is the extinction coefficient (the absorption or attenuation of light in the medium). The real, n, and imaginary, k, parts of the complex refractive index are related to each other through causality. The formulas that allow the calculation of n from k or k from n are the Kramers-Kronig (K-K) relationships. Here we show the K-K formula for the calculation of n from k (P is the Cauchy principle value),
+n(E) − 1 = 2
+πP
+∫∞
+0
+E ′k (E ′)dE ′
+E′2 − E2 . (1)
+We also note that the complex dielectric function and the complex refractive index are related by
+ε ̃ = 1 + i 2 =  ̃n2 = n2 + k2 + i2nk. (2)
+K-K relationships also exist for determining 1 from 2 and vice versa. The complex refractive index of semiconductor materials depends on material composition, structure, stress, and dimension.1 The complex refractive index of a thin film with a fixed composition depends on its atomic structure. For example, the complex refractive index of silicon depends on its structural form: single crystal, polycrystalline, or amorphous. Another important example is the complex refractive index of high κ materials such as hafnium dioxide. The complex refractive index of hafnium dioxide changes with the crystalline form.3 Other important examples are the complex refractive index of silicon and germanium and their alloys.4 The complex refractive index of pseudomorphic SixGe1 x on Si is shown as a function of composition x in Fig. 1. These pseudomorphic films are bi-axially compressively stressed. In Sec. V of this paper, we describe simulations of a horizontal GAA transistor process step that uses fin structures made from Si/SixGe1 x/Si/SixGe1 x pseudomorphic multilayers. Thus the change in optical properties of these multilayers is due to bi-axial stress which changes the band structure.4 The optical properties of many films are typically isotropic. The change in complex refractive index of silicon with the thickness is an example of the impact of the nanoscale dimension on the optical properties of films. It is important to state that the optical properties of a thin single
+07 October 2025 05:46:25
+
+
+ 058201-3 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 1. The complex dielectric function of Si1 xGex alloys for selected concentrations of germanium. Adapted from G. R. Muthinti et al., J. Appl. Phys. 112, 053519 (2012). Copyright 2012 AIP Publishing LLC.
+crystal film such as ∼5 nm thick nanolayers of silicon change with the material properties of films that are deposited above them such as different dielectric films as shown in Fig. 2.5 Another example of the effect of the film thickness on the complex refractive index is that of nickel alloy films as is shown in Fig. 3.6 First, some common parameterized optical models are described, and then the effect of nanoscale dimensions is discussed. The complex refractive index of some materials is experimentally determined and then used as reference data to determine the film thickness or in scatterometry simulations.1 For other materials, the optical properties are fit to a representative functional form such as the Cauchy, Lorentz, TaucLorentz (T-L), Cody–Lorentz (C-L), and other functional forms. Traditionally, the Cauchy model is used for materials that do not absorb light (k = 0). For example, many dielectric films do not absorb light at near IR, visible, and UV wavelengths. The same is true for semiconductors in restricted wavelength ranges that are below the band gap in energy but above the energy range in the IR where phonon absorption occurs. Although the simple Cauchy model is not K-K consistent, most optical modeling software includes an altered optical model that is K-K consistent. The fitting process usually requires knowledge of the thin film thickness. The optical properties of metal films can often be modeled by the combination of the Drude and Lorentz responses. The imaginary part of the dielectric function for the Lorenz model is
+ε2(E) = AΓE
+(E2
+0 − E2)2 − Γ2E2
+, (3)
+FIG. 2. Imaginary part of the dielectric function of c-Si QWs (5 nm) with native oxide, 20 nm SiO2, and 10 nm HfO2 with a SiO2 interfacial layer. Note the clear shift in the energy of the E1 CP and the changes in lifetime broadening. Reproduced with permission from V. K. Kamineni and A. C. Diebold, Appl. Phys. Lett. 99, 151903 (2011). Copyright 2011 AIP Publishing LLC.
+07 October 2025 05:46:25
+
+
+ 058201-4 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 3. The real part of the dielectric function vs photon energy for a series of Ni films. Reproduced with permission from V. K. Kamineni et al., J. Appl. Phys. 107, 093525 (2010). Copyright 2010 AIP Publishing LLC.
+where ω0 is the central frequency of the absorption that is converted to an energy E0 and Γ is the half width of the absorption at half of the maximum value. The Lorentz model is written in terms of the photon energy instead of the frequency in Eq. (3). The fitting parameter A is varied in order to obtain the best match to experimental data for the sample. The Drude optical model can be written in terms of the angular frequency ω = E/ħ as
+ε2(E) = ωp2τ
+ω(1 + ω2τ2) , (3a)
+where ωp is the bulk plasmon frequency and τ is the relaxation or damping time of the Drude like metal. Parameterized Tauc-Lorentz and Cody-Lorentz optical models are often used to model dielectric thin films such as hafnium oxide is shown in Fig. 4 along with a point by point fit to the data for hafnium oxide. Information such as the band gap predicted by each of these approaches will differ as discussed in Ref. 3. The formula for the imaginary part of the dielectric function for the Tauc-Lorentz model is presented in Eq. (3b), and the formula for the imaginary part of the dielectric function of the Cody-Lorentz model is stated in Eq. (4),
+ε2(E) = 1
+E · A · E0 · C · (E − Eg)2
+(E2 − E2
+0 )2 + C2 · E2
+, E > Eg
+ε2(E) = 0, E ≤ Eg,
+, (3b)
+ε2 =
+
+E1
+E exp
+( E − Eg − Et
+Eu
+)
+− − − − − − − − − − − − − − − − − − − − − 0 ≤ E ≤ (Eg + Et)
+(E − Eg)2
+(E − Eg)2 + Ep2
+· AE0ΓE
+(E − Eg)2 + Γ2E2 − − − − − − − − − − − − − − − −E ≥ (Eg + Et)
+. (4)
+In Eqs. (3b) and (4), E is the photon energy, Eg is the band gap parameter, E0 is the peak energy for the Lorentz oscillator, and Γ is the width of the Lorentz oscillator.3 The absorption that occurs at energies less than the band gap is referred to as the Urbach tail which starts at a photon energy equal to Eg + Et. When Et equal zero, there is no Urbach tail in the Cody-Lorentz model. The term Eu provides a way to model how the Urbach tail decreases as the photon energy decreases away from the band gap. Ep is called the transition energy; it is a weighting factor between the Cody model and the Lorentz model.3 Nanoscale dimensions have a significant impact on optical properties of thin semiconductor films and structures. The source of the effects depends on whether or not the samples are single crystal or
+07 October 2025 05:46:25
+
+
+ 058201-5 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 4. The Tauc–Lorentz and Cody Lorentz parameterized optical models for the dielectric function of a high k dielectric such as hafnium oxide are shown in (a) and (b), respectively. The differences in the imaginary part of the complex refractive index for the Tauc–Lorentz (TL) and Cody Lorentz (CL) models are compared to a point by point fit (PPT) of the experimental data for hafnium oxide, shown in (c). Reproduced with permission from M. Di et al., J. Vac. Sci. Technol. A 29, 041001 (2011). Copyright 2011 American Vacuum Society.
+polycrystalline. The thickness dependent optical properties of nickel metal films (see Fig. 3) were shown to be correlated to the change in Drude free electron relaxation time [see Eq. (3)].6 This change in relaxation time was traced to the change in both grain boundary reflection coefficient and grain size.6
+III. MUELLER MATRIX SPECTROSCOPIC ELLIPSOMETERS
+Spectroscopic ellipsometry measures the change in polarization for light scattered from a sample over a range of wavelengths. Traditional ellipsometers measure two parameters: ψ and ∆ at each wavelength. ψ and ∆ are related to the change in polarization state through the ratio of the reflectivity of the component of the light polarized parallel to the plane of incidence rp to the reflectivity of the component of the light polarized perpendicular to the plane of incidence, rs, as stated in the following equation:
+ρ = rp
+rs
+= tan ψ e−i∆ with
+rp
+drse = tan ψ and ∆ = δrp − δrs. (5)
+δrp and δrs refer to the change in phase p and s components of the light after reflection, and then ∆ is the phase difference of the two components of light. At this point, it is useful to describe the angles of incidence of the scatterometry measurements which are done in Fig. 5. We will use the angle θ to describe the angle that an incoming, parallel beam of light makes with the sample surface and the azimuthal angle φ to describe the angle that the incoming parallel beam of light makes with a specific direction in the scatterometry grating. For example, φ = 0◦ for light that is normal to a line grating and φ = 90◦ for light that is parallel to the lines in a line grating.
+07 October 2025 05:46:25
+
+
+ 058201-6 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 5. The ellipsometry measurement is shown. Here, light polarized at 45◦ from the plane of incidence is shown scattering from a sample. The angle θ that the light makes with surface is shown in the main figure and the azimuthal angle φ is shown in the inset for a grating structure sample. Figure adapted from D. Dixit, J. Micro/Nanolithogr., MEMS, MOEMS 15(1), 014004 (2016). Copyright 2016 SPIE.
+MMSE provides 16 elements or pieces of information at each wavelength instead of the usual 2 (ψ and ∆) provided by most ellipsometers. Collins and Drevillon were early pioneers of practical Mueller matrix spectroscopic ellipsometry,7,8 and a very early publication by Hauge appeared in 1976.9 MMSE measures cross-polarized light scattering and provides 16 sets of spectroscopic scattering information (Mueller matrix element vs wavelength) compared to the two measured in traditional ellipsometry. Light can be fully represented by the Stokes vector which is given by
+S=
+*....
+,
+Ip + Is Ip − Is
+I+45◦ − I−45◦
+IR − IL
++////
+
+=
+*....
+,
+s0 s1 s2 s3
++////
+
+, (6)
+where Ip and Is refer to the intensity of the light polarized p or s and I+45◦ and I−45◦ refer to the
+intensity of the light polarized at either + or 45◦. IR and IL refer to the right and left circularly polarized components of the light. The Mueller matrix transforms the Stokes vector from its incident value to its final value,
+*....
+,
+s0 s1 s2 s3
++////
+-out
+=
+*....
+,
+M11
+M21
+M31
+M41
+M12
+M22
+M32
+M42
+M13
+M23
+M33
+M43
+M14
+M24
+M43
+M44
++////
+
+*....
+,
+s0 s1 s2 s3
++////
+-in
+. (7)
+The Mueller matrix (MM) is normalized to the total reflectivity M11. For an isotropic thin film, the Mueller matrix is related to ψ and ∆ as follows:
+*....
+,
+M11
+M21
+M31
+M41
+M12
+M22
+M32
+M42
+M13
+M23
+M33
+M43
+M14
+M24
+M43
+M44
++////
+
+=
+*....
+,
+1
+− cos 2ψ 0 0
+− cos 2ψ 1 0 0
+0 0
+sin 2ψ cos ∆ − sin 2ψ sin ∆
+0 0
+sin 2ψ sin ∆ sin 2ψ cos ∆
++////
+
+=
+*....
+,
+1 −N 0 0
+−N 1 0 0
+0 0 C −S
+0 0 S C
++////
+
+. (8)
+07 October 2025 05:46:25
+
+
+ 058201-7 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+Equation (8) defines N, C, and S. The C and S terms are due to scattering into the same polarization direction. Thus in Eq. (8), C refers to Cpp and S refers to Spp. When the MM of an idea grating structure is measured at an azimuthal angle of incidence that results in cross-polarized light (s → p and p → s) scattering, then
+*....
+,
+M11
+M21
+M31
+M41
+M12
+M22
+M32
+M42
+M13
+M23
+M33
+M43
+M14
+M24
+M43
+M44
++////
+
+=
+*....
+,
+1
+−N − α
+Csp + ς1 −Ssp − ς2
+−N − α 1 − 2α −Csp + ς1 Ssp − ς2
+Csp + ς1 −Csp + ς1 Cpp + β1 −Spp + β2
+Ssp + ς2 −Ssp − ς2 Spp + β2 Cpp + β1
++////
+
+. (9)
+The new terms are defined after Eq. (10). When the grating is non-ideal because of the edge roughness or the optical properties depend on the azimuthal direction (e.g., stress relaxation along the width of a fin but along the length of a fin), then the fully non-symmetric Mueller matrix becomes
+*....
+,
+M11
+M21
+M31
+M41
+M12
+M22
+M32
+M42
+M13
+M23
+M33
+M43
+M14
+M24
+M43
+M44
++////
+
+=
+*....
+,
+1
+−N − αps Csp + E1 −Ssp − E2
+−N − αsp 1 − αsp− −Csp + E1
+αps
+Ssp − E2
+Csp + ς1 −Csp + ς1 Cpp + β1 −Spp + β2
+Ssp + ς2 −Ssp − ς2 Spp + β2 Cpp + β1
++////
+
+, (10)
+where rij
+rss = tan ψije−i∆ij for i = p or s resulting in
+αij = 2 tan2 ψij
+D,
+Cij = 2 tan ψij cos ∆ij
+D,
+Sij = 2 tan ψij sin ∆ij
+D,
+D = 1 + tan2 ψpp + tan2 ψps + tan2 ψsp,
+N = 1 − tan2 ψpp − tan2 ψps − tan2 ψsp
+D,
+ςi = D(Cp2s + Sp2s(−1)i+1mod2)
+2,
+Ei = D(Cs2p + Ss2p(−1)i+1mod2)
+2,
+βi = D(CspCps + SspSps(−1)i+1mod2)
+2.
+It is useful to provide a brief discussion about the impact of symmetry, edge roughness, and anisotropic optical properties on the MM spectra. When symmetric, smooth grating arrays (periodic structures) are perpendicular to the plane of incidence, all diffracted orders of reflected light beam are within the plane of incidence, and cross-polarization is absent. This is the planar diffraction mode. In this case, the off-diagonal MM elements are zero because mirror symmetry about the incidence plane leaves the parallel components of electric fields invariant, while the perpendicular components of electric field change sign resulting in zero intensity. When the grating array is not perpendicular to the plane of incidence or if there is no mirror symmetry, the off-diagonal MM elements are nonzero due to cross-polarization of parallel and perpendicular components of the electric field which is referred to as cross-polarized light scattering. This phenomenon is called conical diffraction. For example, if one considers a perfect grating of silicon fins with an azimuthal angle other than 0◦ or 90◦, then the off-diagonal MM elements will be non-zero. When the grating has (roughness) or other optical properties, a significant depolarized scattering can occur along all azimuthal angles. When there is optical (uniaxial or biaxial anisotropic samples) or structural anisotropy (non-symmetric patterned structures), and less ideal surfaces (roughness, non-homogenous films, and so on), there is near specular reflection and cross-polarization effects resulting in non-zero off-diagonal MM elements.
+07 October 2025 05:46:25
+
+
+ 058201-8 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 6. Dual rotating compensator spectroscopic ellipsometer optical path. The p and s polarized components of the scattered light are shown to illustrate the change in phase ∆.
+The optical path is schematically shown in Fig. 6. The use of a rotating compensator before and after the sample enables the measurement of the full 16 element Mueller matrix. The operating wavelength range for the MMSE in the J. A. Woollam RC2 laboratory system used in the studies discussed here is 200 nm–1500 nm. The light from the RC2 system can be focused into an elliptical spot that is at best 200 μm in length at the operating angle of incidence. Fully automated scatterometry systems based on MMSE can focus light into areas less than 40 μm × 40 μm. In order to apply the rigorous coupled wave approximation for solving Maxwell’s equations, a periodic grating is measured.
+IV. RIGOROUS COUPLED WAVE APPROXIMATION (RCWA)
+RCWA simulations calculate the Mueller matrix elements vs wavelength for the optical model of a structure that represents the periodic grating. The RCWA method was introduced by Moharam and Gaylord in 1981.10 The optical properties of the structure are composed from the optical models of each material in the structure, and the grating is separated into layers as shown in Fig. 7. The first step in RCWA simulations is to expand the dielectric function of the grating into a Fourier series based on the periodicity of each layer. Here we present the dielectric function and RCWA method for a grating that can be represented by a 2D projection of the period structure with pitch P with grating periodicity being along the x direction,
+ε(x) = ∑N
+−N εne−i2πnx/P. (11)
+This represents the dielectric function with 2N + 1 harmonics. Here the coefficients of the Fourier expansion of the dielectric function εn are
+εn=0 = εline
+d
+P + εspace(1 − d
+P ) εn,0 = (εline − εspace)sin(nπ d
+P )/nπ. (12)
+FIG. 7. The dielectric function is separated into layers with a width d and period dependence P for RCWA simulations. Here, the top width for the top layer is shown.
+07 October 2025 05:46:25
+
+
+ 058201-9 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+Equations (11) and (12) are used for each slice of the grating structure which extends normal to the surface along the z direction. Thus, ε(x) is a function of height z, ε(x, z), as shown in Fig. 7. This dielectric function is used to solve Maxwell’s equation for a monochromatic wave of frequency ω for transverse electric (TE) and transverse magnetic (TM) polarized waves,
+~H = i
+ω μ0
+~∇ × ~E and ~E = i
+ωε0ε(x)
+~∇ × ~H, (13)
+where μ0 and ε0 are the magnetic constant (permeability of free space) and electric constant (permittivity of free space), respectively. In order to simplify the discussion, we consider that a grating periodicity is along the x direction, the electric field of the light is polarized along the y direction (TE polarization), and the transverse magnetic field H is along the x direction. Then from Eq. (13),
+iω μ0Hx = ∂Ey
+∂z and iωε0ε(x, z)Ey + ∂Hz
+∂x = ∂Hx
+∂z (14)
+are solved using matrix methods after H and E are expanded as Fourier series as follows:
+for each layer, z Ey(x) = ∑
+i Syi(z)eikxx,
+for each layer, z Hx(x) = i ε0
+μ0
+∑
+i Uxi(z)eikxx,
+(15)
+∂Syi(z)
+∂z = Uxi(z), and ∂Uxi(z)
+∂z = k2
+xi
+k Syi(z) − k ∑
+p ε(i−p)Syp(z). (16)
+The RCWA equations Eq. (16) are solved using matrix methods by determining when there is no change with an additional harmonic term. This method is used for a range of wavelengths appropriate for the wavelength range that is accessed experimentally.
+V. EXAMPLES OF THE APPLICATION OF SCATTEROMETRY TO BEYOND CMOS TRANSISTOR STRUCTURES
+Now that Mueller matrix ellipsometry and RCWA have been thoroughly introduced, we can go forward with presenting relevant “Beyond CMOS” examples incorporating MM scatterometry and RCWA. In this paper, we used the analysis package NanoDiffract from Nanometrics, Inc. NanoDiffract provides an entire ecosystem for scatterometry analysis using RCWA-based analysis algorithms. Within NanoDiffract, the optical model structures are built and 3D models are visualized before scatterometry simulations are performed. This software is used to determine structure and material parameterization and simulate measurement uncertainty, sensitivity, and correlation of the “free” parameters using the built-in Uncertainty and Sensitivity Analysis (US&A) capability. Section V A will briefly describe how the US&A capability works, and then we will look at specific examples of key process steps for a horizontal GAA device and a vertical GAA device. In Sec. VI, we describe a back end of the line (BEOL) interconnect test structure that utilizes a plasmonic resonance sensitivity enhancement. The use of full Mueller matrix data for scatterometry falls into three categories: the case where MM data enable the measurement, the case where MM data enhance measurement by providing extra information to improve parameter decorrelation, and the case where MM data are nice to have. For the first case, full MM data are necessary for the measurement of structural anisotropy, like tilt or overlay shift.11 For the second case, MM data are critical for extremely complex structures, like FinFET solid state doping (SSD) etch, because they add extra unique spectral information that aids in parameter decorrelation. The final case is that where MM data are nice to have, but it is not completely necessary. This can happen, but using a dual rotating compensator ellipsometer enables the collection of the full MM without the need to move to different analyzer angles. Therefore, it takes no extra time to collect the full MM, so the extra MM information is essentially free and used.
+A. Uncertainty and sensitivity analysis overview
+Uncertainty and sensitivity analysis is critical to the use of scatterometry for process control. It is the primary method used for model optimization and feasibility simulations. The analysis is based
+07 October 2025 05:46:25
+
+
+ 058201-10 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+on the Bayesian analysis, where the inputs are the spectral noise (derived from real measurements and representative of all sources of system noise, like light source variability, detector shot noise, and positional uncertainty), spectral parameter sensitivity (given by the partial derivative, or Jacobian, of
+each spectrum with respect to each floating parameter, J = [ ∂Y
+∂P
+]
+), and any weighting used in the fitting function. The output of the analysis is a probability density function of the parameter uncertainty, given as a standard deviation (or σ) Eq. (17), as well as the corresponding orthogonal uncertainty, or oSigma (which is essentially parameter uncertainty from noise alone), and degree of correlation (defined as the coefficient of multiple correlation, where correlation between the given parameter and all other floating (independent) parameters is taken into account) for each parameter.12 Figure 8 illustrates the impact of parameter correlation on parameter uncertainty by showing the change in the probability density function of 2 parameters as correlation is increased,
+P(P) = A · e− 1
+2 ·dP·G·dPT . (17)
+Here dP is the vector of the parameter sensitivity (dP = 〈P〉 P), A is the normalization constant, and G is a matrix of size M × M that is a covariance matrix of all floated parameters (taking spectral noise into account).
+B. Horizontal gate-all-around transistors: Inner spacer etch back
+As we continue to scale logic devices to keep up with Moore’s Law, we are quickly approaching the limit of FinFET devices. The industry consensus as of now has FinFET devices scaling down to the 7 nm node (fully scaled node and 5 nm foundry node). Below the 7 nm node, the contacted gate poly pitch (CPP) drops below 40 nm and the electrostatic control of fins is not possible, necessitating the need to move to a GAA device.13 Horizontal GAA is currently in the roadmap for Samsung at what they are calling their “4 nm node.” The process flow is very similar to that of a FinFET device, with a few key modifications to create the stacked nanowires. Figure 9 shows the process flow for vertically stacked horizontal nanosheet GAA transistors. The most critical, and likely most challenging, process step is the inner spacer etch back. Figure 10 shows a schematic view of the step. This step is critical for two reasons: first, it protects the epi S/D (S/D refers to the epitaxially deposited transistor source and drain) region during the nanowire release step14 and, second, it suppresses parasitic capacitance between the S/D and gate.15 Figure 10 shows a schematic view of the step. Control of the transistor gate is referred to as critical dimension (CD) control. Figure 10 shows the inner spacer etch back model used for this simulation. The term spacer refers to a dielectric that is deposited on both sides of the transistor gate. This simulation compares using MMSE vs
+FIG. 8. Shows the effect of parameter correlation on parameters P1 and P2. As parameter correlation (shown as “C”) increases, the probability density function (pdf) ellipse elongates. Parameter uncertainty is defined as the projection of the pdf on the parameter axis.
+07 October 2025 05:46:25
+
+
+ 058201-11 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 9. Vertically stacked horizontal nanosheet GAA process flow.
+conventional spectroscopic ellipsometry (SE). The measurement azimuth is 45◦ relative to the fin, and the wavelength range used is 200-1000 nm. Design rules used for the simulation are roughly equal to foundry-scaled 7 nm node for fin and gate pitches.16 Figure 11 shows the raw sensitivity curves for low-K (low dielectric constant material with a K value less than silicon dioxide) spacer, SiGe CD, Si offset CD, and inner spacer CD. Figure 12 illustrates the US&A comparison between MMSE and conventional SE. Using MMSE reduces the “Degree of Correlation” for all parameters and directly affects the parameter uncertainty (all parameters show a 2-7× improvement in uncertainty utilizing MMSE over SE).
+C. Vertical gate-all-around transistors: Dummy a-Si etch back
+Beyond the horizontal GAA device, there are a few different directions to go into continue logic scaling. IMEC, among others, has proposed complimentary stacked GAA, vertical GAA, TFET, and 2D FET’s (utilizing graphene or dichalcogenides).14 In this example, we will take a closer look at the
+FIG. 10. NanoDiffract model of GAA inner spacer etch back. The left image is iso-view. The right image highlights the nanowire region.
+07 October 2025 05:46:25
+
+
+ 058201-12 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 11. Raw sensitivity curves for low-K spacer, SiGe CD, Si offset CD, and inner spacer CD.
+vertical GAA device. In theory, a vertical GAA device with a Si nanowire has all of the electrostatic benefits of a horizontal GAA device, but its gate length is not restricted by its “footprint” on the wafer. This allows for relaxing of gate length dimensions (and even the nanowire diameter) and still allowing for lateral device scaling by up to 20% for the same node.17,18 One of the key process differences between a vertical GAA device and a horizontal GAA device (or even a FinFET) is that the gate length and contact alignments switch from being defined lithographically to being defined by deposition and etch back processes.17 The process control of these new key steps is well suited for scatterometry and MMSE, in particular. The process flow used for this example follows the “channel-first” flow proposed by IMEC.18 Channel doping is first done to define the source, gate, and drain regions for N and P type transistors followed by nanowire patterning and etch. After the nanowires are etched, there are 2 critical deposition-etch back steps that define the drain, gate length, and contact alignments. For this example, we will focus on the dummy (sacrificial structure that is later removed by etching) a-Si etch back step. This step is critical because it defines the gate length and needs to be precisely defined in the vertical direction to the nanowire junction doping profile (measurement needs to be done with other type of metrology system). The simulated structure has a pitch of 40 nm, nanowire bottom, and top CD of 15 nm, nanowire height of 120 nm, SiO2 hardmask height of 10 nm, silicon nitride thickness of 30 nm (aligned to drain), and dummy a-Si thickness of 60 nm after etch back (model image can be seen in Fig. 13).
+FIG. 12. US&A comparison between MMSE and SE.
+07 October 2025 05:46:25
+
+
+ 058201-13 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 13. NanoDiffract model of the vertical GAA structure at the dummy a-Si etch back step.
+FIG. 14. Simulated MMSE spectra for dummy (sacrificial) a-Si etch back (left) and for silicon nitride etch back (right).
+The measurement azimuth is 22.5◦ relative to the nanowire lattice (to maximize symmetry breaking between the structure and plane of incidence), and the wavelength range used is 200-1000 nm. Looking at the simulated MMSE spectra between the SiN etch back step (the step before a-Si deposition) and dummy a-Si etch back, it is clear that the off-diagonal response is highly attenuated for the latter step due to the high absorption of a-Si acting as a “substrate” and lowering the interaction volume compared to the prior step (Fig. 14). This means that using MMSE over conventional SE measurements will not be beneficial from the standpoint of lowering parameter correlation. Nevertheless, using ellipsometry for this step is still a viable measurement as means of controlling the a-Si thickness, as US&A predicts 1 sigma uncertainty to be <0.009 nm.
+VI. PLASMONIC TEST STRUCTURES FOR METAL LINES
+Scatterometry sensitivity to linewidth changes needs to improve as copper interconnect metal linewidths decrease with scaling. The term sensitivity has been used to describe the spectral change
+07 October 2025 05:46:25
+
+
+ 058201-14 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 15. The M12 Mueller Matrix element vs wavelength for copper lines of varying linewidths from 18 nm to 30 nm embedded in silicon dioxide. The azimuthal angle is 0 which is normal to the length of the copper lines. Reproduced with permission from S. O’Mullane, Ph.D. dissertation (SUNY Polytechnic Institute, 2015). Copyright 2015 S. O’Mullane.
+in response to the structural parameter change. Here, the sensitivity increase is obtained through the wavelength shift for a plasmon-induced spectral feature with change in linewidth, and we refer to that sensitivity increase in this section.19,20 This issue is illustrated in Fig. 15 using the simulated change in the M12 Mueller matrix element with the copper linewidth. Although the linewidths are varied from 18 nm to 30 nm in 2 nm steps, M12 does not show great sensitivity to linewidth variation even though the linewidths are at the current state of the art. In order to improve sensitivity to linewidth changes, O’Mullane, et al. employed a cross-grating plasmonic structure that changed reflection in a manner that increased sensitivity to the linewidth of copper interconnect lines.19–21 The cross-grating test structure uses a grating that has the dimensions and pitch (periodicity) that result in surface plasmon polaritons when the light of appropriate wavelength from the ellipsometer scatters from the grating at an operational angle of incidence of 65◦.19–21 The linewidth features in the surface plasmonic grating are larger than the state-of-the-art copper interconnect linewidths. For example, a copper grating with 250 nm wide lines and a pitch of 500 nm will launch surface plasmons at a wavelength of 950 nm for light incident at 65◦. The copper lines in the cross-grating have linewidths representative of the state of the art in copper interconnects. One can vary the linewidth and pitch of
+FIG. 16. Copper cross-grating structure used increase sensitivity to state-of-the-art copper interconnect lines. Reproduced with permission from S. O’Mullane et al., J. Micro/Nanolithogr., MEMS, MOEMS 15, 044003 (2016). Copyright 2016 SPIE.
+07 October 2025 05:46:25
+
+
+ 058201-15 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+FIG. 17. M12 vs wavelength for a 20 nm thick copper cross-grating with a larger grating linewidth of 100 nm and pitch of 120 nm and a 600 nm pitch for the small grating. The copper plate thickness was 50 nm. The total thickness of the dielectric layer was 50 nm. Reproduced with permission from S. O’Mullane et al., J. Micro/Nanolithogr., MEMS, MOEMS 15, 044003 (2016). Copyright 2016 SPIE.
+the wider grating and the pitch of the narrower grating to obtain the maximum sensitivity to linewidth variation over the wavelength range of the ellipsometer especially when the wavelength range extends in the IR to 1500 nm.19–21 Although the original concept was based on surface plasmon polaritons, O’Mullane et al. found that a copper plate below the cross-grating resulted in localized plasmons between the top grating and copper plate that enhanced sensitivity to the copper linewidth.19,20 These simulations were based on both RCWA and the finite element method. The cross-grating structure is shown in Fig. 16, and plots of Mueller matrix elements show a linewidth dependent feature in Fig. 17. Simulations also showed that the cross-gratings did not lose sensitivity when corner rounding was present.20 Using a cross-grating test structure, a sensitivity of 0.1 nm linewidth is possible.
+VII. CONCLUSIONS
+This paper describes the application of Mueller matrix spectroscopic ellipsometry and RCWA simulations to scatterometry for the measurement of feature shape and dimensions of advanced semiconductor structures. The sensitivity of scatterometry to gate-all-around transistor structures for future process control applications is demonstrated for the key process step of inner spacer etch back. The extension of scatterometry to process control for next generation copper interconnects is shown by the application of a plasmonically active test structure.
+ACKNOWLEDGMENTS
+ACD gratefully acknowledges the many contributions of Vimal Kamineni, Raja Muthinti, Dhairya Dixit, Sam O’Mullane, and post-doctoral fellow Sonal Dey to the work shown in this publication.
+1 S. J. O’Mullane, D. Dixit, and A. C. Diebold, “Advanced ellipsometry measurements for semiconductor structures,” in Characterization and Metrology for Nanoelectronics and Nanostructures (Pan Stanford, 2016), Chap. 3. 2 H. Fujiwara, Spectroscopic Ellipsometry: Principles and Applications (John Wiley & Sons, 2007).
+3 M. Di, E. Bersch, S. Consiglio, R. D. Clark, G. J. Leusink, T. Kaack, and A. C. Diebold, “Determination of the band gaps of ultrathin HfO2 films using spectroscopic ellipsometry,” J. Vac. Sci. Technol., A 29, 041001 (2011).
+4 G. R. Muthinti, M. Medikonda, T. N. Adam, A. Reznicek, and A. C. Diebold, “Effects of stress on the dielectric function of strained pseudomorphic Si1 xGex alloys from 0 to 75% Ge grown on Si (001),” J. Appl. Phys. 112, 053519 (2012).
+5 V. K. Kamineni and A. C. Diebold, “Electron-phonon interaction effects on the direct gap transitions of nanoscale Si films,” Appl. Phys. Lett. 99, 151903 (2011). 6 V. K. Kamineni, M. Raymond, E. J. Bersch, B. B. Doris, and A. C. Diebold, “Optical metrology of Ni and NiSi thin films used in the self-aligned silicidation process,” J. Appl. Phys. 107, 093525 (2010). 7 R. W. Collins and J. Koh, “Dual rotating-compensator multichannel ellipsometer: Instrument design for real-time Mueller matrix spectroscopy of surfaces and films,” J. Opt. Soc. Am. A 16, 1997–2006 (1999).
+07 October 2025 05:46:25
+
+
+ 058201-16 Diebold, Antonelli, and Keller APL Mater. 6, 058201 (2018)
+8 E. Compain, S. Poirier, and B. Drevillon, “General and self-consistent method for the calibration of polarization modulators, polarimeters, and Mueller-matrix ellipsometers,” Appl. Opt. 38, 3490–3502 (1999). 9 P. S. Hauge, “Automated Mueller matrix ellipsometry,” Opt. Commun. 17, 74–76 (1976). 10 M. G. Moharam and T. K. Gaylord, “Rigorous coupled-wave analysis of planar-grating diffraction,” J. Opt. Soc. Am. 71, 811–818 (1981). 11 D. J. Dixit, A. Green, E. R. Hosler, V. Kamineni, M. Preil, N. Keller, J. Race, J. S. Chun, M. O’Sullivan, P. Khare, W. Montgomery, and A. C. Diebold, “Optical CD metrology for directed self-assembly assisted contact hole shrink,” J. Micro/Nanolithogr., MEMS, MOEMS 15(1), 014004 (2016). 12 P. Vagos, J. Hu, Z. Liu, and S. Rabello, “Uncertainty and sensitivity analysis and its applications in OCD measurements,” Proc. SPIE 7272, 72721N (2009). 13 See https://semiengineering.com/whats-next-in-scaling-and-stacking/ for What’s Next in Scaling and Stacking. 14 A. P. Jacob et al., “Scaling challenges for advanced CMOS devices,” Int. J. High Speed Electron. Syst. 26, 1740001 (2017). 15 See https://semiengineering.com/whats-after-finfets/ for What’s After FinFETs? 16 L. T. Clark, V. Vashishtha, L. Shifren, A. Gujja, S. Sinha, B. Cline, C. Ramamurthy, and G. Yeric, “ASAP7: A 7-nm finFET predictive process design kit,” Microelectron. J. 53, 105–115 (2016). 17 “The vertical nanowire FET: Enabler of highly dense SRAMs,” IMEC Magazine, September 2017, https://www.imec-int. com/en/imec-magazine/imec-magazine-september-2017/the-vertical-nanowire-fet-enabler-of-highly-dense-srams. 18 A. V. Y. Thean, D. Yakimets, T. Huynh Bao, P. Schuddinck, S. Sakhare, M. G. Bardon, A. Sibaja-Hernez, I. Ciofi, G. Eneman, A. Veloso, J. Ryckaert, P. Raghavan, A. Mercha, A. Mocuta, Z. Tokei, D. Verkest, P. Wambacq, K. De Meyer, and N. Collaert, “Vertical device architecture for 5 nm, beyond: Device & circuit implications,” in IEEE 2015 Symposium on VLSI Circuits, Digest of Technical Papers (IEEE, 2015), pp. T26–T27.
+19 S. O’Mullane, B. Peterson, J. Race, N. Keller, and A. C. Diebold, “Enhancing one dimensional sensitivity with plasmonic coupling: Erratum,” Opt. Express 22, 26247 (2014); “Enhancing one dimensional sensitivity with plasmonic coupling,” 24, 3613 (2016). 20 S. O’Mullane, N. Keller, J. Race, and A. C. Diebold, “Utilizing tunable absorption properties of light for enhanced ellipsometry of metal gratings,” J. Micro/Nanolithogr., MEMS, MOEMS 15, 044003 (2016). 21 S. O’Mullane, “Plasmonic enhancement of the ellipsometric measurement of thin metal lines,” Ph.D. dissertation (SUNY Polytechnic Institute, 2015).
+07 October 2025 05:46:25

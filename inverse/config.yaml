@@ -1,0 +1,187 @@
+# 统一配置：建库 / 扫描 / 逆问题 / evaluate 共用本文件
+# 入口均默认读 config.yaml；也可 python3 xxx.py --config /path/to/config.yaml
+#
+# 任务开关（改 eval.task 即可，其它段保留不动）:
+#   inverse      → GA+LM 或 evaluate 批量评价（见 eval.mode）
+#   scan_sweep   → 多波长/多角度正向扫描 + Jacobian（见 scan.axes）
+# build_library.py 不读 eval.task
+#
+# 快速单波长试跑：注释掉 optical.recipe 整段，并改 library.file → ../data/inverse/spectra.npz
+
+structure:
+  pitch_nm: 80
+  cd_nm: 39.52
+  depth_nm: 39.32
+  lswa_deg: 89.63
+  rswa_deg: 89.26
+  n_slices: 10
+  grating_material: Au
+  substrate_material: SiO2
+
+optical:
+  # recipe 未覆盖时的回退；启用 recipe 后逆问题/建库以 recipe 展开为准
+  wl_nm: 29.63
+  angle_deg: 70
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 31
+  order_min: -15
+  order_max: 15
+# 库匹配：optical.recipe 可为 spectra_hhg.npz 建库 recipe 的子集（按 λ/θ/φ 自动列切片）
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      # - {min: 27, max: 31, odd_only: true}   # λ ≈ 25.8–29.6 nm
+      - {min: 55, max: 61, odd_only: true}     # λ ≈ 13.1–14.5 nm
+    # 方案 E：angles:[60, 65, 69, 70, 71, 75, 80, 85]，azimuths:[0, 30, 45, 60, 90]
+    angles_deg: [70]
+    azimuths_deg: [0,30,45,60,90]
+  # 单波长调试（注释上面 recipe，取消下面注释）:
+  # recipe: null  # 或直接删掉 recipe 键，用 wl_nm/angle_deg/azimuth_deg 单点
+  # wl_nm: 13.5
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse
+  cache_size: 128
+
+inverse:
+  # ga_lm | lib_pop_ga_lm | lib_pop_rand_ga_lm
+  method: lib_pop_rand_ga_lm
+  # 建库存全 order_min..order_max；逆问题/库匹配按此筛选
+  # all | propagating | list | decoupling
+  order_collection: decoupling
+  # order_collection: list 时使用
+  # accepted_orders: [-2, -1, 0, 1, 2]
+
+  # φ–m 解耦（order_collection=decoupling 时生效；enabled 仅作显式开关）
+  decoupling:
+    enabled: true
+    azimuth_tol_deg: 0.5
+    roles:
+      depth_anchor: { azimuth_deg: 90, orders: [0] }
+      swa:          { azimuth_deg: 90, orders: [-1, 1] }
+      lateral:
+        azimuths_deg: [0, 30, 45, 60]   # 空列表 = recipe 中除 90° 外全部
+        orders: [0]
+    static_weights:
+      depth_anchor: 1.0
+      swa: 0.8
+      lateral: 1.0
+      aux: 0.2
+    dynamic_lm:
+      enabled: true
+      refresh_every_nfev: 20
+      inner_max_nfev: 15
+      outer_max_rounds: 10
+      coupling_eps: 1.0e-3
+      cd_reg_lambda0: 0.01
+      boost_lateral_when_coupled: 2.0
+      use_kx0_shadow_prior: true
+    cd_anchor: ga
+
+  param_names:
+    - cd_nm
+    - depth_nm
+    - lswa_deg
+    - rswa_deg
+  perturb_frac: 0.05
+  bound_frac: 0.2
+  reg_weight: 0.0
+  noise_level: 0.0
+  noise_threshold: 3.0
+  use_ga: true
+  use_lm: true
+  ga_maxiter: 20
+  # 绝对 DE 个体数 P（须能被 n_params 整除；4 参时 popsize 乘子 = P/4）
+  ga_popsize: 40
+  ga_mutation:
+    - 0.5
+    - 1.0
+  ga_recombination: 0.7
+  ga_seed: null
+  ga_workers: 1
+  lm_max_nfev: 200
+  lm_ftol: 1.0e-8
+  lm_xtol: 1.0e-8
+  lm_verbose: 0
+  # init_guess 仅 method=ga_lm 时生效；库方法忽略；三方法公平对比建议注释掉
+  # init_guess:
+  #   cd_nm: 42
+  #   depth_nm: 38
+  #   lswa_deg: 85
+  #   rswa_deg: 85
+  # lb:
+  #   cd_nm: 32
+  # ub:
+  #   cd_nm: 48
+
+library:
+  # meta 须与 optical.recipe 一致；单波长试跑改为 ../data/inverse/spectra.npz
+  file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
+  build_workers: 2   # build_benchmark.json: workers_best=2
+  grid:
+    cd_nm:    {min: 32, max: 48, step: 1.0}
+    depth_nm: {min: 32, max: 48, step: 1.0}
+    lswa_deg: {min: 80, max: 95, step: 1.0}
+    rswa_deg: {min: 80, max: 95, step: 1.0}
+  # 单波长细 grid 示例（与 spectra.npz 配套）:
+  # file: ../data/inverse/spectra.npz
+  # build_workers: 1
+  # grid step: 1.0
+  prior:
+    enabled: false
+    lambda_prior: 0.01
+    swa_deg_range: [80, 95]
+    penalize_asymmetry: false
+    hard_reject_out_of_range: true
+
+scan:
+  # scan_sweep 专用光学网格（与 optical.recipe / 建库 / 逆问题 独立）
+  # 未设置 scan.recipe 时回退到 optical.recipe
+  axes: [wavelength, angle]
+  compute_jacobian: true
+  plot: true
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      - {min: 27, max: 31, odd_only: true}
+      - {min: 55, max: 61, odd_only: true}
+    # 扫描示例：全 7 波长 + 70° 附近小角；axes 含 angle 不含 azimuth 时 φ 取第一项 0° → 7×3=21 点
+    angles_deg: [69, 70, 71]
+    azimuths_deg: [0, 90]
+  # 或直接列波长:
+  # recipe:
+  #   wavelengths_nm: [13.1, 14.5, 25.8, 29.6]
+  #   angles_deg: [70]
+  #   azimuths_deg: [90]
+  # structure_sweep:
+  #   cd_nm: {min: 38, max: 42, step: 1.0}
+
+eval:
+  # python3 evaluate.py / inverse_solver.py 均读 eval.task
+  #   inverse     - 逆问题（evaluate 按 mode 批量）
+  #   scan_sweep  - 正向扫描
+  task: inverse
+  # 仅 task=inverse 且入口=evaluate.py:
+  #   methods | noise | timing | ga_workers | all
+  mode: all
+  noise_levels_db:
+    - -15
+    - -20
+    - -25
+    - -30
+    - -35
+    - -40
+  n_trials: 10
+  ga_workers_sweep: [1, 2, 3, 4, 8, 16, 24, 28, 32, 36, 40, 48, 56]
+  ga_workers_trials: 3
+  ga_workers_seed_stride: 1
+  plot: true
+  plot_dpi: 150

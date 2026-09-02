@@ -1,0 +1,1837 @@
+Surface Topography: Metrology and Properties
+TOPICAL REVIEW
+Scatterometry—fast and robust measurements of nano-textured surfaces
+To cite this article: Morten Hannibal Madsen and Poul-Erik Hansen 2016 Surf.Topogr.:Metrol.Prop. 4 023003
+View the article online for updates and enhancements.
+You may also like
+Hybrid metrology for nanometric energy harvesting devices Lauryna Siaudinyte, P-E Hansen, R Koops et al.
+
+An insight into optical metrology in manufacturing Yuki Shimizu, Liang-Chia Chen, Dae Wook Kim et al.
+
+Virtual experiments for the assessment of data analysis and uncertainty quantification methods in scatterometry Gertjan Kok, Marcel van Dijk, Gerd Wübbeler et al.
+
+This content was downloaded from IP address 115.156.141.154 on 07/10/2025 at 06:00
+
+
+ Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 doi:10.1088/2051-672X/4/2/023003
+TOPICAL REVIEW
+Scatterometry—fast and robust measurements of nano-textured surfaces
+Morten Hannibal Madsen1 and Poul-Erik Hansen
+Danish Fundamental Metrology A/S, Matematiktorvet 307, DK-2800 Kgs. Lyngby, Denmark 1 Author to whom any correspondence should be addressed.
+E-mail: mhm@dfm.dk and peh@dfm.dk
+Keywords: scatterometry, diffraction and gratings, inverse modeling, scattering measurements, optical design of instruments, in-line metrology
+Abstract
+Scatterometry is a fast, precise and low cost way to determine the mean pitch and dimensional parameters of periodic structures with lateral resolution of a few nanometer. It is robust enough for inline process control and precise and accurate enough for metrology measurements. Furthermore, scatterometry is a non-destructive technique capable of measuring buried structures, for example a grating covered by a thick oxide layer. As scatterometry is a non-imaging technique, mathematical modeling is needed to retrieve structural parameters that describe a surface. In this review, the three main steps of scatterometry are discussed: the data acquisition, the simulation of diffraction efficiencies and the comparison of data and simulations. First, the intensity of the diffracted light is measured with a scatterometer as a function of incoming angle, diffraction angle and/or wavelength. We discuss the evolution of the scatterometers from the earliest angular scatterometers to the new imaging scatterometers. The basic principle of measuring diffraction efficiencies in scatterometry has remained the same since the beginning, but the instrumental improvements have made scatterometry a state-of-the-art solution for fast and accurate measurements of nano-textured surfaces. The improvements include extending the wavelength range from the visible to the extreme ultra-violet range, development of Fourier optics to measure all diffraction orders simultaneously, and an imaging scatterometer to measure area of interests smaller than the spot size. Secondly, computer simulations of the diffraction efficiencies are discussed with emphasis on the rigorous coupled-wave analysis (RCWA) method. RCWA has, since the mid-1990s, been the preferred method for grating simulations due to the speed of the algorithms. In the beginning the RCWA method suffered from a very slow convergence rate, and we discuss the historical improvements to overcome this challenge, e.g. by the introduction of Li’s factorization rules and the introduction of the normal vector method. The third step is the comparison, where the simulated diffraction efficiencies are compared to the experimental data using an inverse modeling approach. We discuss both a direct optimization scheme using a differential evolution algorithm and a library search strategy where diffraction efficiences of expected structures are collected in a database. For metrology measurements two methods are described for estimating the uncertainty of the fitting parameters. The first method is based on estimating the confidence limits using constant chi square boundaries, which can easily be computed when using the library search strategy. The other method is based on calculating the covariances of all the free parameters using a least square optimization. Scatterometry is already utilized in the semiconductor industry for in-line characterization. However, it also has a large potential for other industrial sectors, including sectors making use of injection molding or roll-2-roll fabrication. Using the library search strategy, the comparison can be performed in ms, making in-line characterization possible and we demonstrate that scatterometry can be used for quality control of injection molded nano-textured plastic samples. With the emerging methods of highly parallel manufacturing of nano-textured devices, scatterometry has great potential to deliver a characterization method for in-line quality
+RECEIVED
+27 March 2015
+REVISED
+9 December 2015
+ACCEPTED FOR PUBLICATION 17 December 2015
+PUBLISHED 5 April 2016
+© 2016 IOP Publishing Ltd
+
+
+ control and metrology measurements, which is not possible with conventional characterization techniques. However, there are some open challenges for the scatterometry techniques. These include corrections for measuring on non-ideal samples with a large surface roughness or line-edge roughness and the path towards performing traceable scatterometry measurements.
+1. Introduction
+Diffraction is the phenomenon of light waves interacting with an object or a slit. If multiple objects or slits are periodically positioned, a so-called diffraction grating is formed, and interference of scattered light from these objects forms diffraction patterns. The properties of diffraction gratings were first described by Rittenhouse more than 200 years ago based on observations through a silk handkerchief [1]. Few years later, Thomas Young studied the diffraction orders and not only the specular reflection [2]. Diffraction gratings have since then played an important role in the understanding of physics and in the development of new technology including spectrometers [3], frequency stabilized lasers [4], and optical multiplexing devices [5]. However, the occurrence of diffraction is much older than mankind and advanced patterns leading to colorful iridescence are found on many animals including: beetles, butterflies, birds, and moths [6]. With modern technology and fabrication methods one can reproduce the fascinating structures from nature [7] or from an inverse design approach [8]. One example of newly developed structures are surfaces with structural colors [9], i.e. surfaces where diffraction or plasmonic effects [10, 11] are used to exhibit colors or color changing as sketched in figure 1. Some of the advantages of structural colors are that they are non-degradable [7] and that they can be fabricated without a paint step [12]. Other examples include super-hydrophobic surfaces inspired by the lotus leaf
+[13] and hydrophilic surfaces known from the carnivorous pitcher plant [14], where it is used to form traps for insects. These new structures are often too small to be characterized with normal light microscopy techniques, including interference and confocal microscopy, due to the limited resolution of these systems. For a system with a numerical aperture NA = n sin q, where n is the index of refraction and θ is the collection angle, the resolution is approximately given by the diffraction limit
+l q
+d = 2n sin , (1)
+where λ is the wavelength. In order to characterize smaller structures one instead has to use more advanced techniques such as scanning electron microscopy (SEM) or atomic force microscopy (AFM). The measuring capability of these characterization methods are sketched in figure 2. However, the mentioned characterization techniques are not fast enough for inline characterization of textured samples in a production environment. With new methods for massfabrication of nano-textured samples, new materials enter the market, and by using e.g. injection molding or roll-to-roll (R2R) methods, the production time is decreased dramatically, and new characterization techniques are needed. A much faster technique is scatterometry, which is a characterization technique based on measuring the intensities of diffraction spots from a structured surface and compare the measured intensities with modeled data. Often an inverse modeling approach is used,
+Figure 1. Structured surfaces for making structural colors. (A) Grating with a period comparable to the wavelength of visible light scatters light in the full spectrum giving an iridescence surface when looked at different angles. The surface is a topographic AFM image. (B) Cylinders much smaller than the wavelength of visible light and coated with a metal layer lead to a plasmonic effect, with the same color independent of viewing angle.
+2
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ in which the data are related to model parameters. This is in contrast to forward problems, in which model parameters are related to the data. For in-line characterization it is interesting to use a library search strategy where a priori information is used to build a database that the experimental data are compared against, as sketched in figure 3. The potential measuring capability of scatterometry is huge compared to other conventional characterization techniques as indicated in figure 2. However, the user will have to select a specific scatterometry method for a given sample. A further advantage of scatterometry is that steep side walls can
+be measured; a huge challenge for other microscopy techniques [17, 18]. Scatterometry is at the moment mainly used in the semi-conductor industry that produces high quality samples. With scatterometry the overlay accuracy of two lithography steps can be determined with an uncertainty (k=3) better than 0.5 nm with commercial instruments [19]. These instruments are commercially available but extremely expensive and only targeting large production facilities. Much research in scatterometry are performed by the industry including the large companies IBM [20], KLA-Tencor [21] and ASML [22]. In general, the results from industrial
+Figure 2. Measuring capability of common characterization techniques for micro and nano textured surfaces. The lower/left line indicates the resolution of the instruments. SEM=scanning electron microscope, AFM=atomic force microscope, and optical microscopy indicates the measuring capability of interference and confocal microscopes. Reproduced with permission from [15], copyright 2015 IOP Publishing.
+Figure 3. The principle of scatterometry using inverse modeling with a library search strategy. (A) A nanostructured surface. (B) Characterization of the surface using a scatterometer built into a conventional optical microscope. (C) Computer simulations of the diffraction efficiencies. (D) The measured diffraction efficiencies are compared with the simulated data and the best match yields the dimensions of the structures on the sample. Figure adapted with permission from [16].
+3
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ partners are not published in peer-reviewed journals and thus much work in the field of scatterometry is kept as trade secrets and it is not included in this review. Most studies of the measuring capabilities of scatterometry are performed on silicon samples, but scatterometry has the potential to be used on many other types of samples also outside the semi-conductor industry. An example could be lab-on-chip devices fabricated using e.g. soft lithography [23] or injection molding [24] and designed with periodic channels or having dedicated areas with a grating structure for quality control of the reproduction fidelity [24]. Designated test areas have been used for many years in the print industry, where the edge of the paper is used for measuring the overlay accuracy and in the semi-conductor industry where test patterns are placed in the scribe lines. A wide range of scatterometry setups exists and these are described in chapter 2. For some special cases an analytical solution exists for calculation of the diffraction efficiencies, but often one will have to rely on computer modeling, as will be described in chapter 3. In chapter 4 we review two methods for comparing the experimental data to the simulated diffraction efficiencies. The first approach is to use direct modeling and the second approach is a library search strategy. Methods for estimating the uncertainties of the fitting parameters are also given in this chapter. Some general industrial applications can be found in chapter 5
+including experimental data for an in-line characterization experiment of injection molded nano-textured plastic. In chapter 6 an outlook for the scatterometry method is discussed, and some challenges to be overcome before scatterometry is used in new industries are discussed. Summary and concluding remarks are given in the last chapter.
+2. Scatterometry setups
+A wide range of scatterometry setups exist with some of the typical measurement geometries sketched in figure 4. In a fixed angle setup, figure 4(A), the incoming angle is kept fixed, while the detector is moved in the plane of the incoming beam to detect the diffracted beams. For a 2-theta setup, figure 4(B), the specular beam is detected as a function of the angle of the incoming beam. The specular beam is also detected in a spectroscopic setup, figure 4(C), but here as a function of wavelength. Using special optics, multiple diffraction orders can be measured simultaneously, as sketched in figure 4(D). All these systems, and some variations of them, will be discussed further in the present chapter. An overview of some of the scatterometer systems are also described by Raymond in [25, 26], but the systems have improved significantly in the last decade. Several other characterization techniques utilizing the information in the scattered light have been developed. The technique coherent diffractive imaging, a
+Figure 4. Sketch of different scatterometry setups. (A) A fixed angle setup where only the detector moves. (B) A 2-theta system where the incoming light and the detector are moved in parallel. (C) Spectroscopic system without any moving parts. (D) A hemisphere detector, e.g. a Fourier lens system, is used to collect all diffraction orders simultaneously.
+4
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ lensless imaging method, was developed for x-ray imaging to minimize the amount of advanced optics [27], and it has been extended all the way up to the infrared regime [28]. The ptychography [29] technique, used in both x-ray [27] and visible light imaging [30], and the newly developed Fourier ptychography microscopy technique [31], where several images obtained in the Fourier plane are stitched together, are utilizing the information in the Fourier space to increase the resolution in real-space. There is a huge potential for these techniques, but they will not be discussed further in this review. Other related techniques, such as ellipsometry and Mueller polarimetry, are only briefly described in this review. These techniques are based on studying the change in polarization of the light when interacting with a sample. For a description of spectroscopic ellipsometry we recommend [32, 33]. Independent of the used scatterometry technique the quantities of interest are the scattering efficiencies, η, as a function of wavelength, angle of incidence and/ or diffraction angle. Scattering intensity is the ratio of the intensity of the outgoing light divided by the incoming light. The scattering efficiencies are typically calculated from measuring the light intensities of the sample, Isample, a reference sample, Iref, and a dark signal, Idark, using the formula
+h= 
+
+II
+II 2
+T
+sample dark
+ref dark
+()
+in a transmission configuration, and
+h= 
+
+RI I
+II 3
+R
+sample dark
+ref dark
+()
+in a reflection configuration, where R is the reflection coefficient of the reference sample. For spectroscopic measurements all the quantities become wavelength, λ, dependent. In other words, in order to find the wavelength dependent diffraction efficiencies η(λ), the input quantities should be modified to I→I(λ) and R→R(λ).
+In transmission mode the reference intensity is preferably measured on a non-textured area of the same sample as the sample measurement. Of course the sample has to be (semi)-transparent in order to perform transmission measurements. Strictly speaking only vacuum is transparent, but often the word transparent is used for samples one can look through by eye, even though the words semi-transparent or translucent are more appropriate. For scatterometry in a reflection configuration, a perfect mirror should be used for the reference measurements. As such mirrors do not exist, and it is beneficial to have the reference intensity comparable to the sample intensity to increase the sensitivity of the detector, a surface with a well-known reflection, R, is used instead. As an example, when measuring on a grating etched in silicon, it is preferable to use a flat silicon substrate, or alternatively an aluminum mirror, as the reference.
+Reference free scatterometry measurements can be performed by measuring both TE and TM polarized light at the same area of interest on the sample. The intensities of the two polarizations components
+(Isample
+TE and Isample
+TM ) from the sample may be measured individually or simultaneously. Simultaneously measurements are possible, using a polarization splitter (e.g. Wollaston prism polarizer or Rochon prism polarizer). The wavelength dependent diffraction efficiency, h (l), can be calculated from the measured intensities of the two polarizations components using the expression:
+hl l l
+l ll
+=
++
+II
+I I 2I . 4
+sample
+TM sample
+TE
+sample
+TM sample
+TE dark
+() () ()
+( ) ( ) ( ) ()
+In contrast to the ordinary diffraction efficiency formulas this formula is the same for reflection and transmission measurements.
+2.1. Angular scatterometers
+The first applications of scatterometry for metrology measurements were demonstrated by Kleinknecht and Meier in 1978 where they monitored the etch rate in SiO2 and Si3N4 [34]. Two years later their setup was improved to include measurements of the linewidth on photomasks [35]. They used a static setup where both the incoming beam and the detector were kept at fixed angles, and thus, they were limited to measure the intensity of a single diffraction order. However, with no moving parts the system could monitor the etch rate in SiO2 and Si3N4 by measuring the intensity oscillations in the first order diffraction spot. By adding a second detector to measure the second order diffraction, more advanced measurements were possible. Scatterometers had for some time been available as they were used for measuring the scattering distribution to determine e.g. the surface roughness [36]. For this topic, the reader is referred to [37]. These scatterometers have a fixed angle of incidence, θi, and a moving detector to measure the angle-dependent scattering intensities. Despite the single moving arm, this type of scatterometer is also referred to as the fixed angle configuration. Such a setup can directly measure the pitch, d, of a periodic lattice using the grating equation
+q ql
++ =m
+d
+sin sin , 5
+im
+( ) ( ) ()
+where θm is the diffraction angle of the mth diffraction order and λ is the wavelength of the incident light. However, for pitch measurements the Littrow configuration is superior and an uncertainty as a low 15 pm for a 144 nm grating has been reported [38]. The Littrow configuration is where the angle of the diffracted light is overlapping the incidence light. By rotating the sample, the angle between diffraction orders can be measured very precisely and thereafter the pitch can be calculated.
+5
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ The fixed angle scatterometers combined with the introduction of the method of rigorous coupled-wave analysis (RCWA) in the 1980s, which will be described further in chapter 3, matured the scatterometry method to determine dimensions of gratings. Scatterometry was demonstrated for measuring the line width [39, 40] and etch depth [41] of a grating. Despite the simplicity of the fixed angle scatterometer, it has proven to be a valuable tool for in situ characterization and for measurements on gratings with a pitch much longer than the wavelength of light. The pitch to wavelength ratio is a fundamental quantity in scatterometry for identifying the complexity of the light–matter interaction [42]. A full vectorial mathematical formulation describes the interaction over the whole wavelength range whereas scalar diffraction theory and renormalized scalar diffraction theory are adequately for pitch/wavelength ratios larger than 10 and 3, respectively. The grating period is resolved relative to the wavelength of the incoming light, and most gratings can therefore be said to have a long period when using deep ultra-violet [43] or extreme ultraviolet (EUV) light. Using EUV light with high spectral purity [44], profiles of multi-parameters gratings have been reconstructed [45], and the influence of line-edge roughness (LER) and linewidth roughness (LWR) of the gratings have been studied [46–48]. In a recent study, a fixed angle scatterometer was used to characterize injection molded microfluidic channels with a period of 5 μm [15]. The samples were fabricated in a transparent polymer and measured in a transmission configuration as sketched in figure 5. Using an Argon Ion laser operated at 488 nm, up to 8 diffraction orders could be measured as shown in figure 5(B). As there are three orders of magnitude difference in the intensity of the zeroth order and higher
+order peaks, figure 5(C), it is necessary to have a detector system with a large dynamical range, e.g. by using variable gain settings on the photodetector or using a calibrated variable neutral density filter [49]. The signal noise can be significantly reduced by establishing lock-in detection, e.g. by mechanically chopping the light and use a lock-in amplifier. The input polarization state of the light was selected using a Berek’s variable wave plate and a polarizer. By measuring multiple diffraction orders at several incident angles and for both TE and TM polarization, Robert et al reconstructed the height, width and sidewall angle of a 1D grating with a period of 1 μm etched in Si [50]. By proper choice of their measurement points they could later reduce the number of measurements necessary to only 6 without sacrificing the accuracy [51]. A similar approach has also been used to characterize complex gratings with wavy sidewall profiles [52]. Also reconstruction of nanopillars positioned in a 2D grating with pitches of 780 nm has been demonstrated using a fixed angle system [53]. However, only diffraction orders in the plane of incidence was measured, and in order to increase the accuracy of the results, the sample was measured at two incidence angles and for both TE and TM polarized light. In general, the diffraction efficiencies of the nonzero orders have a higher sensitivity to changes in grating parameters, which increases the robustness of the fit to the experimental data. If possible, the -1st order should be included in the measurements, since this is the last order that remains and it tends to have higher diffraction efficiency than the other nonzero orders [52]. For gratings with a pitch comparable to the wavelength of the incoming light, it can be observed from equation (5) that at most a few diffraction orders exist. Instead, by only studying the specular reflection as a
+Figure 5. Experimental setup and data for a scatterometer with a fixed incident angle. (A) Simplified sketch of an experimental setup. (B) Scattering intensities for diffraction on a 5 μm polymer grating. (C) Same data as (B) plotted on a log scale. There are approximately three orders of magnitudedifference between the zeroth order and higher order diffraction spots. Data for (B) and (C) adapted with permission from [15], copyright 2015 IOP Publishing.
+6
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ function of the angle of incidence, it is possible to measure sub-wavelength gratings [54–58]. In the measurements of the specular reflection, the detector is always positioned symmetrically at the normal of the substrate with respect to the incoming light, see figure 4(B), and hence the name 2-theta (2θ). Originally, the 2-theta scatterometer was demonstrated for overlay accuracy measurement [55], critical dimensions and grating profile [54, 57], gratings on multilayers [56] and combined CD and overlay measurements [58]. Later the technique was used to characterize the profile parameters for 2D patterns with holes and dots in resist layers [59] and the linewidth roughness of a grating [60].
+2.2. Spectroscopic scatterometers
+For robust reconstruction of the scatterometry measurements many individual data points are needed, as will be discussed in details in chapter 4. Instead of scanning the detector angle, one can instead scan the wavelength of the incoming light. Typically such a system is realized using a broad-band light source and filtering the light at the detector side, e.g. with a spectrometer. This is referred to as a spectroscopic scatterometry [61–63]. Studying the first (and higher) orders of the diffracted light is cumbersome as the diffraction angles also depend on the wavelength as observed from equation (5). Thus, typically one only studies the specular reflection, and in the simplest configuration, the incoming light and detector are positioned normally to the sample as sketched in figure 4(C). An advantage of the normal incidence configuration is that alignment is easy and the system is very robust to vibrations [17]. For a simple implementation of a spectroscopic scatterometer, a spectrometer can be built into a conventional microscope either by exchanging the camera, as illustrated in figure 6, or by introduction of a second beam splitter in the beam path [17]. The
+advantage of having the scatterometer integrated in an optical microscope is that the area-of interest can readily be found and the sample can be brought in focus; two of the challenges for a non-imaging system. The data shown in figure 6 are from a measurement series of a 1D grating etched in a Si substrate. The ‘reference’ is obtained on a blank area on the same sample. Usually one would measure the ‘dark’ signal by blocking the light source. However, as the optical components in the microscope reflect the light, it is preferable to measure the ‘dark’ signal by guiding the light into an optical beam dump. Typical spectroscopic scatterometers analyzes an area equal to the illumination spot size. It means that an average value of the structures is found. Measurements on small areas are challenging due to chromatic aberrations in the optical components and the fact that one typically would prefer to avoid hard focusing, such that simulations of the diffraction efficiencies can be performed in the paraxial regime. With a novel design, we have demonstrated that using imaging scatterometry, one can measure on small areas (say 5 μm×5 μm) with nm resolution [64]. With imaging scatterometry a series of images at different wavelengths is acquired to build a multi-spectral image as sketched in figure 7(A). At each wavelength, a reference image, a dark image and an image of the sample are acquired and used to calculate the diffraction efficiency for a single pixel or multiple pixel binned together using equation (3). Binning is where multiple pixels are put together, e.g. 8×8, to form a new pixel and it reduces the noise. The diffraction efficiencies are calculated one pixel at a time and combined to form a full image. The wavelength dependent diffraction efficiencies for a single pixel can be extracted, as sketched in figure 7(B), and used for the scatterometry reconstruction. Scatterometry of pixels with an effective size of 5×5 μm2 was demonstrated in [64] and
+Figure 6. Spectroscopic scatterometry system built into a conventional optical microscope. In the imaging plane either a CCD sensor or a fiber coupled spectrometer is positioned. The data presented are measurements for TE-polarized light on a 1D grating with a period of 800 nm etched in Si(100). Figure adapted with permission from [17].
+7
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ even smaller areas of interests are possible to characterize using this method. In the beginning of the century, a couple of studies investigated the sensitivity of the angular and spectroscopic scatterometry methods. One concluded that they were very comparable but angular scatterometry was easier to implement [65] and another study concluded that spectroscopic scatterometry was superior [66]. It is interesting to observe that today’s commercial state-ofart scatterometers on the market use both angular and/ or spectroscopic techniques [67–69].
+2.3. Other scatterometers
+Using a goniometer is a slow technique for measuring multiple diffraction orders, and especially for 2D gratings with out-of-plane diffraction it is challenging to perform the measurements. Instead several systems have been designed to measure multiple diffraction orders simultaneously. In the simplest form, multiple diffraction orders can be obtained simultaneously using a white sheet of paper and a camera [70] or a diffuse hemispherical screen [71]. With a smart design of lenses, optical Fourier transform scatterometry has been demonstrated for dimensional measurement [72, 73] and LER and LWR [74] of gratings. The same system has also been demonstrated for measuring the periods of 2D gratings without having to align the sample [75]. Optical Fourier Transform is based on a special set of lenses that projects all light in the same direction to a single point in the back-focal plane. Instruments having a collection angle up to 88° are commercially available. Also scatterfield microscopy, the name being from combining scatterometry and bright-field microscopy, as developed by Silver et al has been demonstrated to extend the limits of optical metrology [76, 77]. In scatterfield microscopy selected components of the scattered field are viewed and analyzed at a time by optical engineering of the illumination and imaging path in the conjugate back focal plane. Using e.g. a digital micro-mirror device the light can quickly be modified for scatterfield microscopy. In coherent Fourier scatterometry [78–81], a coherent light source is focused on the sample using a high NA objective. The high NA objective is also used to collect the diffracted light, and for large pitch
+gratings (relative to the wavelength), several diffraction orders are captured simultaneously. By scanning the illumination spot over a grating period the intensities and phase differences of the overlapping orders can be retrieved and used for reconstruction of the sample parameters [81]. It has been shown that for some gratings, e.g. when the wavlength is less than half the grating pitch, the Coherent Fourier scatterometry is more sensitive for the grating shape parameters than inchorent scatterometry [79]. However, it is important to have knowledge of the incident electromagnetic field and any distortions, e.g. aberration effects in the lenses, of the system. The amplitude and phase information of the incident field can for instance be measured using a Shack–Hartmann Sensor as described in [79]. More information can be retrieved by measuring the individual phases, instead of just the phase differences, of the scattered waves by combining coherent Fourier scatterometry with interferometry [80]. Also a white light interferometric Fourier scatterometer has been demonstrated for measuring the basic grating parameters [82]. An overview of some of the scatterometry techniques and methods for reference measurements are summarized in table 1. In general, it is preferentially to have as many independent diffraction efficiencies as possible to achieve a robust result in the inverse modeling. When using a setup with a coherent light source all measurements are correlated to the optical properties of the materials at this specific wavelength. It is therefore beneficial to use either multiple coherent or a broad band light source to avoid all measurements to rely on single optical parameters.
+3. Modeling of diffraction efficiencies
+A numerical solver is needed for modeling of the diffraction efficiencies, except for the simplest grating geometries, see figure 8(A), where an analytical solution from scalar diffraction theory can be used. For modeling of diffraction efficiencies the most popular method is based on RCWA which is a computer power efficient method of solving Maxwell’s equations. As RCWA is the most widely used method, most of this chapter is devoted to explain the basic mathematics behind. In RCWA, a grating geometry is divided into slabs, see sketch in figure 8(B). The electromagnetic
+Figure 7. Sketch of the principle of imaging scatterometry. (A) Illustration of the pixel based multi-dimensional analysis of the diffraction efficiency images. (B) Sketch of diffraction efficiencies extracted for a single pixel as a function of wavelength.
+8
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ Table 1. Overview of scatterometry and reference measurement techniques.
+Method Description Speed Pros Cons
+Fixed angle scatterometry The intensity of multiple diffraction orders are measured using a moving detector Slow • Pitch can be measured simultaneously
+• Large pitch gratings can be measured
+• Large experimental setup
+• Challenging for 2D gratings
+Spectroscopic scatterometry Diffraction efficiencies are measured for multiple wavelengths Very fast • Robust to vibration
+• Easy alignment
+• Most sensitive for structures with a pitch comparable to the
+wavelengths
+Imaging scatterometry Sets of multispectral images are used to calculate the diffraction efficiencies pixel
+by pixel
+Fast • User friendly
+• Areas with a size down to a few μm2 can be
+analyzed
+• Most sensitive for structures with a pitch comparable to the
+wavelengths
+• Challenging outside the visible range
+2-theta scatterometry The detector is always positioned symmetrically at the normal of the substrate with
+respect to the incoming light
+Medium • Measure sub-wavelength gratings
+• Measure overlay accuracy
+• Several moving components
+Spectroscopic ellipsometry The change in polarization is measured for multiple wavelengths Medium • Can measure very thin (few nm) layers
+• Measures optical constants
+• Needs alignment of more components (polarizers)
+Coherent fourier scatterometry Illumination and collection of light through a high NA objective Fast • Can be combined with interferometry • Sensitive to distortions in lens system
+• Most sensitive for measurements on structures with non-eva
+nescent diffraction
+Fourier lens scatterometry A hemisphere detector detects light scattered in ‘all’ directions Fast • Alignment free measurements possible
+• Well suited for 2D gratings
+• Requires custom-made optics
+Atomic force microscopy A small tip interacts with the surface Very slow • Well established method
+• Traceabl
+• Challenging to measure widths and sidewall angles due to tip
+convolution
+• Tip degrades while measuring
+Scanning electron microscopy The re-emitted electrons from a surface is used for imaging Slow • Good for measuring critical dimensions
+• Versatile tool for surface characterization
+• The sample needs to be in vacuum
+• Challenging to measure heights
+Confocal microscopy Spatial filtering of light to increase the resolution of optical microscopy Fast • Versatile tool for surface characterization
+• Easy to operate
+• Diffraction limited resolution
+• Challenging to measure high-aspect ratio structures
+9
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ field is then solved for each slab, and the boundaries of the slabs are matched to each other to find the electromagnetic field and the diffraction efficiencies outside the grating structure. For advanced geometries that cannot be described by the slabs from the RCWA method, one can instead use the finite element method (FEM), where the grating structure is divided into a fine mesh using triangles as sketched in figure 8(C).
+3.1. Scalar diffraction theory
+For simple 1D gratings, e.g. gratings with vertical sidewalls or sinusoidal gratings, one can use the theory of scalar diffraction theory to calculate the diffraction efficiencies [83, 84]. It has been claimed that scalar diffraction theory only applies to systems where the wavelength is much smaller than the grating pitch (λ/ d<0.1) [85, 86]. However, as shown by Harvey et al, by using a non-paraxial formulation of the scalar diffraction theory, the range of parameters can be greatly expanded [87]. As an example, a 1D grating with vertical sidewalls as sketched in figure 8(A) will be used. The sample is assumed to be semi-transparent and measured in a transmission configuration, where the light is incident from the backside of the sample. A phase difference, f, occurs between the light passing through the ridges and the light passing through the grooves. The phase difference is given by:
+jp
+=l - q - q
+/
+hn
+2 sin cos , 6
+2 2 12
+(( ) ) ( )
+where h is the height of the channel, λ is the wavelength, n is the index of refraction and θ is the angle of incident. By Hansen et al in [42] the diffraction coefficients for the zeroth and m’th diffraction order have been derived:
+j
+=- - ⎜ ⎟
+⎛ ⎝
+⎞ ⎠
+a 1 4f 1 f sin 2 , 7
+02 2
+| | ( ) ()
+p p
+j
+=
+⎜⎟
+⎛ ⎝
+⎞ ⎠
+a mf
+m
+4 sin sin 2 . 8
+m2
+2
+2
+2
+|| ( )
+( ) ()
+The new parameter f is the filling factor and is defined as the ratio of the width w to the period of the grating Γ. An experimental example with reconstruction of grating parameters using scalar diffraction theory is given in section 4.1, where injection molded polymer micro-channels are studied.
+3.2. Rigorous coupled-wave analysis
+RCWA is a computational effective method for calculation of diffraction efficiencies. The method is based on simplifying periodic structures by a staircase approximation using rectangular boxes as sketched in figure 8(B). In this section we will discuss the most important equations used in modern RCWA algorithms. In order to set up a RCWA simulation, it is necessary to find some representative parameters to describe the grating. Some typical parameters to describe a grating is the pitch as indicated in figure 9(A), and the height, width and sidewall angle as indicated in figure 9(B). For more advanced models the rounding of corners can be introduced by including two more grating parameters as indicated in figure 9(C). More options include using an asymmetrical model, adding a thin layer or stacking multiple gratings. A predecessor to RCWA was presented by Kogelnik in 1969 and used for calculation of diffraction efficiencies of thick hologram gratings [88]. In the following decades, the theory was improved in a number of small steps to include slicing of structures, surface relief structures, 2D surface relief structures and anisotropic gratings [89–91]. However, the implementations were not stable for high-aspect surface relief structures. A stable implementation for TE polarization was first presented by Moharam and Gaylord in 1995 [92]. However, the RCWA method described in this work suffered from a very slow TM polarized field convergence rate and did only work for binary gratings. At the same time they also published an article that made it possible to use RCWA for multilevel gratings [93]. The origin of the slow convergence rate of TM polarized light compared to TE polarized light remained unclear until two groups found that by reformulating the eigenproblem of RCWA, the TM convergence rate were highly improved [94, 95], and Li found that the poor convergence was due to wrong treatment of the permittivity for line gratings in truncated Fourier space [96]. Li’s factorization rules for obtaining faster convergence can be described by using the electric displacement field, D=ε0εΕ, where ε0ε is the permittivity and is E the electrical field. We also introduce a notation with square brackets, [1⁄4], and double square brackets, 1⁄4, to represent Fourier
+Figure 8. Sketch of slicing for different modeling methods. (A) Scalar diffraction theory is only valid for square gratings. Division into smaller parts is not possible. (B) RCWA. Division is made using slicing where rectangular boxes approximate a more complex surface. (C) FEM. The structure is divided into small triangles.
+10
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ transformed vectors and Fourier transformed matrices, respectively. With this notation, it should be easier to recognize when we are working in Fourier (reciprocal) space or normal space. With this in hand, Li’s factorization rules can be given as: (1) if either ε or E is continuous at a point x = x0 and D is continuous, then the Laurent’s rule should be used
+D = e e E . 9
+0
+[ ] [ ] ()
+(2) If both ε and E is discontinuous at a point x = x0 but D is continuous, then the inverse rule should be used
+ee
+=
+D  E
+1 . 10
+01
+[ ] [] ( )
+(3) It is not possible to use Laurent’s rule or the inverse rule at a point x = x0 where ε, E and D are discontinuous. The rules are easily applied to 1D gratings since the electrical field may be decomposed into components that are parallel and perpendicular to the material boundaries. The perpendicular components of the permittivity and the electrical field are discontinuous, but the electrical displacement field is continuous and the inverse rule should be applied. The parallel field components are continuous and Laurent’s rule should be used, that is the permittivity, e and 1/e, that appears in the differential equations for RCWA in [92] should be replaced with e 
+1/  1 and e 
+  1.
+The problem is more complex for 2D gratings, where it is less obvious how to decompose the electrical field into parallel and perpendicular components. Lalanne proposed to use a weighted average of the matrices e and 1/e [97]. In 1997 Li presented
+the first method that fulfills the factorization rules by introducing two new matrices [⌈e⌉] and [⌊e⌋] containing a mixture of Laurent’s rule in one direction and the inverse rule in the other direction [98]. Thereby the original permittivity contour is approximated by zigzag contours that fulfill Li’s factorization rules. The method has been tested on a wide number of 2D gratings and proven successful for quadrilateral unit cells. Shuster et al introduced a normal vector method that fulfills Li’s factorization rules for the RCWA method [99] by extending the work of Neviere and Popov who had used a differential method [100]. The normal vector field method decomposes the electrical field into parallel and perpendicular components that fulfills Li’s rule. A drawback of the model is that it requires a normal vector field that depends on the structural geometry and that this might be difficult to find. Götz et al presented an automated normal vector field generation method for arbitrary shapes using linear polarization [101] and this work was extended to include elliptical polarization by Antos et al [102, 103] and Liu et al [104]. In this review we adopt the notation from [92, 93, 99] and have rewritten a number of equations from other papers, to make the comparison between the different studies easier for the reader. Let As and Ap denote the projection of the incident field E onto s and p axis, respectively. The diffracted field is more complicated since we have a whole set of fields, and each of these fields comprise an s and a p component. By introducing the normalized wave vectors
+ai =
+k k
+xi
+(| | ) and b = ⎜ ⎟
+⎛ ⎝
+⎞ ⎠
+i
+k k
+iy
+| | to denote the propagation
+direction of the diffracted light, the incident light in the media above the grating (region I) may thus be written as
+Figure 9. Typical parameters used in modeling. (A) AFM image of a 1D grating where the pitch, p, is indicated. (B) Typical parameters to describe the ridge profile of a 1D grating. The height, h, width measured at the half height, w, and sidewall angle is indicated in the figure. (C) By including the roundness of the top and bottom corners, r1 and r2, to the three parameters sketched in (B), a more general model can be made. An asymmetric model is also possible be including even more parameters. (A) Reproduced with permission from [17].
+11
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ qj
+qj q
+=
+++
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+A A
+A
+jk n x
+yz
+E exp sin cos
+sin sin cos , 11
+x
+y
+z
+inc 0 I
+( | | ( () ( )
+( ) ( ) ( ) )) ( )
+where
+j jq j jq q
+j q y jy j q y jy qy
+=
+
+
+=
++ 
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+A A
+A
+A A
+E
+sin cos cos cos sin cos 0 sin
+cos cos cos sin sin sin cos cos cos sin sin cos
+.
+12
+x
+y
+z
+s
+p
+( ) ( ) () ( ) ( ) () ()
+||
+( ) () ( ) ( ) ( ) ( ) () ( ) ( ) ( ) () ( )
+()
+The Rayleigh expansions for the reflected field in region I and the transmitted fields below the grating (region III) may be written as
+åå
+åå
+a bg
+a bg
+=+
+ ́- + =
+ ́- + +
+jk x y z
+jk x y z
+EE R
+ET
+exp
+,
+exp
+13
+mn
+mn
+m n mn
+mn
+mn
+m n mn
+I inc ,
+0 I, ,
+III ,
+0 III, ,
+( | |( ))
+( | |( )) ( )
+in which Rm,n and Tm,n are the electric fields of m, nth reflected and transmitted orders in region I and III, respectively. The wave vector components kxm(αm) and kyn(βn) arise from phase matching and using the Floquet conditions and are given by
+a
+qj l
+b
+qj l
+g
+ab ab
+ab ab
+=
+= -L
+=
+= -L
+=
+= -- > +
+- +- < +
+=
+/
+/
+/
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎧
+⎨⎪
+⎩⎪
+14
+kk
+nm
+kk
+nn
+kk
+nn
+j nn
+l
+sin cos ,
+sin cos ,
+,
+I, III.
+m xm
+x
+n yn
+y
+lmn zlmn
+l m l mn
+m ll m n
+,0
+I0
+,0
+I0
+, , ,, , 0
+22
+2
+2 22
+2 2
+22 2 2
+()
+||
+() ( )
+||
+() ( )
+||
+where nl = ñl - j ̃kl are the complex refractive indexes in region I and III. In the grating region (region II), the fields may be expressed as a Fourier expansion in terms of the spatial harmonics
+åå
+åå
+ab
+e m
+ab
+= -+
+=
+ ́- +
+jk x y
+j
+jk x y
+ES
+HU
+exp ,
+exp
+, 15
+g
+mn
+mn m n
+g
+mn
+mn
+mn
+,0
+0
+0
+,
+0
+( | |( ))
+( | |( )) ( )
+where ε0 and μ0 are the permittivity and permeability of free space, respectively. Sm,n and Um,n are the amplitudes of the spatial harmonics of the fields such that Eg and Hg satisfy Maxwell’s equations in the grating layer
+wm we e
+ ́ = ́ = x y
+EH
+HE
+j,
+j , , 16
+gg
+g 0( )g ( )
+where the angular frequency. Substituting equation (15) for Eg and Hg into the equation (16) and eliminating the z components of the fields, an infinite set of first order differential equations can be derived in matrix form as
+ee ee e e
+¶ ¶
+=
+--
+ ́=
+-
+-
+    
+
+⎡
+⎣
+⎢⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥⎥
+⎡
+⎣
+⎢⎢⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥⎥⎥
+⎡
+⎣
+⎢⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥⎥
+⎡
+⎣
+⎢⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥⎥
+⎡
+⎣
+⎢⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥⎥
+17
+S S U U
+K K IK K
+K KI K K
+KK K
+K KK
+S S U U
+S S U U
+kz
+PP PP QQ QQ
+00
+00
+00
+00
+00 00 00 00
+.
+y
+x
+y
+x
+yx yy
+xx xy
+xy y
+y xy
+y
+x
+y
+x
+y
+x
+y
+x
+0
+11
+11
+2
+2
+11 12
+21 22
+11 12
+21 22
+()
+()
+Here Kx, Ky are diagonal matrices with elements αm and βn and I is the identity matrix. The matrices Prs and Qrs, with r, s={1, 2}, has also been defined. To improve computational efficiency, the equation can be further reduced to a set of second-order equations, which are much faster to solve. In matrix form the two second-order equations can be written as
+¶
+¶=
+⎡
+⎣⎢ ⎤
+⎦⎥ ⎡
+⎣⎢ ⎤
+⎦⎥
+kz
+S
+S MS
+S , 18
+y
+x
+S
+y
+x
+(0) ( )
+¶
+¶=
+⎡
+⎣⎢ ⎤
+⎦⎥ ⎡
+⎣⎢ ⎤
+⎦⎥
+U
+U
+U
+U
+k z M , 19
+y
+x
+U
+y
+x
+(0) ( )
+where the M matrix can be any of the matrices M ,
+Orig
+and M ,
+NV from [92] and [99], respectively. Using the common notation, the M matrices from these references are given as
+e ee ee e
+==
++-+
+
+
+  
+  
+⎡
+⎣⎢ ⎤
+⎦⎥ ⎡
+⎣⎢ ⎤
+⎦⎥
+⎡
+⎣
+⎢⎢
+⎤
+⎦
+⎥⎥
+20
+K
+KB
+M PP
+PP
+QQ QQ
+D KK K
+KK K ,
+S
+x yx x
+xy y y
+Orig,
+11 12
+21 22
+11 12
+21 22
+21
+12
+()
+()
+()
+e ee
+ee e
+==
++
+-+
+
+
+  
+  
+⎡
+⎣⎢ ⎤
+⎦⎥ ⎡
+⎣⎢ ⎤
+⎦⎥
+⎡
+⎣
+⎢⎢
+⎤
+⎦
+⎥⎥ 21
+K B KKK
+KKK K D
+M QQ
+QQ
+PP PP
+,
+U
+y xxy
+y yx x
+Orig,
+11 12
+21 22
+11 12
+21 22
+21
+1 2 ()
+()
+()
+where = = e 
+
+B P K K I
+21 x 1 x and D = P12 =
+e
+
+K   K I.
+yy
+1 The normal field formulation change the Qr,s matrices into
+e
+e
+D D
+D D
+=+ = -
+=- + =- +
+
+  
+  
+
+Q KK
+QK
+QK
+Q KK
+NN
+N
+N
+NN
+,
+,
+,
+. 22
+xy xy
+yx
+xy
+xy xy
+11
+12 2 2
+21 2 2
+22 ( )
+12
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ Performing the product for equation (21) with the Qr,s from equation (22) we find
+DD DD
+=+
+-+ + +- +
+           
+⎡
+⎣
+⎢⎢
+⎤
+⎦
+⎥⎥ 23
+B F DG
+BF D G
+N NN NN N
+NN N N NN
+MM
+,
+UU
+x xy xy x
+xy y y xy
+NV, Orig,
+22
+2 2 ()
+( )( )
+( )( )
+where D = e - e
+
+  ,
+1 1 = e
+F Ky   1 Kx, G = e
+K K
+xy
+1 and Nx, Ny are the x, y component of the normal vector field at the material boundaries. It is straightforward to see that M = M
+NV,U Orig,U if
+e= e
+
+  ,
+1 1 and thus D is a measure of to what
+extend the equivalence of if e and e
+
+1  1 holds in truncated Fourier space. It is instructive to consider how we can find normal vectors before we continue. The simplest case is a slightly misaligned 1D grating, see figure 10(A), where the ridge direction makes an
+angle J with respect to x axis such that J = 90 for a perfect aligned grating. In this case the normal vector components and their Fourier transformed are N = cos J ,
+x ( ) N = - sin J
+y ( ) and
+N = cos J d ,
+x k k,0
+[ ] ( ) N = - sin J d .
+y k k,0
+[ ] ( ) Another instructive example is to find the normal vector field for a 2D grating of cylindrical pillars/holes. To do this, we consider the tangential and normal unit vectors u and v in the natural coordinate system at the material
+boundary of the periodic unit cell
+JJ JJ
+=
+=
+u
+v
+cos , sin ,
+sin , cos . 24
+T
+T
+( ( ) ( ))
+( ( ) ( )) ( )
+The normal vector along the unit vectors x ̄ and y ̄ in figure 10(A) are given as
+N , N = u v x, y . 25
+x yT T
+ ̄ ̄
+( ) [ ]( ) ( )
+Finally we find the normal vectors of a 2D grating of rectangular pillars. Let the pillar boundaries be parallel to the unit vectors x ̄ and y ̄ and consider again the tangential and normal unit vectors, u and v, in the natural coordinate system at the material boundary of the periodic unit cell and define the normal component with respect to the u, v coordinate system. In this case, it is clear that (u, v)T change between ± (x ̄ , y ̄ )T and ± (y ̄ , x ̄ )T as the coordinate system is moved around the material boundary. However, the values at the corners are less obvious. We therefore suggest using rounded corners such that a differentiable parameterization of the u, v coordinate system movement around the material boundary can be made. As in the standard RCWA implementation, the coupled-wave equations are solved by finding the eigenvalues and eigenvectors of MNV. The spatial
+Figure 10. Definitions of light field and grating regions. (A) The plane of incidence and the angle of incidence, θ, through the wave vector,
+
+k , of the incident plane wave. Y is the azimuth angle of the linear polarizer to the incident plane, E is the oscillating field, s and
+p is the orthogonal direction of p and s polarized light, f is the angle that the plane of incidence makes with the x axis and q is the angle between the electric field and the plane of incidence. (B) Sketch of the three grating regions. Region I is above the grating, region II is the grating region and region III is after the light has interacted with the grating. For analysis of surface relief structures in a reflective geometry, region I is referred to as the superstrate and region III as the substrate.
+13
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ harmonics of the tangential electric (S) and magnetic (U) fields in the grating may be written in matrix form as
+=
++ 
+⎡
+⎣
+⎢⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥⎥
+⎡
+⎣
+⎢⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥⎥
+⎡
+⎣⎢ ⎤
+⎦⎥
+S
+S U
+U
+WX WX WX VX VX
+WX VX VX
+C
+C 26
+y
+x
+y
+x
+l
+11 12
+21
+1 ,1
+21
+22
+12
+22
+()
+in which W1, W2 are the eigenvector matrices for S with elements w1,m,n, w2,m,n. W1 and W2 are sub matrices of the eigenvector matrix of MNV given by
+=⎡
+⎣⎢ ⎤
+⎦⎥
+W W
+W . 27
+1
+2
+()
+X1 and X2 are diagonal matrices with diagonal ele
+ments e-k0qiz and 
+e,
+kq z d
+0 i ( ) respectively. The q’s are elements of the matrix Σ, which is the diagonal matrix of the positive square roots of the eigenvalues of MNV and d is thickness of the binary grating. The eigenvectors for U may now be obtained from equation (8) by inserting W and Σ, leading to the following expressions
+S S
+=+ =+
+
+
+V QW QW
+V QW QW
+,
+, 28
+1 11 1 12 2 1
+2 21 1 22 2 1
+()
+( ) ()
+and C+, C- are vectors of layer coupling coefficients that will be determined from matching of the boundary condition at the interfaces. To compute the field values in the reflected and transmitted regions, the tangential electrical and magnetic fields are matched at each boundary and we find the following matrix equations for the boundaries at z=0 (region I) and z=d (region III)
+dd dd b q dd q a dd
+
++
+-+
++
+
+ ́= 
+
++
+
+⎛
+⎝
+⎜⎜⎜⎜
+⎞
+⎠
+⎟⎟⎟⎟
+⎛
+⎝
+⎜⎜⎜⎜⎜⎜⎜
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎞
+⎠
+⎟⎟⎟⎟⎟⎟⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝
+⎜⎜⎜⎜
+⎞
+⎠
+⎟⎟⎟⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+A A
+An A
+n AA
+j j
+j j
+I
+KK
+K
+KK
+K
+I
+KK
+K
+KK
+K
+R R
+W W V V
+WX WX VX VX
+C C
+cos
+cos
+0
+0
+, 29
+xm n
+ym n
+z ym n
+x zm n
+yx
+z mn
+z
+y
+z
+z mn
+y
+z
+xy
+z
+x
+y
+,0 ,0
+,0 ,0
+0 I ,0 ,0
+I 0 ,0 ,0
+,I, ,
+,I
+2
+,I
+,I, ,
+2
+,I
+,I
+2
+1
+2
+1
+21
+11
+21
+11
+1
+1
+[ () ]
+[ () ]
+()
+
+=
++
+-+
+ ́
++
+
+⎛
+⎝
+⎜⎜⎜⎜
+⎞
+⎠
+⎟⎟⎟⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝
+⎜⎜⎜⎜⎜⎜⎜
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎞
+⎠
+⎟⎟⎟⎟⎟⎟⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+j j
+j j
+WX WX VX VX
+W W V V
+C C
+I
+KK
+K
+KK
+K
+I
+KK
+K
+KK
+K
+T T
+0
+0
+, 30
+yx
+z
+z
+x
+z
+z
+y
+z
+xy
+z
+x
+y
+21
+11
+21
+11
+2
+1
+2
+1
+1
+1
+,III
+,III
+2
+,III
+,III
+2
+,III
+,III
+, ()
+where Kz,I, Kz,III are diagonal matrices with elements
+gI,m,n and gIII,m,n.
+The enhanced transmittance approach in [93] describes a way to find the reflectance (R) and transmittance (T) from the boundary conditions in equations (29) and (30), for multilayer gratings, without inverting Xl and thereby avoiding the numerical instability associated with inverting Xl for small num
+bers of e- .
+k0qiz Using this approach for a binary grating yields
+=
+ ́
++
+-+
+ ́=
++
+
+
+
+
+⎜⎟
+⎛
+⎝⎜ ⎞
+⎠⎟ ⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝
+⎜⎜⎜⎜
+⎞
+⎠
+⎟⎟⎟⎟
+⎛
+⎝
+⎜⎜⎜⎜⎜⎜⎜
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎞
+⎠
+⎟⎟⎟⎟⎟⎟⎟
+⎛
+⎝⎜ ⎞
+⎠⎟ ⎛
+⎝⎜ ⎞
+⎠⎟ ⎛
+⎝
+⎞ ⎠
+⎛
+⎝⎜ ⎞
+⎠⎟
+X I
+X I
+a b
+j j
+j j
+C C
+W W V V
+W W V V
+I
+KK
+K
+KK
+K
+I
+KK
+K
+KK
+K
+T T
+T T
+0 0
+0
+0
+0
+0 . 31
+N
+yx
+z
+z
+x
+z
+z
+y
+z
+xy
+z
+x
+y
+x
+y
+1
+1
+1
+1
+2
+1
+2
+1
+2
+1
+2
+1
+1
+,III
+,III
+2
+,III
+,III
+2
+,III
+,III
+1
+11
+1
+()
+Making the substitution Tx, Ty T = a1- X
+11
+()
+T1,x, T1,y T
+( ) and rearranging equation (31) we find the following matrix equation that can be solved for R and T (through T1)
+dd dd b q dd q a dd
+
+=
+
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝
+⎜⎜⎜⎜
+⎞
+⎠
+⎟⎟⎟⎟
+A A
+An A
+n AA
+AB R
+T
+cos
+cos
+. 32
+xy
+xy
+xm n
+ym n
+z ym n
+x zm n
+,
+1, ,
+,0 ,0
+,0 ,0
+0 I ,0 ,0
+I 0 ,0 ,0
+[]
+( () )
+( () )
+()
+14
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ With R = R , R ,
+x,y x y T
+( ) T = T ,T
+1,x,y 1,x 1,y T
+( ) and
+=
+-+
++
+
+⎛
+⎝
+⎜⎜⎜⎜⎜⎜⎜
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎞
+⎠
+⎟⎟⎟⎟⎟⎟⎟
+A
+I
+KK
+K
+KK
+K
+I
+KK
+K
+KK
+K
+0
+0
+, 33
+yx
+z mn
+z
+y
+z
+z
+y
+z
+xy
+z
+,I, ,
+,I
+2
+,I
+,I
+2
+,I
+,I
+()
+=
+
+⎜⎟
+⎛
+⎝
+⎜⎜⎜⎜
+⎞
+⎠
+⎟⎟⎟⎟
+⎛ ⎝
+⎞ ⎠
+⎛
+⎝⎜ ⎞
+⎠⎟
+j j
+j j
+B
+W W V V
+W W V V
+I0 0X
+I
+b a X . 34
+2
+1
+2
+1
+2
+1
+2
+1
+1 11
+11
+()
+We now have the x and y components of R and T. The z component of the transmitted and reflected field may be obtained from the orthogonality of the EM fields. The diffraction efficiency, η, of each reflected and transmitted order (n, m) is defined as the z component of the time-averaged Poynting vector and is related to the electric field components by the following relations:
+hq
+hm
+mq
+=
+=
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+k
+kR
+k
+kT
+Re cos ,
+Re cos , 35
+zmn mn
+r
+r III
+zmn mn
+R
+I, , ,
+I
+,2
+T
+,I
+,
+III, , ,
+I
+,2
+mn
+mn
+,
+,
+||
+| | ()
+=++ =++
+RR R R
+TT T T
+,
+, 36
+mn xmn ymn zmn
+mn xmn ymn zmn
+, 2 ,, 2 ,, 2 ,, 2
+, 2 ,, 2 ,, 2 ,, 2
+||| || || |
+| | | | | | | | ()
+where mr is the relative magnetic permittivity which
+usually is set to unity, as the diffraction efficiencies are measured in air. The stable and efficient implementation of the RCWA presented in this review always converges towards the diffracted field amplitudes. The accuracy of the solution for binary gratings depends solely on the number of terms retained in the expansion of the space-harmonic fields in the grating area, whereas it for more general structure also depend on how well the discretization in boxes represents the actual profile. The normal field vector approach gives a significant increase in computational speed over the original formulation.
+3.3. RCWA solvers
+There are a number of commercial available RCWA solvers aimed at different market segments. LightTrans GmbH is selling the VirtualLab software [105], which includes a RCWA solver as one of several solvers for calculating the electromagnet field propagation through optical elements. This software is aimed at advanced optical engineers that need to go beyond ray tracing in the design of optical setups. S4 is a free RCWA solver made at Stanford University [104]; the software includes several different implementation of the RCWA algorithm for simulating electromagnetic propagation through periodic
+structures. The software has a text only user interface and is aimed at researchers that has time to compile and update the C/C++ source code as new progress is reported in literature. GD-Calc is a commercial RCWA solver from KJ Innovation that can be used within the Matlab programming environment [106]. The user has to write Matlab text file that describe the geometry and the materials within the periodic unit to be used for calculation of the electromagnetic field or diffraction efficiencies using GD-Calc. The software is aimed at researchers that prefer to use the Matlab environment for their work. InFoScat is a commercial software package from Image Metrology that includes a RCWA solver together with a module for the inverse problem solving using a library approach [107]. The software has a user friendly interface in which the user can construct gratings without the need to do any programming. The calculated diffraction efficiencies or ellipsometric parameters can be stored in a database, which afterwards can be loaded directly into the comparison module for the inverse problem solving to find the best set of parameters to describe the measured surface. The software is aimed for industrial use in a production and research environments that require a userfriendly and flexible solution. Gsolver is a commercial RCWA solver from Grating Solver Development Company [108]. The software has a user interface from which the user easily can build binary gratings, but the construction of multilevel gratings is cumbersome. The software also uses a very old implementation of the RCWA algorithm that has poor convergence, especially for 2D grating structures. The software is aimed for research and development engineers requiring an easy way for calculating binary gratings.
+3.4. Other modeling methods
+Other popular modeling methods include the FEM and finite-difference time-domain (FDTD). With FEM the structures are drawn graphically and then divided into a mesh as sketched in figure 8(C). Maxwell’s equations are solved for each point in the mesh with a computational solver program. Popular programs for finite-element analysis include COMSOL Multiphysics and JCMWave, with the first one being more general and the latter optimized for simulations of electromagnetic waves. FEM is very good at handling complex structures as one can use computer aided drawing (CAD) for designing the models. However, the computation time is much longer for such simulations, and when other options are available, we suggest using those instead [109]. In FDTD the E- and H-fields are calculated and advanced in small time steps. FDTD can handle multiple frequencies simultaneously and is thus best suited for spectroscopic scatterometry. On the other hand, in
+15
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ order to obtain the diffraction efficiencies in the farfield, a large grid has to be built, thus increasing the computation time considerably. Another approach is to build a database based on empirical data, where one sample, or a set of samples, is used as a ‘golden standard’ for all other measurements. This method is for instance useful for quality control of fabricated structures. To build a reliable database based on empirical data one needs to measure the diffraction efficiencies of reference samples and characterize the reference samples using another type of instrument. Because of the simplicity of using empirical models, it is widely used in industry and is a powerful method. The different techniques are summarized in table 1. Scalar diffraction and RCWA are the fastest methods, but is to some extend limited in the complexity of the input models. The FEM and FDTD methods can handle very advanced grating geometries, but the computation speed is much slower, and the code might need a supercomputer to run. Especially for spectroscopic systems, the speed of the algorithm is very important, as many wavelengths for each set of grating parameters have to be calculated.
+4. Inverse problem solving
+The next step in scatterometry is to perform an inverse solving, see figure 3(D), where the computer simulated data are compared to the experimental data. Several methods exist for the comparison, which overall can be divided into a direct optimization or library search approach. Typically, the comparison is performed by finding a set of parameters, α0, which minimizes the chi-square value of the difference between the model and the measured scattering intensities [17, 63, 78, 110, 111]. The chi-square value can be found using
+å
+c hh
+dh
+Wa
+=
+=
+⎡
+⎣⎢ ⎤
+⎦⎥
+N
+1 , , 37
+i
+N
+ii
+i
+2
+1
+theory 2
+( ) ()
+where h Wi, a
+theory ( ) are the modeled scattering intensities with the grating parameters α and where Ωi denotes the physical properties (e.g. wavelength, polarization and incidence angle) for the i’th element. N is the
+number of measured diffraction efficiency data points and δηi are the experimental uncertainties. By assuming the measurements of the scattering intensities are independent, the experimental uncertainty is found using the law of propagation on equation (2)
+dh h d
+hd
+d
+=
++
++
+
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+⎛
+⎝⎜ ⎞
+⎠⎟
+I II
+I II
+II
+I I I , 38
+2
+sample dark
+sample
+2
+ref dark
+ref
+2
+sample ref
+ref dark 2 dark
+2
+( ) ()
+where δIsample, δIref and δIdark are the experimental uncertainties for the sample, the reference and the dark measurements, respectively. Under the assumption that no systematic errors are present, the random errors can be estimated from the noise on the measurements. The noise is considered to be normally distributed as we detect a large amount of photons, and thus the measurement uncertainty is given by the standard deviation of the data. Often the contribution from the uncertainty on the dark measurement is negligible and thus the last term in equation (38) can be omitted. It can be observed from equation (37) that data with a large experimental uncertainty compared to other data within the same measurement series, gives a smaller contribution to the chi-square value. Thus, it is more favorable for the algorithm to get a close match between the data with a small experimental uncertainty than the data with a large experimental uncertainty. For the special case of dh  0,
+i that is, a system with noise approaching zero, and a complete mathematical model, the solution goes towards a perfect match of the parameters α0. It has also been demonstrated that artificial neural networks can be used for the inverse modeling of diffraction efficiencies [50–52, 112, 113]. An artificial neural network can be based on nonlinear models and is more robust to noise on the experimental data when reconstructing a surface [113]. In a neural network, a number of input neurons (measured diffraction efficiencies) are connected to a number of hidden neurons that are further connected to a set of output
+Table 2. Comparison of techniques for simulation of diffraction efficiencies.
+Method Speed Pros Cons
+Scalar diffraction Very fast Simple to use Only very simple structures RCWA Fast Can handle most ‘real-life’ structures Difficult to construct complex structures FEM Slow Versatile modeling technique Sensitive to boundary conditions Handle complex structures FDTD Very slow Versatile modeling technique A fine grid is needed Accurate and robust Far-field calculations increase computation a lot Compute multiple frequencies simultaneously Empirical N/A Can handle all structures Requires other characterization techniques for reference measurements Simple approach to otherwise complex problems
+16
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ neurons (grating shape parameters). All connections are adaptive weighted and should be tuned by a learning algorithm. Thus, the first time a neural network approach is used for a given surface structure it is time consuming to ‘train’ the algorithm, but subsequently it can be a very time efficient method for inverse modeling. In table 3 we have listed typical scatterometry model parameters and the estimated accuracy they can be measured with using state-of-art scatterometers. The estimated accuracy is given for k=2, equivalent to a 95% confidence interval. The estimated accuracies should only be used as an indication of which accuracies can be achieved in an experimental setup measuring on high quality samples. For the choice of instrument, the reader is referred to table 1, and for the choice of modeling method, the reader is referred to table 2. Some of the most common grating shape parameters include height, width and sidewall angle as sketched in figure 9(B), and the corner rounding as sketched in figure 9(C). It should be noted that scatterometry is not very sensitive to very thin layers, e.g. an oxide layer covering the grating, and for this more advanced optical techniques, such as Mueller polarimetry, is preferable. However, the scatterometry technique is capable of measuring on gratings buried in a semi-transparent film, e.g. an oxide layer.
+4.1. Direct optimization
+For simple geometries, or when having excessive amounts of computer power, a direct optimization approach can be used. Based on an initial guess by the user, all the free parameters are optimized using e.g. a differential evolution algorithm [114]. As an example we study a periodic array of microfluidic channels as described in [15]. In equations (6)(8) the two free parameters, the height and the filling factor, are optimized with respect to data acquired by an angular scatterometer. Convergence between experimental data, shown in figures 5(B) and (C), and the fit is found after less than 1000 iterations, see figure 11(A), with a computation time of less than 100 ms on a normal desktop computer. The best fit using scalar diffraction theory, shown in figure 11(B), is obtained for the parameters h=88.3 nm and w=436 nm for the height and the
+width of the channels, respectively. Using a metrology AFM for reference measurements the height has been measured to (89.6±1.2) nm and the width estimated to larger than 454 nm [15]. For validation of the scalar diffraction theory, the diffraction efficiencies simulated using RCWA with the same parameters are plotted in the same figure. With RCWA it is furthermore found that the differences in diffraction efficiencies between straight sidewalls and sidewall angles tilted up to 15° are less than 1%. The direct optimization approach can also be used for more complex grating geometries where simulations are performed using RCWA or FEM. For samples with many free parameters and excessive computer power this approach might be advantageous. However, often one will look for a faster method for the inverse modeling, and in that case the library search method is a good approach.
+4.2. Uncertainty analysis for direct optimization
+In this section we assume that a global optimization method has been used to obtain a solution without uncertainties on the measured values and with fixed material parameters. We will show how a local generalized least squares optimization method, which contains the information about the instrument and measurement standard uncertainties, may be used to determine the uncertainty on the grating profile parameters. In order to use this method we introduce the quantities needed to describe the measured scatterometry data obtained from a reflection or transmission experiment. These quantities are divided into two groups. For the first group, let z = (z1, 1⁄4, zm)T be the unknown exact values of intensities without noise and systematic errors. Furthermore let I = (I1, 1⁄4, Im)T be the known measured intensity values, with noise and systematic errors and with the standard uncertainties u (I1), 1⁄4, u (Im). The standard uncertainties are determined in accordance with GUM [115] and depend on the accuracy of the instrument. Let r Ii, Ij,
+( ) and u Ii, Ij,
+( ) be the correlation and covariance between the measured values Ii and Ij. They are related through
+the relation u I , I = u I r I , I u I
+ij i ij j
+( ) ( ) ( ) ( ) and the general covariance matrix is given by
+Table 3. Typical measuring range and accuracy of grating shape parameters for scatterometry measurements. The accuracies are estimates based on measuring on high quality samples with a good choice of scatterometer configuration.
+Grating shape parameter Typical measuring range Estimated accuracy (k=2) Reference technique
+Pitch 50 nm–10 μm 5 nm (at 1000 nm) Littrow configuration measurements Height 10 nm–2 μm 1 nm (at 100 nm) AFM Width 10 nm–5 μm 5 nm (at 500 nm) SEM Sidewall angle 25°–110° <1° (at 90°) Tilted AFM Corner rounding, radius 10 nm–100 nm 2 nm (at 50 nm) Cross-section SEM Line edge roughness, Rq 0 nm–25 nm 3 nm (at 10 nm) 3D AFM Oxide layer covering grating 10 nm–100 nm 20 nm (at 50 nm) Mueller polarimetry Overlay accuracy 0 nm–100 nm 0.3 nm (at 0 nm) 
+17
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ S= =
+
+  
+⎡
+⎣
+⎢⎢⎢
+⎤
+⎦
+⎥⎥⎥
+uI I
+u I u II
+uI I u I
+, ,
+. 39
+m
+mm
+T
+2 1 1, ,
+1, 2
+()
+() ( )
+( ) ()
+()
+S is simplified if the measurements I = (I1, 1⁄4, Im)T are assumed to be uncorrelated. Fortunately, this assumption is very often valid for experimental setups. The second group is all the free unknown parameters. That is, let a = a , 1⁄4, ak T
+( 1 ) be the k model parameters, which we want to determine through our
+analysis. The a parameters are interrelated to the z values through a number of constraints
+f a, z = f a, z , 1⁄4, f a, z = 0, 1⁄4, 0 .
+40
+1n
+TT
+( ) ( ( ) ( )) ( )
+()
+As an example we look at spectroscopic scatterometer system. The task is to find to find the unknown set of scatterometry intensity values z from the known none-perfect set of measured scatterometry intensity values I and associated covariance matrix S subject to the constraints in equation (40). We do this in a two-step procedure by first setting up
+the constraints function for the measurement system and continue by presenting the least square approach from [116] to find the model parameters. The measured quantities in spectroscopic scatterometry are I = I , 1⁄4, I , I , 1⁄4, I , I , 1⁄4, I ,
+m mm
+1
+sample sample
+1
+ref ref
+1
+dark dark T
+()
+where Ii are the uncorrected sample intensities of the zero order diffracted beam obtained with the measurement conditions W = q , l , 1⁄4 .
+i ii
+{ } The calculated diffraction efficiency,h ,
+i theory depends on the exper
+imental measurement conditions, Wi, and the adjus
+table grating profile parameters, a. The transmission and reflection diffraction efficiencies formulas in equations (2) and (3) may be put into the following form
+a
+a
+h
+h
+W - ́W - = W - ́W - =
+TI I
+II
+RI I
+II
+, 0,
+, 0, 41
+i
+i
+i
+i
+i ii
+ii
+i ii
+ii
+sample dark theory
+ref dark
+sample dark theory
+ref dark
+( )( )
+( )( )
+( )( )
+( )( ) ( )
+where T Wi
+( ) is the transmission from the substrate to the detector position outside the substrate.
+Figure 11. Direct optimization of diffraction data from an array of microfluidic channels. (A) Convergence study of the height and width parameters using a differential evolution algorithm. Convergence occurs after less than 1000 iterations with a computation time of less than 100 ms on a normal desktop computer. (B) Experimental data (red circles) and best fit using scalar diffraction theory (blue triangles) to the normalized intensities of the diffraction orders. The height is found to 88.3 nm and the width to 436 nm. For reference of the scalar diffraction theory the diffraction efficiencies calculated using RCWA are also plotted in the figure (green crosses). Figure (B) adapted with permission from [15], copyright 2015 IOP Publishing.
+18
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ T Wi
+( ) is needed because the diffraction efficiencies are calculated in the substrate, but the measurements are performed outside the substrate. Setting z = I and inserting equation (41) into equation (40) we find the following set of constraints az
+a
+a
+h
+h
+=
+W -- W 
+W -- W 
+=
+
+
+⎛
+⎝
+⎜⎜⎜
+⎞
+⎠
+⎟⎟⎟
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟ 42
+f
+SI I I I
+S I I II
+,
+,
+,
+0
+0
+,
+mm m m m m m
+11
+sample
+1
+dark
+1
+theory 1 1
+ref
+1
+dark
+sample dark theory ref dark
+()
+()
+( )( ) ( )( )
+( )( ) ( )( )
+where S (W1) is either T Wi
+( ) or R Wi .
+( ) The least
+squares estimates of a and z are found by minimizing the chi-square function
+c = -z S -z
+
+I I , 43
+2 T1
+( ) ( ) ()
+subject to the constraints f (a, z) = 0 and with the Lagrange function
+F a z = -z S -z + a z
+
+, , v, I I I 2v f , , 44
+T1 T
+( )( ) ( ) ( ) ()
+where v = v , 1⁄4, vn T
+( 1 ) are the Lagrange multipliers. The optimal condition may be found from the Lagrange function conditions
+az az az
+F = F = F =
+a
+z
+vI vI
+vI
+, , , 0, , , , 0,
+, , , 0, 45
+v
+() ()
+( ) ()
+where i represent the partial derivative with respect to the i’th variable. Equation (45) gives a set of equations called the normal equation of the least square problem
+az z az az
+S
+= - - + = =
+a
+z
+
+v
+Iv
+f
+f
+f
+,0
+,0
+, 0. 46
+T
+1T
+()
+( ) ()
+( ) ()
+In order to obtain convergence of the iteration process, proper initial profile parameter values a0 have to be known. These values might be found from a previous global optimization method, a library search method or other a prior knowledge. For an initial input a , z , v = a , I, v
+1 1 1T 0 0T
+( ) ( ) to the normal equation, an updated estimate, a , z , v ,
+2 2 2T
+( ) is calculated. In the case of convergence the normal equation gives the solution a, z, v T
+( ) which can be formally written as
+a z
+a
+z az S z
+=+ 
+-
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+⎛
+⎝
+⎜⎜
+⎞
+⎠
+⎟⎟
+v
+DI 0
+,
+0
+0
+, 47
+11
+( ) ( ) ()
+where a z 
+D, 1
+( ) is the covariance matrix of the complete solution. This matrix contains the covariance matrix u a, aT
+( ) of the grating parameter since they are a subset of the model and instrument parameters in the analysis. The standard uncertainties may be calculated from the diagonal elements and the correlation r ai, aj,
+( ) from the off-diagonal elements
+of u a, aT .
+( ) It is important to emphasize that the
+covariance matrix a z 
+D, 1
+( ) includes substantial more information than the uncertainty analysis for the library search method in section 4.4. A particular useful quantity is the variance of the difference between the measured values (initial estimate) I and the solution (redefined estimate) z. This quantity is
+important for testing if the difference I − z, is significantly different from the expectation value. A good model and instrument description should give a difference I−z less than two times the standard uncertainty of the associated parameters. As an example, Hansen and Nielsen used the presented uncertainty analysis in the second step of a twostep direct search method [42], where the transmission diffraction efficiency profile was used to reconstruct a 1D grating with a 480 nm pitch. The height was found to 281.3 nm and the width of the grating to 125.4 nm with associated uncertainties (k=1) of 2.2 nm and 1.3 nm, respectively.
+4.3. Library search
+In scatterometry, a library search approach is widely used for solving the inverse problem [25, 62]. For library search the chi-square value is computed for all elements in a pre-generated database. The database can contain thousands of scattering intensity profiles for different structures, and it is effectively only limited by the available time for generation of the database, which can be of the order of hours on a normal desktop computer. An example of experimental data and a best fit found using a library search is shown in figure 12(A). It can seem cumbersome to first generate a database and then perform the comparison. However, as the library search is an extremely fast algorithm, typically only a few ms, this approach is well suited for direct feed-back, e.g. when used in a production line. Another benefit of the library search algorithm is that it finds the global minimum within the pre-defined parameter range, which can be a challenge when using the direct optimization [117]. To increase the resolution one can subsequently perform a direct optimization with the values found using the library search as the initial parameters [118]. Instead of a pre-generated database, it has also been shown that a simple model based on e.g. scalar diffraction theory can be used for the initial guess, and subsequently a local optimization using RCWA simulations to increase the accuracy of the fit [42]. One will always find a ‘best fit’ when using the library search approach. Here the user has to be aware that if the true value is outside the pre-generated database, the given solution from the library search is not valid. And worse, even a faulty pre-generated database, where say wrong optical constants have been used, will give out an answer. Often these errors can be spotted by a skilled operator by comparing the best fit to the experimental values ‘by eye’. A more quantitative
+19
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ evaluation can be made by performing an uncertainty analysis of the fitting variables as will be described in the next section. Another approach is to estimate the confidence limits of the fitting parameters based on using constant chi square boundaries [110]. Given that cmin
+2 is the global minimum found in the library search, a new chi-square distribution is calculated using Dc = c - c
+nn
+22 min
+2 for ν degrees of freedom. To find the confidence limit of a
+single parameter, ν=1, the relations Dcn < 1,
+2
+Dcn < 4
+2 or Dcn < 9
+2 should be fulfilled to give the confidence intervals of 68%, 95% or 99.7%, respectively
+[110]. One should note that for calculation of the Dcn2 a
+non-normalized version of equation (37) should be used. The confidence limits can be visualized for up to two grating shape parameters using contour plots [17]. From the contour plots in figure 12(B) the best estimate for the grating shape parameters are found to height=(319±2) nm, filling factor=0.520±0.001 and side wall angle=(88±2)°, where ±indicates the 95% confidence limits [16]. It should be emphasized that the confidence limit only gives an uncertainty estimate of the parameters included in the analysis and the uncertainties on the modeled values are not taking into account. For instance, the optical parameters n and k are critical parameters and the influence of their associated uncertainties are not taken into account when using the constant chi square boundary method.
+4.4. Uncertainty analysis for library search
+Having obtained the best database profile α0 from the previous section, one can obtain an improved result by
+interpolation of the database points. A first order correction may be obtained in the following way. Let the simulated diffraction efficiency ηtheory be expanded to first order in α0; thus
+h ah a
+ha
+aa
+WW W
+»
++¶
+¶ D,
+,,
+, 48
+ii
+i
+theory theory 0
+theory 0
+() ( )
+( ) ()
+where Da = a - a0. The chi-square value can then be approximated as
+hh h
+c » - -¶ a a
+¶D
+⎛
+⎝⎜ ⎞
+⎠⎟
+N
+1 , 49
+2 theory
+theory 2
+()
+where ¶h ¶a
+theory
+( ) is the Jacobian matrix estimated
+from neighboring points of the optimum profile a0. For a given profile, the number of rows and columns in the Jacobian matrix is given by the number of adjustable profile parameters and the number of calculated diffraction efficiency points. The difference Δα is found by solving the equation
+ah
+a
+hh dh
+D =S ¶
+¶
+
+⎛
+⎝⎜ ⎞
+⎠⎟ ⎛
+⎝⎜ ⎞
+⎠⎟, 50
+theory theory
+()
+where S. is the covariance matrix and given by the
+inverse of ¶h ¶a ¶h ¶a .
+theory T theory
+( ) ( ) The diagonal elements of the covariance matrix are the variances u ai ,
+2 ( ) and the off-diagonal matrix elements u ai, aj,
+( ) are the covariances between the fitted elements αi and αj. The uncertainty for a given variable
+is then given as u a = k u a ,
+ii
+2
+( ) ( ) where k is the confidence factor. A value of k=1, k=2 and k=3 corresponds to a confidence interval of approximately
+Figure 12. Scatterometry data and analysis of a 1D grating with a 1000 nm pitch. (A) Wavelength dependent diffraction efficiencies and best fit. The black solid line is experimental data and the red curve is the best fit found using a library search strategy. The insert
+shows the raw data with the reference, sample, and dark signals from top to bottom. (B) 2D plots of the Δχ2 values. Dark blue areas indicate a better agreement with simulated values. The white dashed lines indicate the 95% confidence interval of the fit estimated using constant chi square boundaries. Figure adapted with permission from [16].
+20
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ 68%, 95% and 99.7%, respectively. The correlation between the profile parameters αi and αj is given by
+aa aa
+aa
+r =u
+uu
+, , . 51
+ij
+ij
+ij
+,
+,
+()()
+( )( ) ( )
+As a rule of thumb, an acceptable solution has been found if the chi-square value is small (typically χ2<2)
+and the acceptance criteria r a , a < 0.8, i 1 j
+i j,
+( ) is fulfilled for all linearly independent parameters.
+4.5. Instrument uncertainties
+For metrology measurements the scatterometer has to be calibrated and the sources of errors should be known [42, 111, 119, 120]. The most important sources of errors, including both random and systematic uncertainty contributions, for a scatterometer instrument are
+(1) Detector noise.
+(2) Light fluctuations.
+(3) Long term stability of the light source.
+(4) Polarization of the light.
+(5) Incident angle.
+(6) Wavelength of the detected light.
+(7) Orientation of the sample.
+(8) Light losses in the system.
+(9) Incomplete collection of the scattered light.
+The first two sources are random errors (Type A). They can be reduced by collecting more light, either by increasing the integration time or averaging of data sets. The analysis of random errors in scatterometry experiments is handled very well by the least square analysis. The remaining sources lead to systematic errors (type B) in the scatterometry measurements and obtaining more data does not help to reduce these errors. Systematic errors are not corrected by the least square analysis. Therefore, it is important to identify the sources of these errors and minimize them when possible. As an example, the long term stability of the light source can be monitored by a secondary detector, and all data can then be corrected in the postprocessing. The instrument uncertainties should be combined with the uncertainties related to the mathematically modeling and the input parameters to this, e.g. the optical properties of the used materials, to set up a full uncertainty budget. In the joint research project ‘Metrology of small structures for the manufacturing of electronic and optical devices’ part of the European Metrology Research Programme, the National Metrology Institutes from Germany (PTB) and Denmark (DFM) developed a full uncertainty budget for scatterometry and ellipsometry [121]. Traceable
+measurements with a standard uncertainty of less than 1 nm were demonstrated in the project.
+5. Industrial use
+The first applications of scatterometry in the semiconductor industry were monitoring of etch processes [34] and measurements on integrated circuit masks in various stages of the production [35]. Using a simple hemispherical detector, Hatab et al measured the trench depth of dynamic random access memory devices in 1995. A study by Lee et al showed that in situ quantitative information of the topography of gratings could be retrieved by monitoring the specularly reflected light, provided that the computational speed was increased [122]. For more examples of the early development of industrial applications of scatterometry the reader is referred to [26]. In the new millennium, a number of studies of in situ measurements using scatterometry were presented. With an infrared scatterometry system inside a deep reactive-ion etch instrument, Bosch-Charpenay et al demonstrated real-time etch-depth measurements of microelectromechanical systems [123]. In 2004 one of the few papers using one of the big commercial instruments presented a feasibility study for sub-nanometer in-line CD control [124]. For in situ resist trimming scatterometry has also been demonstrated as a valuable tool for controlling the profile of grating structures [125]. Today, scatterometry is widely used in the semiconductor industry and provides state-of-art measurements in the production lines of computer chips. With commercially available instruments, though out of reach for a normal research budget, the overlay accuracy can be measured with an uncertainty of less than 0.5 nm (k=3) [19]. The metrology demand from the semiconductor industry is continuously increasing. Some of the metrology challenges listed in the ‘International Technology Roadmap for Semiconductors’ from 2013 are [126]: the need for integrated inline metrology tools to reduce scrap rate and increase product quality, reducing the size of test pattern areas, measuring on other materials than silicon, and measure on the always decreasing structures. Another field, where scatterometry has been used, is monitoring of crystal growth processes. The growth dynamics of nanowires fabricated using a bottom up approach is very complex and changes at all stages in the growth [127]. It has been demonstrated that monochromatic x-rays can be used for detailed analysis of the crystal formation rates of nanowires [128]. However, this requires large facilities, and monitoring using visible light is much easier to implement in a normal growth system [129]. With the improvements of nano-texturing surfaces in other materials than semi-conductors, scatterometry has found applications in fields from
+21
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ microfluidic channels [15], to R2R applications [81] and injection molded plastic, see figure 13. The nanotextured injection molded bricks were fabricated using a steel insert patterned by nanoimprint lithography [130]. For fast characterization of the injection molded parts, the robust spectroscopic scatterometer described in section 2 was set up directly next to the heavy injection molding machine. Samples could be measured directly after fabrication and the scatterometer could be used to give direct feed-back to the injection molding parameters, e.g. injection pressure, hold time and temperature. The nano-textured surface of the samples was optimized to diffract as much light as possible into the ±1 orders, and therefore a high quality sample (steep side walls) generally exhibits lower diffraction efficiencies for the zeroth order than low quality samples (rounded corners).
+6. Outlook
+With many new products utilizing nano-textured surfaces entering the market, the demand for in-line metrology solutions for fast and accurate characterization in the nm-regime is rapidly increasing. As scatterometry is an ideal technique for quality control of mass production, some of the most obvious production methods for applying scatterometry are injection molding and R2R fabrication. However, before the industries begin to use scatterometry in the production lines at a large scale, several challenges have to be overcome. First of all, there is a need for more user friendly scatterometry solutions. At the moment scatterometry is for experts with the abilities to devise advanced models and experiments. With a
+more user-friendly approach, more industries will probably begin to pick up the technology. In the project ‘Metrology for Highly Parallel Manufacturing’, part of the European Metrology Programme for Innovation and Research (EMPIR), the industrial applications of scatterometry, and several other promising technologies, are investigated [131]. It is the goal of the project to deliver faster and more accurate surface measurements to provide in-line feedback to large scale manufacturing processes. A second challenge is that scatterometry is a nonimaging technique. In general, the direct visualization when using an imaging characterization technology makes the uptake of the new technology much easier, as it can be conceptually difficult for an operator to validate measurements of surface topography without an image. As scatterometry is built on the principles of measuring the intensity of scattered light, it is easiest and most precise to use it on 1D or 2D gratings. Many products for the consumer market do not fulfill this. However, this can be overcome by using designated test areas with representative gratings. This technique has been used for many years in the print industry where the edge of a paper is used for testing and in the semi-conductor industry where scribe lines are used as test patterns. However, using test patterns requires a good understanding and correlation between the designated areas and the real structures of interest. Also the design of test areas has recently attracted interest for improvement of the precision of the measurement and at the same time reducing the target areas [132]. A challenge when reducing the test structures is that the acquisition time increases and/or the precision is reduced, as illustrated in figure 14. As a general rule of thumb, one can improve the
+Figure 13. Scatterometry of injection molded plastic bricks with a nano-textured surface. (A) Image of a very robust spectroscopic scatterometer placed next to a large injection molding machine in a production environment. (B) Diffraction efficiency spectra for two injection molded bricks with the same pattern but different molding parameters. The inserts show images of the bricks in ambient light conditions.
+22
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ scatterometry measurements in two of the three parameters: speed, precision and target size, but not in all of them at the same time. With the ever decreasing size of test areas, we expect to eventually see industrial scatterometry measurements on single features. The surface form, e.g. roundness, influences the scatterometry measurements. New characterization techniques and algorithms should be developed for compensation of the effect introduced by the surface form. Also the surface roughness is important to take into considerations. It has been demonstrated that the perturbation of the light due to roughness can be treated independently of scattering on periodic structures either before or after the interaction with the periodic structures [133]. However, this is still an important point, which should be further improved, especially as scatterometry begins to find usage in materials far less ideal than silicon. Correction of the line-edge of a grating is a similar perturbation that one needs to correct for [134, 135]. Another challenge for scatterometry is calibration of the instruments. The first steps towards a reference standard for scatterometry were described in 2012 [136] with focus on improving the tool-to-tool matching between scatterometers, CD-AFMs and CD-SEMs. The first data for such a reference standard was presented in 2015 [137] where a comparison of SEM, AFM, EUV scatterometry and Mueller polarimetry was made. These high quality samples should eventually be commercially available and pave the way for traceable scatterometry measurements. As pointed out by Asano et al it is risky to build the analysis solely on scatterometry and one should also include a sampling plan with e.g. SEM analysis [138]. Here the tool-totool matching is important for lowering the combined uncertainties [139].
+7. Summary
+In this review, we have looked at the basic principles of scatterometry going from the development of the first scatterometers and software, to the future applications
+of scatterometry. Scatterometry is based on an inverse modeling approach and the workflow for performing such measurements is essential. We have discussed the three steps in the workflow: the experimental measurements, the simulation of diffraction efficiencies and the comparison. A wide variety of scatterometers can be found and these can roughly be put into three groups: angular scatterometer, spectroscopic scatterometers and others, which include the hemispherical detectors. Experimental data has been presented for both angular and spectroscopic scatterometers in configurations targeting analysis of gratings with a pitch much longer than the wavelength of light (Γ?λ) and for gratings with a pitch comparable to the wavelength (Γ∼λ), respectively. Simulations of the diffraction efficiencies are preferentially performed using RCWA algorithms due to their high speed compared to FEM and FDTD and their multiple grating shapes compared to the simple scalar diffraction theory. As an example, RCWA has been used to perform simulations for finding the height, the filling factor and the sidewall angle of a 1D grating. For the comparison part, we have focused on two techniques: direct optimization and library search. Using direct optimization the diffraction efficiencies are calculated on the fly and selected free parameters are varied, e.g. using a differential evolution algorithm, in order to find a best match between model and data. For the library search approach, all values in a pre-generated database are compared to the experimental values. It can be time consuming to generate a large database, but once generated, the library search method is very fast and can be performed in a few ms. Two methods for uncertainty calculation have been presented in this review. In the uncertainty analysis for direct optimization a general least square analysis approach is presented that might be used to calculate both instrument and grating parameter uncertainties according to the GUM. The uncertainty analysis for library search method is much simpler and much faster but it can only be used for uncertainty calculation of the grating parameter. In the last decades, scatterometry has matured to be a fast, precise and accurate characterization technique. It has evolved from measurements of simple grating parameters in the 1990s to today’s in-line characterization of full wafers with sub-nm uncertainty. With more user-friendly scatterometers and software packages being developed, scatterometry is ready to be taken up by new industries such as injection molding and R2R companies.
+Acknowledgments
+We would like to thank Lars Nielsen for fruitful discussions on uncertainty analysis and Carsten Thirstrup for proof-reading of the manuscript. This project has received funding from the EMPIR
+Figure 14. Selection of areas to improve scatterometry. One can choose any two of the focus areas, but not all three. In other words, it is not possible to reduce the test target area, increase the precision and shorten the acquisition time at the same time.
+23
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ programme co-financed by the Participating States and from the European Union’s Horizon 2020 research and innovation programme through the project 14IND09 MetHPM. We also acknowledge the financial support from Eurostars project E8875InFoScat. This work has been supported by funds from the The Danish Agency for Science, Technology and Innovation.
+References
+[1] Rittenhouse D 1786 An optical problem proposed by F Hopkinson and solved J. Am. Phil. Soc. 201 202–6 [2] Young T 1802 The theory of light and colours Phil. Trans. R Soc. 92 12–48
+[3] Popov E 2012 Introduction to diffraction gratings: summary of applications Gratings: Theory and Numeric Applications ed E Popov (Institut Fresnel, CNRS, AMU) ch 1 (Available from: http://www.fresnel.fr/files/gratings/test1v2.htm) [4] Ricci L et al 1995 A compact grating-stabilized diode laser system for atomic physics Opt. Commun. 117 541–9 [5] Isiho H, Minowa J and Nosu K Review and status of multiplexing technology 1984 J. Lightwave Technol. 2 448–63 [6] Srinivasarao M 1999 Nano-optics in the biological world: beetles, butterflies, birds, and moths Chem. Rev. 99 1935–62 [7] Saito A 2011 Material design and structural color inspired by biomimetic approach Sci. Technol. Adv. Mater. 12 064709 [8] Andkjær J, Johansen V E, Friis K S and Sigmund O 2014 Inverse design of nanostructured surfaces for color effects J. Opt. Soc. Am. B 31 164
+[9] Kinoshita S, Yoshioka S and Miyazaki J 2008 Physics of structural colors Rep. Prog. Phys. 71 076401 [10] Clausen J S et al 2014 Plasmonic metasurfaces for coloration of plastic consumer products Nano Lett. 14 4499–504 [11] Goh X M et al 2014 Three-dimensional plasmonic stereoscopic prints in full colour Nat. Commun. 5 5361 [12] Kumar K, Duan H, Hegde R S, Koh S C W, Wei J N and Yang J K W 2012 Printing colour at the optical diffraction limit Nat. Nanotechnol. 7 557–61
+[13] Guo Z and Liu W 2007 Biomimic from the superhydrophobic plant leaves in nature: binary structure and unitary structure Plant Sci. 172 1103–12
+[14] Koch K and Barthlott W 2009 Superhydrophobic and superhydrophilic plant surfaces: an inspiration for biomimetic materials Phil. Trans. R Soc. A 367 1487–509 [15] Calaon M et al 2015 Replication fidelity assessment of large area sub-μm structured polymer surfaces using scatterometry Surf. Topogr. Metrol. Prop. 3 045005
+[16] Madsen M H, Hansen P E, Bilenberg B and Karamehmedović M 2015 Characterization of nano-textured samples in a production environment Proc. EUspen (Leuven) [17] Madsen M H, Hansen P-E, Zalkovskij M, Karamehmedović M and Garnæs J 2015 Fast characterization of moving samples with nano-textured surfaces Optica 2 301 [18] Leach R et al 2015 Open questions in surface topography measurement: a roadmap Surf. Topogr. Metrol. Prop. 3 013001 [19] Smilde H-J H et al 2012 Evaluation of a novel ultra small target technology supporting on-product overlay measurements Proc. SPIE 8324 83241A [20] Conrad E W and Paul D P 1999 Method and apparatus for measuring the profile of small repeating lines US 5963329 A [21] Xu Y and Abdulhalim I 2002 Spectroscopic scatterometer system US 6483580 B1 [22] Den Boef A J and Dusa M 2008 Inspection apparatus and method of inspection US 7315384 B2 [23] Qin D, Xia Y and Whitesides G M 2010 Soft lithography for micro- and nanoscale patterning Nat. Protoc. 5 491–502
+[24] Calaon M, Hansen H N, Tosello G, Garnaes J, Nørregaard J and Li W 2015 Microfluidic chip designs process optimization and dimensional quality control Microsyst. Technol. 21 561–70
+[25] Raymond C J 2001 Scatterometry for semiconductor
+metrology Handbook of Silicon Semiconductor Metrology ed A C Diebold (New York: Marcel Dekker) pp 477–514 [26] Raymond C 2005 Overview of scatterometry applications in high volume silicon manufacturing Charact. Metrol. ULSI Technol. 2005 788 394–402
+[27] Chapman H N and Nugent K A 2010 Coherent lensless x-ray imaging Nat. Photonics 4 833–9
+[28] Witte S, Tenner V T, Noom D W and Eikema K S 2014 Lensless diffractive imaging with ultra-broadband table-top sources: from infrared to extreme-ultraviolet wavelengths Light Sci. Appl. 3 e163
+[29] Hoppe W 1969 Diffraction in inhomogeneous primary light fields: II. Principle of phase determination from electron diffraction interference Acta Crystllogr. A 25 495–501 [30] Greenbaum A et al 2012 Imaging without lenses: achievements and remaining challenges of wide-field on-chip microscopy Nat. Methods 9 889–95 [31] Zheng G, Horstmeyer R and Yang C 2013 Wide-field highresolution Fourier ptychographic microscopy Nat. Photonics 7 739–45
+[32] Hiroyuki F 2007 Spectroscopic Ellipsometry: Principles and Applications (New York: Wiley) [33] Tompkins H G and Irene E A (ed) 2005 Handbook of Ellipsometry (Norwich, Heidelberg: William Andrew Pub., Springer) p 870 [34] Kleinknecht H P and Meier H 1978 Optical monitoring of the etching of SiO2 and Si3N4 on Si by the use of grating test patterns J. Electrochem. Soc. 125 798
+[35] Kleinknecht H P and Meier H 1980 Linewidth measurement on IC masks and wafers by grating test patterns Appl. Opt. 19 525
+[36] Bennett H E and Porteus J O 1961 Relation between surface roughness and specular reflectance at normal incidence J. Opt. Soc. Am. 51 123 [37] Stover J C 1995 Optical Scattering: Measurement and Analysis (WA: SPIE Optical Engineering Press) [38] Chernoff D A, Buhr E, Burkhead D L and Diener A 2008 Picometer-scale accuracy in pitch metrology by optical diffraction and atomic force microscopy Proc. SPIE 6922 69223J–11 [39] Bishop K P, Gaspar S M, Milner L-M, Naqvi S S H and McNeil J R 1991 Grating line shape characterization using scatterometry Proc SPIE 1545 64–73 [40] Naqvi S S H, Gaspar S, Hickman K, Bishop K and McNeil J 1992 Linewidth measurement of gratings on photomasks: a simple technique Appl. Opt. 31 1377 [41] Naqvi S S H et al 1994 Etch depth estimation of large-period silicon gratings with multivariate calibration of rigorously simulated diffraction profiles J. Opt. Soc. Am. A 11 2485–93 [42] Hansen P-E and Nielsen L 2009 Combined optimization and hybrid scalar–vector diffraction method for grating topography parameters determination Mater. Sci. Eng. B 165 165–8 [43] Wurm M, Pilarski F and Bodermann B 2010 A new flexible scatterometer for critical dimension metrology Rev. Sci. Instrum. 81 023701
+[44] Scholze F, Tummler J and Ulm G 2003 High-accuracy radiometry in the EUV range at the PTB soft x-ray beamline Metrologia 40 S224–8
+[45] Gross H, Rathsfeld A, Scholze F and Bär M 2009 Profile reconstruction in extreme ultraviolet (EUV) scatterometry: modeling and uncertainty estimates Meas. Sci. Technol. 20 105102 [46] Kato A and Scholze F 2010 Effect of line roughness on the diffraction intensities in angular resolved scatterometry Appl. Opt. 49 6102–10 [47] Gross H, Henn M-A, Heidenreich S, Rathsfeld A and Bär M 2012 Modeling of line roughness and its impact on the
+24
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ diffraction intensities and the reconstructed critical dimensions in scatterometry Appl. Opt. 51 7384 [48] Kato A, Burger S and Scholze F 2012 Analytical modeling and three-dimensional finite element simulation of line edge roughness in scatterometry Appl. Opt. 51 6457–64 [49] Feidenhans’l N A et al 2015 Comparison of optical methods for surface roughness characterization Meas. Sci. Technol. 26 085208 [50] Robert S, Ravaud A M, Reynaud S, Fourment S, Carcenac F and Arguel P 2002 Experimental characterization of subwavelength diffraction gratings by an inverse-scattering neural method J. Opt. Soc. Am. A 19 2394 [51] Robert S, Mure-Ravaud A, Thiria S, Yacoub M and Badran F 2004 Neural selection of the optimal optical signature for a rapid characterization of a submicrometer period grating Opt. Commun. 238 215–28
+[52] Wei S and Li L 2008 Measurement of photoresist grating profiles based on multiwavelength scatterometry and artificial neural network Appl. Opt. 47 2524 [53] Paul O, Widulle F, Kleemann B H and Heinrich A 2013 Nanometrology of periodic nanopillar arrays by means of light scattering Proc. SPIE 8788 87881O [54] Raymond C J 1995 Metrology of subwavelength photoresist gratings using optical scatterometry J. Vac. Sci. Technol. B 13 1484 [55] Ko C-H, Ku Y, Smith N, Shyu D-M, Wang S-C and Lu S-H 2005 Comparisons of overlay measurement using conventional bright-field microscope and angular scatterometer Proc. SPIE 5752 987–96 [56] Raymond C J, Murnane M R, Prins S L, Naqvi S S H, McNeil J R, Hosch J W and Multiparameter C D 1996 measurements using scatterometry Proc. SPIE 2725 698–709 [57] Bischoff J, Baumgart J W, Truckenbrodt H and Bauer J J 1996 Photoresist metrology based on light scattering Proc. SPIE 2725 678–89
+[58] Ku Y-S, Wang S-C, Shyu D-M and Smith N 2006 Scatterometry-based metrology with feature region signatures matching Opt. Express. 14 8482 [59] Bischoff J, Hutschenreuther L, Truckenbrodt H, Bauer A, Haak U and Skaloud T 1999 Characterization of 3D resist patterns by means of optical scatterometry Proc. SPIE 3743 49–60 [60] Shyu D-M, Ku Y-S and Smith N 2007 Angular scatterometry for line-width roughness measurement Proc. SPIE 6518 65184G–10 [61] Niu X, Jakatdar N H, Bao J, Spanos C J and Yedur S K 1999 Specular spectroscopic scatterometry in DUV lithography Proc. SPIE 3677 159–68
+[62] Niu X, Jakatdar N, Bao J and Spanos C J 2001 Specular spectroscopic scatterometry IEEE Trans. Semicond. Manuf. 14 97–111 [63] Garnaes J, Hansen P-E, Agersnap N, Holm J, Borsetto F and Kühle A 2006 Profiles of a high-aspect-ratio grating determined by spectroscopic scatterometry and atomic-force microscopy Appl. Opt. 45 3201–12 [64] Madsen M H and Hansen P E 2016 Imaging scatterometry for flexible measurements of patterned areas Opt. Express 24 1109–117 [65] Logofatu P-C and McNeil J R 2001 Measurement precision of optical scatterometry Proc. SPIE 4344 447–53 [66] Allgair J A et al 2000 Manufacturing considerations for implementation of scatterometry for process monitoring Proc. SPIE 3998 125–34
+[67] Maas J et al 2011 YieldStar: a new metrology platform for advanced lithography control Proc. SPIE 7985 79850H [68] Atlas II + [Internet] (cited 14 August 2015) Available from: (http://nanometrics.com/products/scatterometry.html) [69] SpectraShape Family [Internet] (cited 14 August 2015) Available from: (http://kla-tencor.com/Metrology/ spectrashape-family.html#spectrashape) [70] Madsen M H et al 2013 A classroom demonstration of reciprocal space Am. J. Phys. 81 274
+[71] Hatab Z R 1995 Sixteen-megabit dynamic random access memory trench depth characterization using twodimensional diffraction analysis J. Vac. Sci. Technol. B 13 174 [72] Boher P, Luet M, Leroux T, Petit J, Barritault P, Hazart J, Chaton P et al 2004 Innovative rapid photogoniometry method for CD metrology Proc. SPIE 5375 [73] Hazart J, Barritault P, Garcia S, Leroux T, Boher P and Tsujino K 2007 Robust sub-50 nm CD control by a fastgoniometric scatterometry technique Proc. SPIE 6518 65183A [74] Boher P et al 2005 Optical Fourier transform scatterometry for LER and LWR metrology Proc. SPIE 5752 192–203 [75] Madsen M H, Boher P, Hansen P-E and Jørgensen J F 2016 Alignment free characterization of 2D gratings Appl. Opt. 55 317–22 [76] Silver R M et al 2007 Scatterfield microscopy for extending the limits of image-based optical metrology Appl. Opt. 46 4248–57 [77] Barnes B M, Attota R, Quintanilha R, Sohn Y-J and Silver R M 2011 Characterizing a scatterfield optical platform for semiconductor metrology Meas. Sci. Technol. 22 024003 [78] El Gawhary O, Kumar N, Pereira S F, Coene W M J and Urbach H P 2011 Performance analysis of coherent optical scatterometry Appl. Phys. B 105 775–81 [79] Kumar N et al 2012 Coherent Fourier scatterometry: tool for improved sensitivity in semiconductor metrology Proc. SPIE 8324 83240Q [80] Roy S, Kumar N, Pereira S F and Urbach H P 2013 Interferometric coherent Fourier scatterometry: a method for obtaining high sensitivity in the optical inverse-grating problem J. Opt. 15 075707 [81] Petrik P et al 2014 Optical characterization of macro-, microand nanostructures using polarized light J. Phys.: Conf. Ser. 558 012008 [82] Ferreras Paz V, Peterhansel S, Frenner K and Osten W 2012 Solving the inverse grating problem by white light interference Fourier scatterometry Light Sci. Appl. 1 e36 [83] Goodman J W 1996 Introduction to Fourier Optics 2nd edn (New York: McGraw Hill) [84] Harvey J E, Vernold C L, Krywonos A and Thompson P L 1999 Diffracted radiance: a fundamental quantity in nonparaxial scalar diffraction theory Appl. Opt. 38 6469–81 [85] Pommet D A, Moharam M G and Grann E B 1994 Limits of scalar diffraction theory for diffractive phase elements J. Opt. Soc. Am. A 11 1827–34
+[86] Gremaux D A and Gallagher N C 1993 Limits of scalar diffraction theory for conducting gratings Appl. Opt. 32 1948–53 [87] Harvey J E, Krywonos A and Bogunovic D 2006 Nonparaxial scalar treatment of sinusoidal phase gratings J. Opt. Soc. Am. A 23 858–65 [88] Kogelnik H 1969 Coupled wave theory for thick hologram gratings Bell Syst. Tech. J. 48 2909–47
+[89] Peng S T, Tamir T and Bertoni H L 1975 Theory of periodic dielect waveguides IEEE Trans. Microw. Theory Tech. 23 123–33 [90] Moharam M G and Gaylord T K 1981 Rigorous coupledwave analysis of planar-grating diffraction J. Opt. Soc. Am. 71 811
+[91] Moharam M G and Gaylord T K 1982 Diffraction analysis of dielectric surface-relief gratings J. Opt. Soc. Am. 72 1385–92 [92] Moharam M G, Gaylord T K, Grann E B and Pommet D A 1995 Formulation for stable and efficient implementation of the rigorous coupled-wave analysis of binary gratings J. Opt. Soc. Am. A 12 1068–76
+[93] Moharam M G, Pommet D A, Grann E B and Gaylord T K 1995 Stable implementation of the rigorous coupled-wave analysis for surface-relief gratings: enhanced transmittance matrix approach J. Opt. Soc. Am. A 12 1077–86 [94] Granet G and Guizal B 1996 Efficient implementation of the coupled-wave method for metallic lamellar gratings in TM polarization J. Opt. Soc. Am. A 13 1019
+25
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen
+
+
+ [95] Lalanne P and Morris G M 1996 Highly improved convergence of the coupled-wave method for TM polarization J. Opt. Soc. Am. A 13 779–84 [96] Li L 1996 Use of Fourier series in the analysis of discontinuous periodic structures J. Opt. Soc. Am. A 131870 [97] Lalanne P 1997 Improved formulation of the coupled-wave method for two-dimensional gratings J. Opt. Soc. Am. A 14 1592 [98] Li L 1997 New formulation of the Fourier modal method for crossed surface-relief gratings J. Opt. Soc. Am. A 14 2758 [99] Schuster T, Ruoff J, Kerwien N, Rafler S and Osten W 2007 Normal vector method for convergence improvement using the RCWA for crossed gratings J. Opt. Soc. Am. A 24 2880
+[100] Nevière M and Popov E 2003 Light Propagation in Periodic Media: Differential Theory and Design (New York: Dekker) p 410 [101] Götz P, Schuster T, Frenner K, Rafler S and Osten W 2008 Normal vector method for the RCWA with automated vector field generation Opt Express 16 17295 [102] Antos R 2009 Fourier factorization with complex polarization bases in modeling optics of discontinuous bi-periodic structures Opt. Express 17 7269 [103] Antos R and Veis M 2010 Fourier factorization with complex polarization bases in the plane-wave expansion method applied to two-dimensional photonic crystals Opt. Express 18 27511 [104] Liu V and Fan S 2012 S4: a free electromagnetic solver for layered periodic structures Comput. Phys. Commun. 183 2233–44 [105] LightTrans—Optical Engineering, Optics Software VirtualLab, Diffractive Optical Elements (DOE) Fabrication: Solutions Overview [Internet] (cited 24 September 2015) Available from: (http://lighttrans.com/) [106] Diffraction Grating Simulation Software from KJ Innovation | Scientific programming software from KJ Innovation [Internet] (cited 24 September 2015) Available from: (http:// software.kjinnovation.com/GD-Calc.html) [107] InFoScat—home [Internet] (cited 24 September 2015) Available from: (http://infoscat.com/) [108] Grating Solver Development Co. [Internet] (cited 24 September 2015) Available from: (http://gsolver.com/) [109] Hansen P-E and Burger S 2013 Investigation of microstructured fiber geometries by scatterometry Proc. SPIE 8789 87890R [110] Press W H, Teukolsky S A, Vetterling W and Flannery B P 1995 Numerical Recipes in C, The Art of Scientific Computing 2nd edn (Cambridge: Cambridge University Press) [111] Silver R et al 2007 Fundamental limits of optical critical dimension metrology: a simulation study Proc. SPIE 6518 65180U–17 [112] Krukar R H et al 1926 Using scattered-light modeling for semiconductor critical dimension metrology and calibration Proc. SPIE 1993 60–71
+[113] Kallioniemi I, Saarinen J and Oja E 1998 Optical scatterometry of subwavelength diffraction gratings: neuralnetwork approach Appl. Opt. 37 5830 [114] Storn R and Price K 1997 Differential evolution—a simple and efficient heuristic for global optimization over continuous spaces J. Glob. Optim. 11 341–59 [115] Evaluation of measurement data—Guide to the expression of uncertainty in measurement [Internet] JCGM 100:2008; Available from: (http://bipm.org/en/publications/guides/ gum.html) [116] Nielsen L 2002 Evaluation of measurements by the method of least squares Algorithms for Approximation IV (University of Huddersfield)
+[117] Raymond C J, Littau M E, Chuprin A and Ward S 2004 Comparison of solutions to the scatterometry inverse problem Proc. SPIE 5375 564–75
+[118] Chen X, Liu S, Zhang C and Zhu J 2013 Improved measurement accuracy in optical scatterometry using fitting error interpolation based library search Measurement 46 2638–46 [119] Germer T A, Patrick H J, Silver R M and Bunday B 2009 Developing an uncertainty analysis for optical scatterometry Proc. SPIE 7272 72720T–11
+[120] Henn M-A, Gross H, Heidenreich S, Scholze F, Elster C and Bär M 2014 Improved reconstruction of critical dimensions in extreme ultraviolet scatterometry by modeling systematic errors Meas. Sci. Technol. 25 044003
+[121] Metrology of small structures for the manufacturing of electronic and optical devices: Home [Internet] (cited 30 September 2015 ) Available from: (https://ptb.de/emrp/ ind17-home.html) [122] Lee M E, Galarza C, Kong W, Sun W and Terry F L 1998 Analysis of reflectometry and ellipsometry data from patterned structures ASCE pp 331–5 [123] Bosch-Charpenay S et al 2002 Real-time etch-depth measurements of MEMS devices J. Microelectromech. Syst. 11 111–7 [124] Pollentier I et al 2004 In-line lithography cluster monitoring and control using integrated scatterometry Proc. SPIE 5378 105–15 [125] El Kodadi M, Soulan S, Besacier M and Schiavone P 2009 Real time scatterometry for profile control during resist trimming process J. Vac. Sci. Technol. B 27 3232
+[126] International Technology Roadmap For Semiconductors 2013 [Internet] (cited 1 September 2015) Available from: (http://itrs.net/ITRS%201999-2014%20Mtgs,% 20Presentations%20&%20Links/2013ITRS/2013Chapters/ 2013Metrology_Summary.pdf) [127] Krogstrup P et al 2013 Advances in the theory of III–V nanowire growth dynamics J. Phys. Appl. Phys. 46 313001 [128] Krogstrup P et al 2012 In-situ x-ray characterization of wurtzite formation in GaAs nanowires Appl. Phys. Lett. 100 093103 [129] Heurlin M, Anttu N, Camus C, Samuelson L and Borgström M T 2015 In situ characterization of nanowire dimensions and growth dynamics by optical reflectance Nano Lett. 15 3597–602 [130] Zalkovskij M et al 2015 Smart plastic functionalization by nanoimprint and injection molding Proc. SPIE 9423 94230T [131] Metrology for Highly Parallel Manufacturing [Internet] (cited 29 September 2015) Available from: (http://empir.npl.co. uk/methpm/project/) [132] Smilde H-J H et al 2015 Target design optimization for overlay scatterometry to improve on-product overlay Proc. SPIE 9424 942412 [133] Karamehmedović M, Hansen P-E and Wriedt T 2013 An efficient rough-interface scattering model for embedded nano-structures Thin Solid Films 541 51–6 [134] Germer T A 2007 Effect of line and trench profile variation on specular and diffuse reflectance from a periodic structure J. Opt. Soc. Am. A 24 696–701
+[135] Schuster T, Rafler S, Frenner K and Osten W 2008 Influence of line edge roughness (LER) on angular resolved and on spectroscopic scatterometry Proc. SPIE 7155 71550W–12 [136] Bodermann B et al 2012 First steps towards a scatterometry reference standard Proc. SPIE 8466 84660E [137] Agocs E et al 2015 Scatterometry reference standards to improve tool matching and traceability in lithographical nanomanufacturing Proc. SPIE 9556 955610 [138] Asano M, Ikeda T, Koike T and Abe H 2006 Evaluation of producer’s and consumer’s risks in scatterometry and scanning electron microscopy metrology for inline critical dimension metrology J. MicroNanolithography MEMS MOEMS 5 043006
+[139] Bunday B et al 2008 Impact of sampling on uncertainty: semiconductor dimensional metrology applications Proc. SPIE 6922 69220X
+26
+Surf. Topogr.: Metrol. Prop. 4 (2016) 023003 M H Madsen and P-E Hansen

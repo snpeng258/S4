@@ -1,0 +1,226 @@
+Vol.:(0123456789)
+13
+Nanomanufacturing and Metrology (2022) 5:149–158 https://doi.org/10.1007/s41871-022-00126-w
+ORIGINAL ARTICLE
+Analysis of Line‐Edge Roughness Using EUV Scatterometry
+Analía Fernández Herrero1 · Frank Scholze2 · Gaoliang Dai3 · Victor Soltwisch2
+Received: 19 October 2021 / Revised: 18 January 2022 / Accepted: 19 January 2022 / Published online: 2 March 2022 © The Author(s) 2022
+Abstract
+Smaller and more complex three-dimensional periodic nanostructures are part of the next generation of integrated electronic circuits. Additionally, decreasing the dimensions of nanostructures increases the effect of line-edge roughness on the performance of the nanostructures. Efficient methods for characterizing three-dimensional nanostructures are required for process control. Here, extreme-ultraviolet (EUV) scatterometry is exploited for the analysis of line-edge roughness from periodic nanostructures. In line with previous observations, differences are observed between line edge and line width roughness. The angular distribution of the diffuse scattering is an interplay of the line shape, the height of the structure, the roughness along the line, and the correlation between the lines. Unfortunately, existing theoretical methods for characterizing nanostructures using scatterometry do not cover all these aspects. Examples are shown here and the demands for future development of theoretical approaches for computing the angular distribution of the scattered X-rays are discussed.
+Keywords Line-edge roughness · LER · LWR · EUV scatterometry · Debye–Waller factor
+1 Introduction
+Structural elements of integrated electronic circuits are often formed by grating-like structures with very small periods. These lamellar gratings are affected by line-edge roughness that has been identified as the ultimate limiting factor in the production of nanostructured surfaces in the semiconductor industry [1]. State-of-the-art integrated electronic circuits are produced in several steps and any misplacement of the edge position can lead to a complete failure of the features [2]. Therefore, at present, almost 50% of the processes in production consist of metrology [3]. An in-line nondestructive method with high throughput and sensitivity is sought. Methods based on scatterometry are used as in-line metrology [3, 4]. Overlay metrology is used to characterize displacements between patterned layers with optical wavelengths. However, the accuracy is limited when asymmetry
+is present on the studied targets [2]. Grazing-incidence small-angle X-ray scattering (GISAXS) has been proposed as an alternative method for characterizing nanostructured surfaces. However, the elongated footprint leads to experimental [5] and data analysis challenges [6]. A recent comparison between EUV scatterometry and GISAXS has shown the potential of using softer X-rays to characterize nanostructured surfaces [7]. The characterization of nanostructures using X-ray (or EUV) scattering data relies on optimization methods based on a forward model. Forward models must be as faithful to the experimental conditions and as versatile as possible [8, 9] for a reliable reconstruction of the parameters and their uncertainties. Therefore, knowledge of the role of line-edge roughness in diffracted intensities is essential. A Debye–Waller factor (DWF) has been considered to account for the roughness in the scattered intensities [8, 10, 11–15]. Moreover, the applicability of the DWF in the reconstruction of binary gratings has been proposed [10, 16, 17]. Recently, the limits of application of the DWF for the characterization of three-dimensional nanostructures have been reported [9]. In the presence of roughness, the light gets scattered out of the diffraction orders producing a structured scattering pattern, where different phenomena have been identified [12, 13, 18]. However, the characterization and analysis of nanostructures based on the diffuse scattering pattern are rather complex [19].
+* Analía Fernández Herrero analia.fernandez_herrero@helmholtz-berlin.de
+1 Helmholtz-Zentrum Berlin, Albert-Einstein Str. 15, 12489 Berlin, Germany
+2 Physikalisch-Technische Bundesanstalt, Abbestr. 2–12, 10587 Berlin, Germany
+3 Physikalisch-Technische Bundesanstalt, Bundesallee 100, 38116 Braunschweig, Germany
+
+
+150 Nanomanufacturing and Metrology (2022) 5:149–158
+13
+Previous reports have indicated that the diffuse scattering signal from lamellar gratings can be decomposed in the analysis of the different frequencies [20–22]. This possibility would mean that in the absence of dynamical scattering, the diffuse scattering can be explained by the superposition of periodic binary samples. In this regard, the redistribution of the intensity for lamellar gratings with periodic roughness has been theoretically and experimentally investigated in the framework of critical-dimension small-angle X-ray scattering (CD-SAXS) [22–24] and EUV-scatterometry [20, 25]. Ultimately, the effect of the height of the structure, which is neglected in binary gratings, plays a crucial role in the distribution of the diffuse scattering [13]. In this manner, it was shown that the superposition of periodic binary gratings of different amplitudes could not explain the diffuse scattering pattern from stochastic samples [13, 26]. Additionally, the reported studies considered different types of line-edge roughness. According to the correlation between the edges of the lines, we can have line edge roughness (LER, correlated edges) or line width roughness (LWR, totally anticorrelated). The roughness types are distinguishable by the scattering out of the diffraction orders [13, 20] as predicted by Fourier optics using binary gratings [20]. In this work, we reviewed some of those concepts already reported for the characterization of line-edge roughness and the distinction between line-edge roughness and linewidth roughness. We extend the previous reports with other types of roughness distributions. Chirped roughness and a combination of LER and LWR with different correlation lengths and amplitudes are also included in this sample set. We show that the chirped roughness can also be explained by the superposition of binary gratings with periodic roughness. However, for the explanation of the diffuse scattering from stochastic roughness, this demonstration is not applicable. The roughness along the lines as well as the correlation between the lines and the height of the structures must be considered.
+2 Experimental Details
+2.1 Sample Set
+The set of samples was produced in the framework of the European Research Program Horizon 2020 to improve and benchmark the existing metrology methods in the semiconductor industry [27]. The investigated sample consists of 11 fields etched on silicon, as shown in Table 1. The reference grating is of 100-nm pitch and a nominal line width of 30 nm. The other fields are designed with a dedicated type of roughness: line edge roughness (LER), line width roughness (LWR), or a combination of both, and a dedicated roughness distribution (periodic, chirped, or random).
+A roughness-basis cell was designed depending on the type, distribution, amplitude (δ), and correlation length (Lc) of the roughness (for the stochastic samples) or roughness pitch ( pr). This roughness-basis cell is repeated to cover the grating area, which is approximately 8 mm × 0.5 mm. The subset with periodic roughness has a sinusoidal profile with a roughness pitch pr of 180 nm. The subset with chirped roughness has a roughness pitch pr that continuously varies from pr1 = 90 nm to pr2 = 360 nm over the length of l = 3600 nm following
+where fpr1
+=1
+pr1 and Δfpr = 1
+pr1
+−1
+pr2 . The initial phase is φ0.
+Depending on LER and LWR, both edges of the lines would be in phase or out of phase, respectively. The roughnessbasis cell of the chirped structure consists of the above signal and its mirrored profile. The x step size is given by the grid used in the manufacturing process and was 1 nm. For the stochastic roughness, different correlation lengths are considered, and for each the basis cell is 45 nm × 45 nm. Top-view SEM images from some of the samples are given in Fig. 1.
+2.2 Experimental Setup
+The measurements were conducted at the SX700 beamline at PTB’s laboratory at the electron storage ring BESSY II. This beamline delivers a photon energy range from 50 to 1800 eV and it is under UHV [28]. For the measurements, the photon wavelength of the beam was selected as 13.5 nm. A monochromatic beam with wavevector ki impinges on the sample at an incidence angle αi defined from the sample surface (Fig. 2). The elastically scattered beam with wavevector kf propagates along an exit angle αf and an azimuth angle θf . The momentum transfer is given by q = kf − ki,
+(1)
+y(x) = δ sin φ0 + 2πx fpr1
++ Δfpr
+2l x ,
+Fig. 1 SEM top view images from the sample set. LER samples have a period of 75 nm; all other samples, 100 nm
+
+
+Nanomanufacturing and Metrology (2022) 5:149–158 151
+13
+where k0 = 2π∕λ. An EUV angle resolved scattering chamber [29] was used. This prototype does not allow the rotation of the incident angle but the sample can be azimuthally rotated. A back-illuminated CCD detector is placed at the end of the chamber, approximately 15 mm from the sample and the incident angle is approximately 31 ◦. The grating samples were mounted in conical geometry, i.e., with the grating lines parallel to the incoming beam. Because of the limitations of the setup, the angle of incidence and distance must be evaluated using the double periodicity of the samples with periodic roughness. The position of the diffraction orders is given by the intersection of the grating truncation rods and the Ewald sphere. If an additional periodicity exists along the line, satellite orders appear [8, 20, 25]. By azimuthally rotating the sample, the position of the orders of diffraction changes and the orders are no longer symmetrically distributed around the zeroth order. The positions of the diffraction orders are given by,
+where n is the diffraction order given by the periodicity or pitch p and m is the satellite row given by the periodicity along the lines or pitch roughness, pr. Using the above equations, the positions in qz of the diffraction orders in reflecting condition, i.e., over the sample horizon, are
+(2)
+⎛
+⎜
+⎜ ⎝
+qx
+qy
+qz
+⎞
+⎟
+⎟ ⎠
+= k0
+⎛
+⎜
+⎜ ⎝
+cos(θf ) cos(αf ) − cos(αi) sin(θf ) cos(αf ) sin(αf ) + sin(αi)
+⎞
+⎟
+⎟ ⎠
+,
+(3)
+qx = n 2π
+p sin φ + m 2π
+pr
+cos φ,
+(4)
+qy = n 2π
+p cos φ + m 2π
+pr
+sin φ,
+The illumination time is adapted to each target to allow high counting rates without overexposing the detector. For these measurements, a pinhole of 320 mm was introduced in the beam path to reduce the footprint of the beam. Different samples scatter differently and the distribution of the intensity strongly depends on the period of the grating. Thus, the measurement time was estimated experimentally for each pitch size. The samples with a 75-nm pitch were measured for 10 s; the samples with a 100-nm pitch, for 20 s.
+3 Results
+All the samples were measured using EUV scatterometry with an incoming photon wavelength of 13.5 nm. Figure 3a shows the scattering pattern for the reference sample. Different distributions and amplitudes of the roughness lead to different scattering patterns (Figs. 3b and 4). Scattering patterns from samples with periodic or chirped roughness are dominated by the frequencies of the samples (Eqs. 3–5), as shown in Fig. 3b). The angular distribution of the scattering pattern from the samples with stochastic roughness (Fig. 4) is qualitatively different depending on the correlation length of the roughness. However, the intensity of the scattered light in (and out of) the diffraction orders highly depends on the amplitude of the roughness. The total intensity of the main diffraction orders (m = 0 in Eqs. 3–5) decreases with increasing roughness amplitudes. Small differences in the diffuse scattering are observed for different types or correlation lengths of the roughness (Fig. 5). The samples were
+(5)
+qz = k0
+��
+1−
+� mλ
+pr
+cos φ + nλ
+p sin φ + cos αi
+�2
+−
+� nλ
+p cos φ + mλ
+pr
+sin φ
+�2�1∕2
++ sin αi
+⎤
+⎥
+⎥ ⎦
+.
+Table 1 List of structure patterns with the characteristics, where p is the pitch. The CD is the nominal line width of the structures, δ is the maximum deviation of the line from a straight line, pr is the roughness pitch and Lc the correlation length of the roughness
+Roughness type Roughness dist. p/nm CD/nm δ/nm pr/nm Lc/nm
+Grating 1 None - 100 30 – – Grating 2 LER periodic 75 40 3 180 Grating 3 6 Grating 4 LWR periodic 100 30 3 180 Grating 5 6 Grating 6 LER chirped 75 40 6 90–360 Grating 7 LWR 100 30
+Grating 8 LER +
+LWR
+random 100 30 3 – 50 Grating 9 200 Grating 10 6 – 50 Grating 11 200
+
+
+152 Nanomanufacturing and Metrology (2022) 5:149–158
+13
+separated according to the pitch because the intensity of the diffraction orders highly depends on the structure and form factors of the investigated sample. The roughness amplitudes considered for the plot correspond to the line-edge roughness analysis using SEM reported by Levi et al. [27]. For the reference grating, no roughness was considered in the design, but in previous studies it was reported to be approximately 1 nm [27]. Figure 6 compares the trend of the ratio between the diffuse scattering and the diffracted light for EUV (at the incoming photon wavelength of 13.5 nm) and GISAXS. For GISAXS this ratio has been already studied for the applicability of the Debye–Waller factor for the characterization of three-dimensional nanostructures [9]. Despite the similar trend, there are differences on that ratio. GISAXS data
+correspond to the average of 21 different photon energies, while the EUV experiment corresponds to a single experimental setup using 13.5 nm as the incoming photon wavelength. The dark signal must be removed from the images obtained by the back-illuminated CCD detector, while in GISAXS the PILATUS detector allows single-photon counting. Additionally, inhomogeneities have also been observed in the CCD detector, and scattering events due to the defining-beam pinhole have been identified. These effects would contribute to the total intensity but not to the trend of the intensity within these measurements. To analyze the effect of different correlation lengths on the trend of the diffuse scattering, further studies are needed.
+Fig. 2 Sketch of the experimental setup. The inset on the left shows the direct imaging of the grating fields by projection with a collimated beam. The black circle shows the beam footprint for the scatter measurements
+Fig. 3 a Scattering pattern of the reference sample (grating 1). b Scattering patterns for the samples with LER (top) and LWR (bottom). The scattering patterns from the samples with periodic roughness correspond to the nominal roughness δ = 6 nm (on the left). The chirped roughness is on the right
+
+
+Nanomanufacturing and Metrology (2022) 5:149–158 153
+13
+3.1 Differences Between LER and LWR
+The recorded images for the different types of roughness (LER/LWR) show a distinct scattering pattern (Fig. 3b). The scattering patterns from samples with LER show no satellite order at the zeroth order of diffraction, see top image in Fig. 3b. In contrast, the samples with LWR have wellresolved satellite peaks at the zeroth order of diffraction.
+This difference has already been reported for samples with periodic roughness [13, 20] and can be qualitatively explained by using binary gratings in Fourier optics [20]. LER and LWR have different form factors that cause the satellite orders at the zeroth order to vanish or appear. Here, samples with chirped roughness are shown to also have this behavior. For the periodic and chirped roughness, the same phenomenon is observed. The scattering pattern is dominated by the periods on the sample, in the lateral direction, i.e., the pitch, and along the line. The angular distribution of the scattering out of the diffraction orders can be explained by the superposition of periodic binary gratings whose lines are fully correlated [20]. This assumption is also followed in the derivation of the Debye–Waller factor for lamellar gratings [10]. However, it has also been reported previously that stochastic LER or LWR has a distinct scattering pattern. Along the zeroth order of diffraction the same effect as the one observed for periodic roughness was reported [14, 25]. However, for the samples with LER, the maximum diffuse scattering signal is found between the orders and not along
+Fig. 4 Scattering patterns for the samples with stochastic roughness. The correlation length is 50 nm on the left and 200 nm on the right
+a
+b
+Fig. 5 Total intensity of the diffraction orders for the samples with a 75-nm pitch (samples with only LER) and b 100-nm pitch measured under the same conditions
+Fig. 6 Ratio between the diffuse scattering and the diffracted intensities for the stochastic and reference samples using EUV scatterometry
+Fig. 7 Scattering pattern of a sample with stochastic LER (top) and LWR (bottom) at 261 eV. This sample was reported elsewhere [13, 14]
+
+
+154 Nanomanufacturing and Metrology (2022) 5:149–158
+13
+the orders. This is shown in Fig. 7, where the scattering patterns from another sample with dedicated roughness [14, 25] are shown. An analogous experimental setup was used. The sample detector distance from the center of the sample was 40 mm. The incoming photon energy of the beam was 261 eV, and the beam size was approximately 0.5 mm × 0.5 mm. The experimental realization and its preliminary results have already been reported elsewhere [14]. The behavior at the zeroth order of diffraction for samples with stochastic roughness might be explained following the superposition of periodic solutions without considering the correlation between the lines, as for the chirped roughness. The diffuse scattering observed between the orders cannot be explained by the simple superposition of the nanostructures without considering the correlation between the lines. The impact of the height on the diffuse scattering has been identified as a further parameter to be included in future theoretical models [25]. Additionally, the correlation between the lines affects the angular distribution of the scattering signal and may move scatter intensity to between the regular orders as shown in Fig. 8. Figure 8 shows the Fourier transform of free-standing binary gratings with chirped roughness and one with shiftedchirped roughness. The first case is analogous to the ones reported here. In the latter case, the lines are shifted. The same frequencies of the roughness are chirped but have different starting frequencies, so that the lines are shifted to each other. For shifted roughness, a signal is also observed between the diffraction orders. Thus, the diffuse scattering must be explained including the height of the structures and considering the correlation between and along the lines [26]. This latter consideration is clearly explained here by
+considering a sample with chirped roughness and shiftedchirped roughness. The distribution of the diffuse scattering has also been shown to depend on the height of the structures [25]. Existing theories are based on the superposition of periodic rough gratings [10, 20, 21] where the effects of height and correlation of the lines are ignored.
+3.2 Quantification of Periodic Roughness Amplitudes
+The models that exist for the quantification and description of stochastic roughness using diffuse scattering are not sufficiently versatile. However, for the analysis of periodicroughness-induced scattering, analytical methods exist [20, 22, 24]. Here, the applicability of two of these methods is discussed. The third one predicts the effect of LER using another form factor of the structure with little evidence [24]. For the analysis of the two-dimensional frequencies (pitch grating and pitch roughness) of the samples, the scattering patterns in Fig. 3 are converted into qy-qx coordinates, where qx allows us to explore the pitch roughness-induced scattering.
+Figure 9 shows a cut at the first order of diffraction (qy = 2π
+p)
+and along qx for LER and at the zeroth order of diffraction qy = 0 for LWR. For LER, no modulation of the intensity is observed at the zeroth order of diffraction. For larger amplitudes of the roughness (see periodic cases), the intensity of the satellite orders increases as previous models predict [20, 22]. The two models used for comparison were developed in the framework of Fourier optics. The model of Kato et al. [20] is developed for EUV masks with sinusoidal profiles analyzed
+Fig. 8 Fourier transform of a free-standing binary grating with chirped roughness and shifted-chirped roughness
+
+
+Nanomanufacturing and Metrology (2022) 5:149–158 155
+13
+by EUV scatterometry. The model from Wang et al. [22] is developed for CD-SAXS, where the height of the structure is neglected and the roughness is considered in the form of boxes. The distribution of the intensity according to Kato’s model for LER is [20]
+where I0(qy, 0) is the intensity of the diffraction orders of an undisturbed grating (an ideal reference grating). Considering that the roughness produces the dispersion of the scattering along qx, the addition of the kinematic scattering for each qy coordinate would correspond to that of a non-rough grating. This assumption is used here to calculate the intensity of an undisturbed grating from the experimental data. The numer
+ator I(qy, m 2π
+pr
+) corresponds to the intensity of the satellite
+(6)
+modelK
+LER =
+I qy, m 2π
+pr
+I0 qy, 0 = J2
+m qyδ ,
+orders (in this case the satellite row m = −1), and qy corresponds to the position of the main diffraction order. The distribution of the intensity is given by a Bessel function of first kind of order m, Jm. However, Wang’s model compares the diffracted intensity of the satellite orders with that of the main diffraction orders of the disturbed grating I(qy, 0). For the minus first satellite row, m = −1, this is given by [22]
+Figure 10a compares the measurement and the two models for the samples with LER. For the calculation of the models, the reported values for the roughness are used [27]. Both models predict that the satellite at the position of the zeroth order disappears.
+(7)
+modelW
+LER =
+I qy, m 2π
+pr
+I qy, 0 ≈ tan2 qyδ .
+grating 2, periodic grating 3, periodic
+grating 6, chirped grating 4, periodic grating 5, periodic
+grating 7, chirped
+ab
+Fig. 9 Frequencies of the chirped and periodic structures for LER (a) and for LWR (b). The area along the first order and zeroth order of diffraction is shown for LER and LWR, respectively
+LER LWR
+ab
+Fig. 10 Comparison of the model of Wang (red) and Kato (black) for the redistribution of the scattered intensity for a lamellar grating with periodic LER (a) and for LWR (b). The measured data is represented by dots
+
+
+156 Nanomanufacturing and Metrology (2022) 5:149–158
+13
+For the case of LWR, the intensity of the orders on the satellite row (in this case m = −1) is compared to that of the diffraction orders. Using Kato’s model and derivation of the relative diffracted intensity [20, pp. 6460–6461] we have that,
+for qy ≠ 0. The case qy = 0 is discussed separately [20, p. 6462] because of the divergence of the odd satellite rows [20]. The relation between the zeroth order of diffraction and the satellite at this position is [20]:
+However, the theory of Wang et al. for the LWR does not analyze the behavior of the zeroth order’s satellite order as this is usually not measured in CD-SAXS [22]. Therefore, Wang’s method does not predict the main difference between LER and LWR. However, the model predicts the relative intensity of the diffraction and satellite orders for the other diffraction orders [22],
+Figure 10b compares the models for periodic LWR and the measurement data. The trend is predicted by both models, but Wang’s model fails to predict the intensity of the main distinguishing feature of LWR: the satellite order at the zeroth order of diffraction. For the extraction of the diffracted intensities, the patterns were corrected by the solid angle subtended by each pixel to that of the direct beam. The measured intensities (dots) partially follow the behavior of the models for LER and LWR. Previously, a similar analysis was conducted for samples with periodic roughness using the photon energy at 1 keV [13]. The models estimated poorly the amplitude of the roughness. Several reasons may be proposed for the different observed behavior. The photon energy and angle of incidence are different, as is the structure itself. Figures 7 and 4 show diffuse scattering patterns from different rough samples. The combination of the experimental conditions and the sample shape in Fig. 4 do not allow the observation of the modulation of the diffuse scattering by the height, while in Fig 7 it is clearly visible. Moreover, in previous analysis [13], the angle of incidence was rotated to measure the diffraction or the satellite orders. Each variation of the incident angle varies the qz component. Thus, the resulting influence of the height on the scattering intensity is much larger.
+(8)
+modelK
+LWR =
+I qy, − 2π
+pr
+I qy, 0
+= cot2 qy
+CD 2
+J2
+1 qyδ
+J2
+0 qyδ
+(9)
+I 0, − 2π
+pr
+I(0, 0) = δ
+CD
+2
+.
+(10)
+modelW
+LWR =
+I qy, − 2π
+pr
+I qy, 0
+= cot2 qy
+CD
+2 tan2 qyδ
+The present study does not directly analyze the influence of the height distribution on the diffracted intensities. The angular distribution of the diffuse scattering intensity is an interplay between the form factor and structure factor of the grating, the amplitude and distribution of the roughness and the roughness type. It has been reported that different layouts of the roughness lead to different line shapes and thus, scatter differently [9]. However, these samples were produced in such a way that the influence of the line-edge roughness on the scattering pattern is rather large compared to other parameter variations on the sample. Within a sample structure, height might vary depending on the position of the line edge and thus redistribute the diffuse scattering.
+4 Conclusions
+A dedicated set of samples covering different types of roughness (LER or LWR) and different amplitudes, distributions (periodic, chirped, and stochastic) and correlation lengths was analyzed using EUV scatterometry. The alreadyreported behavior depending on the type of roughness has been verified. For the samples with LER, no satellite order is observed at the position of the zeroth order, while for LWR it is. Binary models, where the height of the structure is neglected, can explain the distribution of the scattered intensity between the diffraction and satellite orders in this specific case because the modulation caused by the height is not predominant. The difference between the types of roughness is also shown for samples with chirped roughness. However, the superposition of different frequencies along a line does not explain the diffuse scattering. It is shown that the correlation of one edge to that of neighboring lines must be considered to better explain the distribution of the scattered intensities from stochastic samples. This consideration, together with models that also include the height of the structures, is essential for the further development of roughness analysis using EUV scattering. It has also been shown that the intensity of the diffuse scattering depends on the amplitude of the roughness, however, further analysis is needed to conclude if the roughness correlation length is also playing a role.
+Acknowledgements This project has received funding from the Electronic Component Systems for European Leadership Joint Undertaking under grant agreement No 826589 | MADEin4. This Joint Undertaking receives support from the European Union’s Horizon 2020 research and innovation programme and The Netherlands, France, Belgium, Germany, Czech Republic, Austria, Hungary, and Israel.
+Funding Open Access funding enabled and organized by Projekt DEAL.
+
+
+Nanomanufacturing and Metrology (2022) 5:149–158 157
+13
+Declarations
+Conflict of interest The authors declare that they have no conflicts of interest.
+Open Access This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons licence, and indicate if changes were made. The images or other third party material in this article are included in the article's Creative Commons licence, unless indicated otherwise in a credit line to the material. If material is not included in the article's Creative Commons licence and your intended use is not permitted by statutory regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this licence, visit http://creativecommons.org/licenses/by/4.0/.
+References
+1. Mack CA (2010) Line-edge roughness and the ultimate limits of lithography. In: Allen RD (ed) Advances in resist materials and processing technology XXVII, vol 7639. International Society for Optics and Photonics (SPIE), Berlin, pp 901–916. https://doi.org/ 10.1117/12.848236 2. Bhattacharyya K (2019) Tough road ahead for device overlay and edge placement error. In: Ukraintsev VA, Adan O (eds) Metrology, inspection, and process control for microlithography XXXIII, vol 10959. International Society for Optics and Photonics (SPIE), Berlin, pp 1–8. https://doi.org/10.1117/12.2514820 3. Orji NG, Badaroglu M, Barnes BM, Beitia C, Bunday BD, Celano U, Kline RJ, Neisser M, Obeng Y, Vladar AE (2018) Metrology for the next generation of semiconductor devices. Nat Electron 1(10):532. https://doi.org/10.1038/s41928-018-0150-9 4. Omullane S, Dixit D, Diebold AC (2017) Advancements in ellipsometric and scatterometric analysis. In: Ma Z, Seiler DG (eds) Metrology and diagnostic techniques for nanoelectronics. Pan Stanford, Singapore, pp 65–108. https://doi.org/10.1201/97813 15185385 5. Roth SV, Autenrieth T, Grübel G, Riekel C, Burghammer M, Hengstler R, Schulz L, Müller-Buschbaum P (2007) In situ observation of nanoparticle ordering at the air–water–substrate boundary in colloidal solutions using X-ray nanobeams. Appl Phys Lett 91(9):091915. https://doi.org/10.1063/1.2776850 6. Pflüger M, Soltwisch V, Probst J, Scholze F, Krumrey M (2017) Grazing-incidence small-angle X-ray scattering (GISAXS) on small periodic targets using large beams. IUCrJ 4(4):431. https:// doi.org/10.1107/S2052252517006297 7. Fernández Herrero A, Pflüger M, Puls J, Scholze F, Soltwisch V (2021) Uncertainties in the reconstruction of nanostructures in EUV scatterometry and grazing incidence small-angle X-ray scattering. Opt Express 29(15):32490. https://doi.org/10.1364/OE. 430416 8. Soltwisch V, Fernández Herrero A, Pflüger M, Haase A, Probst J, Laubis C, Krumrey M, Scholze F (2017) Reconstructing detailed line profiles of lamellar gratings from GISAXS patterns with a Maxwell solver. J Appl Crystallogr 50(5):1524. https://doi.org/ 10.1107/S1600576717012742 9. Fernández Herrero A, Pflüger M, Probst J, ScholzeF Soltwisch V (2019) Applicability of the Debye–Waller damping factor for the determination of the line-edge roughness of lamellar gratings. Opt Express 27(22):32490. https://doi.org/10.1364/OE.27.032490
+10. Kato A, Scholze F (2010) Effect of line roughness on the diffraction intensities in angular resolved scatterometry. Appl Opt 49(31):6102. https://doi.org/10.1364/AO.49.006102 11. Henn MA, Gross H, Heidenreich S, Scholze F, Elster C, Bär M (2014) Improved reconstruction of critical dimensions in extreme ultraviolet scatterometry by modeling systematic errors. Meas Sci Technol 25(4):044003. https://doi.org/10.1088/0957-0233/25/4/ 044003 12. Suh HS, Chen X, Rincon-Delgadillo PA, Jiang Z, Strzalka J, Wang J, Chen W, Gronheid R, de Pablo JJ, Ferrier N, Doxastakis M, Nealey PF (2016) Characterization of the shape and line-edge roughness of polymer gratings with grazing incidence small-angle X-ray scattering and atomic force microscopy. J Appl Crystallogr 49(3):823. https://doi.org/10.1107/S1600576716004453 13. Fernández Herrero A, Pflüger M, Probst J, ScholzeF Soltwisch V (2017) Characteristic diffuse scattering from distinct line roughnesses. J Appl Crystallogr 50(6):1766. https://doi.org/10.1107/ S1600576717014455 14. Fernández Herrero A, Pflüger M, Scholze F, Soltwisch V (2017) Fingerprinting the type of line edge roughness. In: Bodermann B, Frenner K, Silver RM (eds) Modeling aspects in optical metrology VI, vol 10330. International Society for Optics and Photonics (SPIE ), Berlin, pp 175–183. https://doi.org/10.1117/12.2269991 15. Mikulík P, Baumbach T (1999) X-ray reflection by rough multilayer gratings: dynamical and kinematical scattering. Phys Rev B 59(11):7632. https://doi.org/10.1103/PhysRevB.59.7632 16. Gross H, Richter J, Rathsfeld A, Bär M (2010) Investigations on a robust profile model for the reconstruction of 2D periodic absorber lines in scatterometry. J Eur Opt Soc 5:1025 17. Gross H, Heidenreich S, Bär M (2017) Impact of different stochastic line edge roughness patterns on measurements in scatterometry–a simulation study. Measurement 98:339. https://doi.org/10. 1016/j.measurement.2016.08.027 18. Soltwisch V, Haase A, Wernecke J, Probst J, Schoengen M, Burger S, Krumrey M, Scholze F (2016) Correlated diffuse X-ray scattering from periodically nanostructured surfaces. Phys Rev B 94(3):1029. https://doi.org/10.1103/PhysRevB.94.035419 19. Renaud G, Lazzari R, Leroy F (2009) Surface science reports probing surface and interface morphology with grazing incidence small angle X-ray scattering. Science 64(8):255. https://doi.org/ 10.1016/j.surfrep.2009.07.002 20. Kato A, Burger S, Scholze F (2012) Analytical modeling and three-dimensional finite element simulation of line edge roughness in scatterometry. Appl Opt 51(27):6457. https://doi.org/10. 1364/AO.51.006457 21. Wang C, Jones RL, Lin EK, Wu WL, Villarrubia JS, Choi KW, Clarke JS, Rice BJ, Leeson M, Roberts J, Bristol R, Bunday B, (2007) Line edge roughness characterization of sub-50 nm structures using CD-SAXS: round-robin benchmark results. In: Archie CN (ed) Metrology, inspection, and process control for microlithography XXI, vol 6518. International Society for Optics and Photonics (SPIE), Berlin, pp 587–595. https://doi.org/10.1117/12. 725380 22. Wang C, Jones RL, Lin EK, Wu WL, Rice BJ, Choi KW, Thompson G, Weigand SJ, Keane DT (2007) Characterization of correlated line edge roughness of nanoscale line gratings using small angle X-ray scattering. J Appl Phys 102(2):024901. https://doi. org/10.1063/1.2753588 23. Wang C, Choi KW, Fu WE, Ho DL, Jones RL, Soles C, Lin EK, Wu WL, Clarke JS, Bunday B (2008) CD-SAXS measurements using laboratory-based and synchrotron-based instruments. In: Allgair JA, Raymond CJ (eds) Metrology, inspection, and process control for microlithography XXII, vol 6922. International Society for Optics and Photonics (SPIE), Berlin, pp 845–851. https://doi. org/10.1117/12.773774
+
+
+158 Nanomanufacturing and Metrology (2022) 5:149–158
+13
+24. Freychet G, Kumar D, Pandolfi R, Staacks D, Naulleau P, Kline RJ, Sunday D, Fukuto M, Strzalka J, Hexemer A (2018) Criticaldimension grazing incidence small angle X-ray scattering. In: Metrology, inspection, and process control for microlithography XXXII. International Society for Optics and Photonics, vol 10585, pp 1058512. https://doi.org/10.1117/12.2297518.https://www. spiedigitallibrary.org/conference-proceedings-of-spie/10585/ 1058512/Critical-dimension-grazing-incidence-small-angle-xray-scattering/10.1117/12.2297518.short 25. Fernández Herrero A, Pflüger M, Probst J, Scholze F, Soltwisch V (2017) Characteristic diffuse scattering from distinct line roughnesses. J Appl Crystallogr 50(6):1766. https://doi.org/10.1107/ S1600576717014455 26. Fernández HA (2021) Systematic analysis of the impact of lineedge roughness on the X-ray scattering pattern. Ph.D. thesis, Technische Universität, Berlin . https://doi.org/10.14279/depos itonce-12320 27. Levi S, Swrtsband I, Kaplan V, Englard I, Ronse K, KutrzebaKotowska B, Dai G, Scholze F, Anne K, Johanesen H, Kwakman L, Turovets I, Rabinovitch M, Krannich S, Kasper N, Connolly B, Wende R, Bender M (2018) A holistic metrology sensitivity study
+for pattern roughness quantification on EUV patterned device structures with mask design induced roughness. In: Ukraintsev VA (ed) Metrology, inspection, and process control for microlithography XXXII, vol 10585. International Society for Optics and Photonics (SPIE), Berlin, pp 225–237. https://doi.org/10. 1117/12.2297265 28. Scholze F, Beckhoff B, Brandt G, Fliegauf R, Gottwald A, Klein R, Meyer B, Schwarz UD, Thornagel R, Tuemmler J, Vogel K, Weser J, Ulm G (2001) High-accuracy EUV metrology of PTB using synchrotron radiation. In: Sullivan NT (ed) Metrology, inspection, and process control for microlithography XV, vol 4344. International Society for Optics and Photonics (SPIE), Berlin, pp 402–413. https://doi.org/10.1117/12.436766 29. Fernández Herrero A, Mentzel H, Soltwisch V, Jaroslawzew S, Laubis C, Scholze F (2018) I EUV-angle resolved scatter (EUVARS): a new tool for the characterization of nanometre structures. In: Ukraintsev VA (ed) Metrology, inspection, and process control for microlithography XXXII, vol 10585. International Society for Optics and Photonics (SPIE), Berlin, pp 140–148. https://doi.org/ 10.1117/12.2297195

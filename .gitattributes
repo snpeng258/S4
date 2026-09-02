@@ -1,0 +1,21 @@
+# 全仓库统一 LF：入库时归一化，检出时也写 LF。
+# 背景：工作区曾被整体转为 CRLF，导致 500 个上游文件显示为「已修改」但零内容差异。
+* text=auto eol=lf
+
+# 二进制与数据文件：禁止任何换行符转换，否则文件会被破坏
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.pdf   binary
+*.eps   binary
+*.npz   binary
+*.npy   binary
+*.mat   binary
+*.o     binary
+*.a     binary
+*.so    binary
+*.dll   binary
+*.exe   binary
+*.pyc   binary
+*.lnk   binary

@@ -1,0 +1,442 @@
+Measurement Science and Technology
+Profile reconstruction in extreme ultraviolet (EUV) scatterometry: modeling and uncertainty estimates
+To cite this article: H Gross etal 2009 Meas.Sci.Technol. 20 105102
+View the article online for updates and enhancements.
+You may also like
+An insight into optical metrology in manufacturing Yuki Shimizu, Liang-Chia Chen, Dae Wook Kim et al.
+
+Virtual experiments for the assessment of data analysis and uncertainty quantification methods in scatterometry Gertjan Kok, Marcel van Dijk, Gerd Wübbeler et al.
+
+Interferometric coherent Fourier scatterometry: a method for obtaining high sensitivity in the optical inverse-grating problem S Roy, N Kumar, S F Pereira et al.
+
+This content was downloaded from IP address 202.85.53.2 on 04/07/2025 at 02:31
+
+
+IOP PUBLISHING MEASUREMENT SCIENCE AND TECHNOLOGY
+Meas. Sci. Technol. 20 (2009) 105102 (11pp) doi:10.1088/0957-0233/20/10/105102
+Profile reconstruction in extreme ultraviolet (EUV) scatterometry: modeling and uncertainty estimates
+H Gross1, A Rathsfeld2, F Scholze1 and M Ba ̈r1
+1 Physikalisch-Technische Bundesanstalt, Abbestr. 2-12, 10587 Berlin, Germany 2 Weierstrass Institute for Applied Analysis and Stochastics, Mohrenstr. 39, 10117 Berlin, Germany
+E-mail: hermann.gross@ptb.de and rathsfeld@wias-berlin.de
+Received 21 April 2009, in final form 8 July 2009 Published 9 September 2009 Online at stacks.iop.org/MST/20/105102
+Abstract
+Scatterometry as a non-imaging indirect optical method in wafer metrology is also relevant to lithography masks designed for extreme ultraviolet lithography, where light with wavelengths in the range of 13 nm is applied. The solution of the inverse problem, i.e. the determination of periodic surface structures regarding critical dimensions (CD) and other profile properties from light diffraction patterns, is incomplete without knowledge of the uncertainties associated with the reconstructed parameters. The numerical simulation of the diffraction process for periodic 2D structures can be realized by the finite element solution of the two-dimensional Helmholtz equation. The inverse problem can be formulated as a nonlinear operator equation in Euclidean space. The operator maps the sought mask parameters to the efficiencies of diffracted plane wave modes. We employ a Gauß–Newton type iterative method to solve this operator equation and end up minimizing the deviation of the measured efficiency or phase shift values from the calculated ones. We apply our reconstruction algorithm for the measurement of a typical EUV mask composed of TaN absorber lines of about 80 nm height, a period in the range of 420 nm–840 nm, and with an underlying MoSi-multilayer stack of 300 nm thickness. Clearly, the uncertainties of the reconstructed geometric parameters essentially depend on the uncertainties of the input data and can be estimated by various methods. We apply a Monte Carlo procedure and an approximative covariance method to evaluate the reconstruction algorithm. Finally, we analyze the influence of uncertainties in the widths of the multilayer stack by the Monte Carlo method.
+Keywords: nanometrology, EUV scatterometry, lithography masks, inverse problem, uncertainty
+(Some figures in this article are in colour only in the electronic version)
+1. Introduction
+An important application of scatterometry is the evaluation of structure dimensions on photo-masks and wafers in lithography [1, 2]. In the semiconductor industry both the feature sizes and the admissible limits of measurement uncertainty decrease continuously. Besides conventional metrology techniques such as atomic force, electron and optical microscopy, scatterometry is an important tool for the characterization of such structures [3, 4]. However,
+scatterometry requires a priori information. Typically, the surface structure is sought in a certain class of gratings described by a finite number of parameters, and these parameters are confined to certain intervals centered around known design values for the mask under investigation. The conversion of measurement data into desired geometrical parameters depends crucially on a rigorous modeling by Maxwell’s equations [5–7] and on accurate numerical algorithms. Note that Maxwell’s equations reduce to the two-dimensional Helmholtz equation if the geometry
+0957-0233/09/105102+11$30.00 1 © 2009 IOP Publishing Ltd Printed in the UK
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+aperture
+mask with Mo/Si multilayer
+detector with slit
+6o
+Figure 1. Spectroscopic reflectometer operating in the EUV range (λ ∼ 13.5 nm) and the scheme of measurement set-up.
+and material properties are invariant in one direction. For the numerical solution, a lot of methods have been developed [8–14]. We use the finite element method (FEM) and truncate the infinite domain of computation to a finite one by coupling with boundary elements [15–18]. To compute highly oscillatory fields, generalized finite element methods are available [19–22].
+Apart from the forward computations of the Helmholtz equation, the solution of the inverse problem, i.e. the reconstruction of the grating profiles and interfaces from measured diffraction data, is the essential task in scatterometry. This problem is related to the optimal design of diffractive optics [23]. Our approach here employs a Gauß–Newton type iteration [24] proposed, e.g., by Al-Assaad and Byrne [25] and is based on FEM computation for the efficiencies of the grating and for derivatives of the efficiencies with respect to the grating parameters [26, 27]. It is well known that the solution of the inverse problem might fail if it is based on insufficient or improper input data. Studies with simulated data for a typical grating representing a photolithographic mask [3] show a strong dependence of the reconstruction result on the subset of efficiencies chosen from the set of all available efficiencies.
+There are different methods of sensitivity analysis [28–30] to find suitable sets of measurement configurations, e.g. convenient angles of incidence or diffraction orders to be measured. The statistical approach is to include as much data as possible but with a weight factor proportional to the reciprocal variance of the individual measurement data.
+In section 2 a brief description of the measurement system for EUV scatterometry will be given. The mathematical formulation of the scattering problem and the numerical algorithms for solving the inverse problem are presented in section 3. Section 4 presents the achieved reconstruction results for several measured fields of the EUV mask and discusses their quality. Furthermore, in section 4 the impact of uncertainties of the measured efficiencies and the influence of stochastically perturbed widths in the underlying multilayer stack on the uncertainties of reconstructed parameters are examined. We will present first estimates for the achievable uncertainty ranges of the reconstructed parameters.
+2. Experimental set-ups: EUV reflectometer
+For EUV scatterometry we use the standard scatterometry approach, i.e. non-specular diffracted light is measured for different wavelengths and directions of the incoming radiation. The measurements are carried out using the EUV reflectometer [31] shown in figure 1. The reflectometer is operated at the soft x-ray radiometry beam line [32] in the synchrotron radiation laboratory of PTB at BESSY. The beam line provides monochromatized radiation in the spectral range from 0.7 nm to 35 nm, including the EUV spectral range around 13.5 nm. The beam size at the sample is about 1 mm in both directions and the divergence is below 0.5 mrad. The area of interest is placed in the incoming photon beam and either wavelength, angle of incidence or the angle of detection are scanned. It is also possible to measure two-dimensional scatter distributions by moving the detector out of plane with regard to the direction of the specular reflection. The measurements shown here are obtained by scanning the detector angle in-plane for three different wavelengths and a fixed angle of incidence of 6◦. For further processing we only used the measured diffraction efficiencies for the discrete diffraction orders, no diffusely scattered radiation. For the structures investigated, EUV scatterometry offers the advantage of working in the regime with the wavelength much shorter than the characteristic dimensions of the structures to be investigated (a few 100 nm). Therefore many diffraction orders can be measured providing information on the higher harmonics in the spatial frequency range corresponding to smaller structure details. For optical scatterometry in most cases, only the zeroth order is accessible. It is therefore suspected that EUV scatterometry should provide more robust and less model dependent results. The sample under test is an EUV mask with several fields of periodic line-space structures, with different critical dimensions and pitch (period). The absorber stack of the mask consists of three layers, i.e., a thin anti-reflection (ARC) layer of (TaO) on top, the main EUV absorber layer (TaN) and a thin buffer layer (SiO2) which protects the underlying multilayer reflective coating during the manufacturing process of the mask. The reflective multilayer coating beneath these line structures consists of 49 periodically repeated groups of Mo and Si layers. The multilayer is terminated at the
+2
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+θ
+z
+x
+y
+(line)
+(line)
+reflected modes
+transmitted modes
+incoming field
+(E ,H )
+ii
+substrate materials
+bridge
+(line)
+material
+oxide layer
+Figure 2. Scheme for wave interaction with a periodic grating structure.
+surface with a slightly thicker Si-capping layer. In the open reflective areas (spaces between lines), this capping layer is also protected by a thin SiO2 layer. Figure 3 shows this design schematically together with some of the most important geometrical parameters.
+3. Model of scatterometry and inverse problem
+3.1. Helmholtz equation and its solution
+The mathematical basis for modeling the propagation of electromagnetic waves in matter is Maxwell’s equations. Their numerical solution represents a direct problem. From the data of the incident light and from characteristic parameters of the irradiated grating, the efficiencies and phase shifts for the different diffraction directions are calculated. Figure 2 shows a scheme for the irradiation of a periodic surface structure. We use the finite element method (FEM) for the forward calculations on mask profiles. For simplicity, we suppose that the direction of the incident wave is in the plane perpendicular to the lines. Since the polarized incident wave can be represented as a superposition of a TE- and a TMpolarized mode, i.e. of waves with the electric or magnetic field vectors, respectively, oscillating normally to the plane of incidence, Maxwell’s equations for the electromagnetic field in the time-harmonic case reduce to the scalar Helmholtz equation over one spatial period of the cross-sectional domain of the mask specimen (cf the details in [3, 5, 7]):
+u(x, y) + k2u(x, y) = 0. (1)
+Here, the lines of the mask are supposed to be parallel to the z-axis, the plane of incidence is the x–y plane, and the unknown u is the z-component of the electric or magnetic field
+vector. The coefficient k = k(x, y) = ω√μ0 (x, y) is the wave number function and ω is the angular frequency of the incident light wave. The wave number k is constant in each area of the mask specimen filled by the same material. Transparent boundary conditions are imposed on the upper and the lower boundaries of the cross-sectional domain, respectively, and quasi-periodic boundary conditions on the lateral boundaries. The FEM solution of this boundary value problem coupled with the so-called Rayleigh expansion of u(x, y) provides a
+Figure 3. Scheme of an EUV grating structure with profile parameters: p1, p2, p3 denote thickness and x coordinates of upper corners of the SiO2 layer; p6, p7, p8 denote thickness and x coordinates of upper corners of the TaN layer; p11, p12, p13 denote thickness and x coordinates of upper corners of the TaO layer.
+general solution above and below the mask for the outgoing wave modes. A simple Fourier series expansion of the solution u restricted to lines above the line-space structure gives the coefficients of the reflected plane wave modes. Note that, due to the periodicity of the surface geometry, the far field is the superposition of a finite number of such plane wave modes. Arranging these modes according to the angles of the propagation direction, the plane wave modes can be indexed, and this index is called the order of the reflected mode. The ratio of the incoming energy which is radiated into the directions of these plane wave modes is proportional to the squared modulus of their coefficients and is called the efficiency of the mode. We use the DIPOG software package [20] as the work horse for our investigations. This FEM-based Maxwell solver offers a high flexibility including generalized FEM [19, 21, 22] and optimization methods for many different grating classes.
+3.2. Profile reconstruction by optimization
+The inverse problem consists in determining the parameters describing the geometry of a certain class of gratings from the measured efficiency/phase-shift values. To simplify the notation, we restrict ourselves in the following to efficiency measurements though phase-shift measurements can always be included without a problem. Figure 3 shows a grating class and its geometrical profile model for the cross section over one period of a typical line-space structure for EUV lithography where the extreme ultraviolet wavelength range is applied. The cross section of the line is a symmetric polygonal domain composed of three trapezoidal layers of different materials (TaO, TaN and SiO2). These trapezoids are defined by the heights and by the x-coordinates of the corner points denoted as pi. Beneath the line-space structure there are two capping layers of SiO2 and of Si followed by a MoSi-multilayer stack (MLS). The last
+3
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+consists of a periodically repeated group of a Mo layer, an Si layer and two intermediate layers. Note that the MLS is added to enable the reflection of EUV waves. Important geometric profile parameters are, e.g., the height p6 of the TaN layer (55–60 nm) and the x-coordinates p2 and p7 of the right corners of the TaN layer. In the following evaluations and studies we impose a symmetric profile, i.e., the x-coordinates of the corresponding left corners depend on those of the right corners such as p3 = d − p2 or p8 = d − p7. Furthermore we assume a fixed side wall angle (SWA) for the TaO layer of
+82.6◦ (=arctan( p11
+p7 −p12
+)) representing a certain edge rounding, i.e., the cross-sectional area of this trapezoidal layer is equal to a corresponding TaO layer having curved upper edges with a radius of about 6 nm. Additionally, we assume that the SWA of the SiO2 layer should always be equal to the SWA of the TaN layer above. The latter depends on the corners and the height of the TaN layer by tan (SWA) = p6
+p2−p7 . We only
+optimized the three parameters p2, p6 and p7. For all other model parameters, including the heights p1 (8 nm) and p11 (12 nm) of the SiO2 and the TaO layer, the optical indices of the materials, and the widths in the capping or the multilayer system, we suppose known values. They are fixed and will not be sought by our reconstruction method. To solve the inverse problem an equivalent optimization problem is set up with the following objective functional which is to be minimized:
+f ({pj , j = 1, . . . , J }) :=
+L ∑
+l=1
+M ∑
+m=1
+∑
+n
+ω±
+n (λl, θm)
+× [e±
+n ({pj }, λl, θm) − E±
+n (λl, θm)]2, (2)
+where the λl, l = 1, . . . , L are the wavelengths, the θm, m = 1, . . . , M are the angles of incidence of the measurement, the En±(λl, θm) are the measured efficiencies,
+and the ωn±(λl, θm) > 0 represent some weight factors. By
+en±({pj }, λl, θm) we denote the efficiency of order n calculated for wavelength λl and angle of incidence θm and for a mask geometry defined by the parameters pj . If information about the uncertainties of the measured values En±(λl, θm) is available, then it is common and well accepted for leastsquare procedures to choose the weight factors as the squared reciprocal uncertainties (ωn±(λl, θm) ∝ [un±(λl, θm)]−2). More precisely, we have
+f ({pj }) := χ 2({pj }) :=
+∑L
+l=1
+M ∑
+m=1
+∑
+n
+1
+[un±(λl, θm)]2
+× [e±
+n ({pj }, λl, θm) − E±
+n (λl, θm)]2. (3)
+Applying an iterative algorithm to the optimization of the functional f , the values of the grating parameters are varied until the minimum of the functional has been found. For instance, we can follow the ideas of the Gauß–Newton and of the sequential quadratic programming (SQP) methods (cf e.g. [24, 25]). If E is the mapping which maps the grating parameters p := {pj } to the efficiency vector
+(en±({pj }, λl, θm)), then we look for a solution of E(p) =
+Emeas with Emeas = (En±(λl, θm)). If pk is the approximate solution of the kth iteration step, then an improved solution
+pk + p is the solution of
+E(pk + p) ≈ E(pk) + ∂E
+∂p (pk) p ≈ Emeas,
+∂E
+∂p (pk) :=
+( ∂Em(pk)
+∂pj
+)
+m,j
+.
+Taking into account the upper and lower bounds for the parameters, we arrive at the iteration step pk+1 = pk + p with p being the solution of the simple quadratic convex optimization problem with box constraints
+min
+p:pmin
+j [pk + p]j pmax
+j
+∥∥∥∥E(pk) + ∂E
+∂p (pk) p − Emeas
+∥∥∥∥
+2
+.
+The convergence of this method to at least a locally optimal solution can be proved if additional conditions are fulfilled (cf [29]). In particular a superlinear rate of convergence is possible if a true solution of E(p) = Emeas exists. The method is quite fast since no expensive line search step is needed.
+4. Reconstruction results and uncertainty estimates
+4.1. Reconstructed results of measured EUV masks
+An EUV mask with differently structured fields was measured with the spectroscopic EUV reflectometer already shown in figure 1. All measurements were performed for three wavelengths varying slightly for the different fields of the mask. The orders n of efficiencies with acceptable measurement uncertainties depend on the measured field. For example, in the case of a mask field with a ratio line to space of about 1:5 (line width = 140 nm, period = 840 nm) orders from −11 to +11 can be included into the sum for the objective functional (2) resulting in a number of 3 × 23 measured efficiency values. For this field, the applied wavelengths were λ1 = 13.389 nm, λ2 = 13.655 nm and λ3 = 13.921 nm. A typical example of the objective functional as a function of two grating parameters (layer thickness p6 and a lateral coordinate p2) is shown in figure 4. The functional was defined choosing the weight factors to be the reciprocal value
+of the variances of the measured efficiencies (ωn±(λl, θm) ∝
+[un±(λl, θm)]−2) and including the diffraction orders from −11 to 11, measured for three different wavelengths and for one angle of incidence (6◦). For the selected range of the thickness parameter p6 two local minima exist. This was to be expected, because the height of the absorber line is very sensitive to interference effects contributing to the reflected wave modes. Figure 5 compares the calculated and measured efficiencies for this example, if the optimized profile parameters are used for the simulation. The optimization was executed under the additional constraint that the height p6 of the TaN layer should be greater than 55 nm and less than 62 nm. Shown are the efficiencies for λ1 and λ2, and fairly good agreement can be recognized. If the line to space ratio changes to 1:2 for the same nominal line width of 140 nm, the period decreases to 420 nm and therefore a lower number of diffraction orders is observed.
+4
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+p2/period
+p6 /μm
+0.575 0.58 0.585 0.59
+0.045
+0.05
+0.055
+0.06
+0.065
+20
+25
+30
+35
+40
+45
+50
+55
+60
+65
+0.575 0.58 0.585 0.59
+0.045 0.05 0.055 0.06 0.065
+101.2
+101.4
+101.6
+101.8
+p2/period
+p6 /μm
+Figure 4. f = χ 2 for a certain field of the EUV mask, shown in dependence on right lower corner point p2 and height p6 of the TaN layer (upper right corner fixed); 69 measured efficiencies of orders −11 to +11 over three wavelengths (13.389 nm, 13.655 nm and 13.921 nm); left as an iso-line and right as a surface plot.
+−15 −10 −5 0 5 10 15
+10−2
+10−1
+100
+101
+102
+orders
+efficiency / %
+sim. efficiencies meas. efficiencies
+−15 −10 −5 0 5 10 15
+10−3
+10−2
+10−1
+100
+101
+102
+orders
+efficiency/ %
+sim. efficiencies meas. efficiencies
+Figure 5. Comparison of measured and calculated efficiencies for one of the optimal solutions for the first two wavelengths (λ1 = 13.389 nm, λ2 = 13.655 nm).
+Only the range of order −6 to +11 is detectable with sufficient intensity. Here, the applied wavelengths are λ1 = 13.398 nm, λ2 = 13.664 nm, and λ3 = 13.931 nm. Figure 6 presents the objective functionals for this measurement if the orders from −4 to +4 for λ1 and λ2 or −4 to +2 for λ3 are included in the objective functional. In the considerations in section 4.3 where we will analyze the impact of certain perturbations in the multilayer system, this medium-sized data set of 25 efficiency values will be used. We indicate this by the symbol N2m-25. In our numerical experiments we choose the weights of the objective functional as in (3) and consider the following simplified statistical model. The uncertainty un±(λl, θm) for
+the measurement of En±(λl, θm) is the standard deviation
+of En±(λl, θm) considered as a normally distributed random variable. We assume that the measurements are independent and that there is no systematic error. Moreover, according to measurement experience, the variance of the measured value En± can be supposed to be the variance of the sum of two
+independent variables:
+[u±
+n
+(λl, θm
+)]2 = [a · E±
+n
+(λl, θm
+)]2 + b2
+g, (4)
+where a is a constant factor with typical values of 0.010.03 for our EUV measurements. The number bg represents the background noise of the reflectometer (0.001%) and is dominant for efficiencies En < 0.01%. Then the weights become almost independent of En. Table 1 contains the reconstruction results for the measurements at five different fields of the EUV mask whose profiles are designed to be equal. They have a line-space ratio of 3:1 at a period of 720 nm and are indicated by D4, H 4, F 6, D8, and H 8. For example, the measurements of F 6 were executed at the wavelengths λ1 = 13.410 nm, λ2 = 13.677 nm and λ3 = 13.943 nm. The optimization was executed for the already discussed profile model of the previous examples (cf figure 3), again imposing symmetrical constraints and using known optical constants for all material components as well as a suitable model (vector of widths
+5
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+p2 / period
+p6 /μm
+0.66 0.67 0.68 0.69 0.7
+0.045
+0.05
+0.055
+0.06
+0.065
+0.5
+1
+1.5
+2
+2.5
+3
+3.5
+4
+4.5
+p2 / period
+p7 /period
+0.66 0.67 0.68 0.69 0.7
+0.66
+0.665
+0.67
+0.675
+0.68
+0.685
+0.69
+0.695
+0.7
+0.705
+0.5
+1
+1.5
+2
+2.5
+3
+3.5
+4
+4.5
+Figure 6. f (p2, p6) (left) and f (p2, p7) (right), for the medium-sized data set N2m-25 of a measured EUV field with a nominal line to space ratio of 1:2 and a period of 420 nm.
+Table 1. Reconstruction results for measurements at five different mask fields with the same nominal values (period: 720 nm, CD: 540 nm). Multilayer parameters used (best approximation from bright-field measurements including roughness): two capping layers 1.234 nm and 12.869 nm, MLS 49 × (0.147 nm–2.141 nm–1.972 nm–2.838 nm).
+Mask field Bottom CD (nm) Top CD (nm) Height TaN (nm) SWA (deg)
+D4 572.8 540.3 60.52 77.9 H4 623.4 531.9 60.46 57.1 F6 578.8 548.9 60.64 78.9 D8 575.2 538.6 60.86 76.3 H8 575.4 540.7 60.50 77.0
+for the layers) for the underlying capping and multilayer structure. Instead of the results for the x-coordinates, p2 and p7 of the right corners, the table presents the horizontal width (CD) on the bottom and the top derived from the optimized corner points. Furthermore, the height of the TaN layer and the side-wall angle determined from the corner points are indicated. As a test for the results shown in table 1, figure 7 shows the calculated efficiencies (empty symbols) of field F6 and for the wavelengths λ1, λ2 and λ3 as compared with the measured ones (filled symbols). The widths used for the capping and multilayer components are crucial for such reconstruction results and their impact will be discussed in section 4.3. Their values are determined by evaluation of bright-field measurements of special fields on the EUV mask, where only the capping and the multilayer system are present but no absorber lines. At a fixed angle of incidence (6◦) the specular reflectance R was measured in dependence on the wavelength ranging from 12.8 to 14.4 nm with a resolution of about 0.02 nm [33, 34]. These reflectance curves composed of 80 data points were fitted by varying the layer widths first, and then adapting the interface roughness. We have used the IMD software for modeling optical properties of thin multilayer structures [35]. The IMD program is based on the Fresnel equations and their modification for rough interfaces [36].
+4.2. Impact of uncertainties in the measurement data
+The experimentally measured efficiency values entering the numerical algorithm have an uncertainty. It is important to see how these uncertainties affect the accuracy and the precision of the reconstructed parameter values. To analyze this, we suppose that all the statistical assumptions before equation (4) are fulfilled and that the uncertainty is given by the relation (4). First we apply a Monte Carlo method in the spirit of the recommendations in Supplement 1 of the GUM [37] for the determination of uncertainties in measurements, i.e., complete profile reconstructions are repeated many times with randomly perturbed measurement data. So a distribution of the reconstructed parameters is generated and their deviation statistics from the expected or undisturbed values can be calculated. Figure 8 shows the 1% disturbed measured data set N2m-25 (cf section 4.1) and the resulting distribution of the reconstructed parameters. The three reconstructed parameters are labeled by their indices 2, 6 and 7. The ranges between lower and upper quartiles are indicated by boxes, the medians by lines. The whiskers extend to the most extreme data points not considered as outliers, and the outliers are plotted individually as plus signs. The calculated standard deviations σi, i = 2, 6, 7, for the reconstructed parameters are given in nm.
+6
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+Table 2. Approximated standard deviations determined by the covariance method for the medium-sized data set N2m-25 (cf section 4.1) with four different noise levels presumed: 1%, 3%, 10% and 15% noise for measured efficiencies give values of σ2, σ6, σ7 and σSWA (in brackets: relative deviation from the mean value); background noise 0.001; line–space ratio 1:2; period 420 nm.
+Noise component a 0.01 0.03 0.10 0.15
+σ2 (nm) 0.27 (0.09%) 0.75 (0.26%) 2.50 (0.87%) 3.70 (1.28%) σ6 (nm) 0.03 (0.05%) 0.09 (0.16%) 0.30 (0.52%) 0.45 (0.79%) σ7 (nm) 0.19 (0.07%) 0.51 (0.18%) 1.70 (0.60%) 2.50 (0.88%) σSWA (deg) 0.33 (0.38%) 0.91 (1.10%) 3.00 (3.53%) 4.50 (5.29%)
+−10 −5 0 5 10 15
+10−4
+10−2
+100
+10−3
+10−1
+101
+diffraction order
+efficiency / %
+F6
+Figure 7. Comparison of measured (filled symbols) and simulated (empty symbols) efficiencies for all three wavelengths of field F6 (circles for 13.410 nm, diamonds for 13.677 nm and squares for 13.943 nm).
+Alternatively, another way to estimate the uncertainties is to follow a proposal by Al-Assaad and Byrne [25] or Germer
+et al [38]. If the mapping E : (pi) → (en±({pj }, λl, θm))
+−0.2
+−0.15
+−0.1
+−0.05
+0
+0.05
+0.1
+0.15
+0.2
+0.25
+0.3
+−4 −3 −2 −1 0 +1 +2 +3 +4
+order of efficiency value
+deviation from reference values /%
+−8
+−6
+−4
+−2
+0
+2
+4
+6
+8
+10
+12 x 10−4
+267
+index of optimized parameter
+deviation from the expected value/μm
+σ2: 0.37 nm (0.13%)
+σ6: 0.07 nm (0.12%)
+σ7: 0.25 nm (0.09%)
+Figure 8. Impact of normally distributed perturbations (1%) of data set N2m-25 (left, only efficiencies belonging to the λ1 = 13.398 nm are shown) on reconstructed parameters (right); standard deviations σ2, σ6 and σ7 and their relative values are given; line to space ratio 1:2; period 420 nm.
+is assumed to be locally almost linear, at least for parameter values (pi) close to the point of the optimal solution, then the uncertainties of the reconstructed parameters are, again, normally distributed random numbers with zero mean. The standard deviation σi of pi is the square root of the main diagonal entry of the covariance matrix Cov of the parameters, and the latter matrix can be approximated as
+Cov ≈ [J T · J ]−1, J =
+( ∂Ej
+∂pi
+1
+uj
+)
+j,i
+. (5)
+That is, the inverse covariance matrix can be approximated by means of the matrix of the partial derivatives of the efficiencies (or phase shifts) with respect to the sought parameters, normalized by the uncertainties of the measured data. If we apply the covariance method to the same example already used for the Monte Carlo method, comparable results are obtained: table 2 gives the standard deviations for different noise levels presumed for the measured efficiencies. The different noise levels applied demonstrate that the results scale as a because the background noise is relatively small for this example. Note that, for a = 0.01, the convariance method yields smaller standard deviations than Monte Carlo (cf figure 8). In [39] we have made further comparisons between the Monte Carlo and the covariance method applying
+7
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+Table 3. Monte Carlo experiments with perturbed capping layer/MLS models: applied to reconstruction of measured EUV mask (period 420 nm, line to space ratio 1:2); used reference widths for capping layers (1.234 nm, 12.869 nm) and for the MLS 49 × (0.147 nm, 2.141 nm, 1.972 nm, 2.838 nm).
+σ2 σ6 σ7 σSWA σCDm
+Perturbation (nm) (nm) (nm) (deg) (nm)
+Cap:1% MLS:0.1% 0.86 0.10 0.67 1.52 0.11 (0.30%) (0.17%) (0.24%) (1.79%) (0.07%)
+Cap:1% MLS:0.5% 1.35 0.29 1.24 2.30 1.19 (0.47%) (0.51%) (0.44%) (2.70%) (0.79%)
+Cap:1% MLS:1.0% 2.15 0.47 1.79 2.75 2.81 (0.75%) (0.82%) (0.63%) (3.24%) (1.86%)
+Cap:2% MLS:0.1% 1.21 0.21 0.85 2.06 0.25 (0.42%) (0.37%) (0.30%) (2.42%) (0.17%)
+Cap:2% − 5%offset MLS:0.1% 1.37 0.24 0.81 2.16 0.41 (0.48%) (0.42%) (0.29%) (2.54%) (0.27%)
+Cap:2% + 5%offset MLS:0.1% 0.95 0.36 0.77 1.72 0.17 (0.33%) (0.63%) (0.27%) (2.02%) (0.11%)
+Table 4. Reconstructed parameters for the measurement values of the medium-sized data set (N2m-25): period 420 nm, line to space ratio 1:2, capping layer widths (1.234 nm, 12.869 nm), MLS widths 49 × (0.147 nm, 2.141 nm, 1.972 nm, 2.838 nm).
+p2 − p3 p6 p7 − p8 SWA CDm Data set (nm) (nm) (nm) (deg) (nm)
+N2m-25 156.3 57.19 146.2 85.0 150.92
+simulated data sets of different sizes, and the uncertainties found by the covariance approach are always smaller than those obtained by Monte Carlo. The 10% or 15% level does not correspond to the variances of the measured efficiencies but is meant as a general test for the influence of other model parameters with potentially large fluctuations. Note that for realistic estimates of the measurement statistics, the resulting uncertainties for the profile parameters are rather small.
+4.3. Impact of multilayer perturbations
+We have already mentioned in the previous sections that the reconstruction results do not only depend on the uncertainties of the measured efficiencies, but also on the choice of model parameters. The capping and multilayer system will be shown to be crucial for the final reconstruction of the parameters of the line–space structure. Particularly, effects such as perturbations in the widths of the multilayer system beneath the line–space structure are considered. We applied a Monte Carlo method to assess the influence of the MLS and capping parameters on the reconstruction results. We generate stochastic capping layer/MLS models such that the layer widths are normally distributed independent variables, and consequently, also the total widths of the capping/MLS models are varied. Based on these models, we ran our reconstruction algorithm for the geometric parameters of the line–space structure. Finally, we got the distributions of the sought profile parameters in dependence on the capping layer/MLS models. The perturbations are created by normally distributed fluctuations of the same magnitude for the two widths of the capping layers
+−4
+−3
+−2
+−1
+0
+1
+2
+x 10−3
+26 7 index of optimized parameter
+deviation from the expected value/μm
+σ2: 0.86 nm
+(0.30%)
+σ6: 0.10 nm
+(0.17%)
+σ7: 0.67 nm
+(0.24%)
+Figure 9. Impact of the capping layer and MLS widths (noise for capping widths 1%, noise for ML widths 0.1%) on the reconstructed profile parameters (112 samples).
+and another magnitude for the widths of the MLS around the reference values determined from bright field reflectance (cf section 4.1). The values for the calculations are summarized in table 3. Different perturbations for the widths of the capping layers and the widths in the MLS allow one to separate the impacts of these components. For each of the given fluctuations, the standard deviations of the x-coordinates of the corner points p2 and p7 as well as that of the height p6 were calculated. Furthermore the standard deviations σ of the side-wall angles and of the horizontal line widths in the middle of the height of the absorber line, indicated as CDm, were calculated. These parameters are easy to calculate from the reconstructed profile parameters p2, p7 and p6. Additionally, the impact of an offset of ± 5% for the capping layers relative to the reference model
+8
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+1
+SWA of TaN layer (dependent on p2,p6,p7)
+side−wall angle / o
+SWAmean: 84.59 o
+σSWA: 1.52 o
+( 1.8 % )
+0.1502
+0.1503
+0.1504
+0.1505
+0.1506
+0.1507
+0.1508
+0.1509
+0.151
+0.1511
+0.1512
+1
+CDm of whole absorber line (dependent on p2,p6,p7)
+CDm / μm
+CDmmean: 151.09 nm
+σCDm: 0.11 nm
+( 0.07 % )
+Figure 10. Derived distribution of side-wall angles (left) and horizontal line widths in the middle of the height (right) for the line structure (noise for capping widths 1% and for ML widths 0.1%, 112 samples).
+−5
+−4
+−3
+−2
+−1
+0
+1
+2
+3
+x 10−3
+26 7 index of optimized parameter
+deviation from the expected value/μm
+σ2: 1.37 nm
+(0.48%)
+σ6: 0.24 nm
+(0.42%)
+σ7: 0.81 nm
+(0.29%)
+Figure 11. Impact of variations of the capping layer widths, imposed with an offset of −5% and a noise of 2%, and MLS widths with a noise of 0.1% on the reconstructed profile parameters (97 samples).
+has been studied and the results are given in the last two rows of table 3. Figures 9 and 10 present the details of the impact on the reconstructed parameters for one of these examples. Namely, the plots correspond to the case with a noise of 1% in the widths of the capping layers and 0.1% in those of the MLS stack. As already mentioned briefly in section 4.1, for all results presented in table 3, we have used the mediumsized measurement data set N2m-25 (line to space ratio 1:2, period 420 nm). The reconstructed profile parameters used as reference values are given in table 4, and the standard deviations in table 3 are those of the fluctuation around these values. As expected, for all examined perturbations the standard deviations of the height p6 of the absorber line are
+Figure 12. Dependence of the reconstructed side-wall angle on the thickness of the SiO2 capping layer: measurements for a mask field with a line–space ratio of 1:2 and with a period of 420 nm.
+significantly smaller than the deviations for the corner points, due to the higher sensitivity of the height p6 with respect to the reflected wave modes. We have observed similar results for the standard deviations in dependence on different noise levels of the measured efficiencies (cf table 2) in section 4.2. As a consequence of the larger deviations in the horizontal x-coordinates, the standard deviations for the side-wall angles SWA are relatively large and they are always greater then 1.5◦. Furthermore it can be observed that, for perturbed MLS widths smaller then 0.5%, the horizontal width at the middle of the height (CDm) has relatively small deviations indicating a stable value. In other words, the reconstruction of CDm is just as stable as that of p6. An offset of ±5% for the widths of capping layers (cf last two rows of table 3) does not affect significantly the standard deviations of the reconstructed parameters. However, a systematic shift of the reconstructed side-wall angle SWA appears. In fact, the side-wall angle increases significantly if the widths of the SiO2 and Si capping layers are presumed to be smaller than the corresponding references values 1.234 nm
+9
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+and 12.869 nm. In figure 11 this increase is manifested by the significant shifts of the median values for σ2 and σ7 to the negative and positive directions, respectively. The mean side-wall angle increases to 87.8◦ compared with 85.0◦ for the reference thickness values. The side-wall angle measured by atomic force microscopy is between 86.9◦ and 87.6◦. If we pick up the thickness of the first capping layer, i.e., the SiO2 layer, and perform the optimization of our reconstruction algorithm to get the relative x-coordinates of the lower and upper corner points in dependence on the varying thickness of the first capping layer, a strong correlation of the resulting side-wall angle is obtained, cf figure 12.
+5. Summary and conclusions
+To solve the reconstruction problem for EUV scatterometry by 2D line structures, we have proposed a trapezoidal shaped profile model composed of different material components and parameterized by corner points and heights. The inverse problem has been formulated as a nonlinear operator equation which includes the mapping of the vector of sought parameters to the vector of certain efficiencies of the plane-wave modes diffracted by the mask. An FEM-based Gauß–Newton type method has been applied to solve the operator equation reformulated as an optimization problem. If the number of measured values is sufficiently large and if the bounds for the sought parameters are chosen appropriately, precise results can be achieved for EUV masks with different line to space ratios (1:5, 1:2, 3:1) and with different periods (840 nm, 420 nm, 720 nm). For the sake of simplicity, we have restricted our examinations to a symmetric profile model, where only three important parameters are sought, namely, the two x-coordinates of the lower and the upper right corners of the layer in the middle of the line structure and the thickness of this layer. Clearly the uncertainties of the reconstructed parameters depend on the uncertainties of the input data for the reconstruction algorithm. We analyzed the impact of normally perturbed efficiencies of measurement data sets by a Monte Carlo method and, additionally, by an approximate covariance matrix method. If the relative uncertainties of the measured efficiencies are about 1% with a background noise of 0.001%, then the relative uncertainties of the reconstructed parameters have been found to be smaller than 0.8%. This holds even for input data sets of moderate size and for the reconstruction of the side-wall angle. Furthermore, we investigated the influence of certain presumed and fixed model parameters, namely, the thicknesses of the two capping layers and the four widths in the periodically repeated groups of the multilayer system. We have confined our tests to a single medium-sized data set and to the Monte Carlo method. That is, stochastically perturbed thicknesses have been inserted into the capping and MLS model, and reconstructions for all these perturbed models have been performed to determine the statistics of the reconstructed parameters of the line-space structure. It turned out that the impact of such model-based uncertainties is dominant as compared to the variances of the measured diffraction efficiencies. The CD for the bottom and the top
+of the line structure show significantly increased variations. Even for the smallest presumed perturbation (the capping layer thickness perturbed by 1% and MLS layers by 0.1%), the standard deviation of the side-wall angle σSWA is greater than 1.5◦. On the other hand, we have observed that the height of the line-space structure and its CDm (width at middle height of the absorber line) are relatively stable with respect to the model-based uncertainties. Furthermore, our examinations have revealed a strong correlation between the thicknesses of the capping layers, e.g. the SiO2 layer, and the side-wall angle. Future work will deal with further model imperfections and the impact of roughness at the layer interfaces is supposed to be the most important one.
+Acknowledgments
+The presented investigations are part of the project CDuR32 funded by the Federal Ministry of Education and Research.
+References
+[1] Huang H T and Terry F L Jr 2004 Spectroscopic ellipsometry and reflectometry from gratings (scatterometry) for critical dimension measurement and in situ, real-time process monitoring Thin Solid Films 455–456 828–36 Huang H T and Terry F L Jr 2004 Erratum to Spectroscopic ellipsometry and reflectometry from gratings (scatterometry) for critical dimension measurement and in situ, real-time process monitoring Thin Solid Films 468 1155–69 (erratum) [2] Raymond C J, Murnane M R, Prins S L, Sohail S, Naqvi H and McNeil J R 1997 Multiparameter grating metrology using optical scatterometry J. Vac. Sci. Technol. 15 361–8 [3] Gross H, Model R, B ̈ar M, Wurm M, Bodermann B and Rathsfeld A 2006 Mathematical modelling of indirect measurements in scatterometry Measurememt 39 782–94 [4] Wurm M, Bodermann B and Mirand ́e W 2005 Evaluation of scatterometry tools for critical dimension metrology DGaO Proc. 106 P25
+[5] Bao G and Dobson D C 1998 Modeling and optimal design of diffractive optical structures Surv. Math. Ind. 8 37–62 [6] Chen X and Friedmann A 1991 Maxwell’s equation in a periodic structure Trans. Am. Math. Soc. 323 811–8
+[7] Petit R (ed) 1980 Electromagnetic Theory of Gratings (Berlin: Springer) [8] Chandezon J, Maystre D and Raoult G 1980 A new theoretical method for diffraction gratings and its applications J. Opt. (Paris) 11 235–41
+[9] Kleemann B H 2003 Elektromagnetische Analyse von Oberfl ̈achengittern von IR bis XUV mittels einer parametrisierten Randintegralmethode: Theorie, Vergleich und Anwendungen Dissertation TU Ilmenau 2002 (Berlin: Mensch und Buch Verlag) [10] Lalanne P and Morris G M 1996 Highly improved convergence of the coupled-wave method for TM-polarization J. Opt. Soc. Am. A 13 779–84 [11] Li L 1997 New formulation of the Fourier modal method for crossed surface-relief gratings J. Opt. Soc. Am. A 14 2758–67 [12] Moharam M G and Gaylord T K 1981 Rigorous coupled wave analysis of planar grating diffraction J. Opt. Soc. Am. 71 811–8 [13] Moharam M G, Grann E B, Pommet D A and Gaylord T K 1995 Stable implementation of the rigorous coupled-wave
+10
+
+
+Meas. Sci. Technol. 20 (2009) 105102 H Gross et al
+analysis for surface-relief gratings: enhanced transmittance matrix approach J. Opt. Soc. Am. A 12 1077–86 [14] Tavrov A, Totzeck M, Kerwien N and Tiziani H J 2002 Rigorous coupled-wave analysis calculus of submicrometer interference pattern and resolving edge position versus signal-to-noise ratio Opt. Eng. 41 1886–92 [15] Bao G 1995 Finite element approximation of time harmonic waves in periodic structures SIAM J. Numer. Anal. 32 1155–69 [16] Elschner J, Hinder R and Schmidt G 2002 Finite element solution of conical diffraction problems Adv. Comput. Math. 16 139–56
+[17] Schaedle A, Zschiedrich L, Burger S, Klose R and Schmidt F 2006 Domain decomposition method for Maxwell’s equations: scattering of periodic structures ZIB-Report 06-04 (Berlin: Konrad Zuse Institut) [18] Urbach H P 1991 Convergence of the Galerkin method for two-dimensional electromagnetic problems SIAM J. Numer. Anal. 28 697–710 [19] Cessenat O and Depres B 1998 Application of an ultra weak variational formulation of elliptic PDEs to the two-dimensional Helmholtz problem SIAM J. Numer. Anal. 35 255–99 [20] Elschner J, Hinder R, Rathsfeld A and Schmidt G 2009 internet DIPOG Homepage
+http://www.wias-berlin.de/software/DIPOG
+[21] Ihlenburg F 1998 Finite Element Analysis of Acoustic Scattering (Applied Mathematical Sciences vol 132) (New York: Springer) [22] Melenk J M and Babuška I 1998 The partition of unity method: basic theory and applications Comput. Methods Appl. Mech. Eng. 139 289–314
+[23] Turunen J and Wyrowski F (ed) 1997 Diffractive Optics for
+Industrial and Commercial Applications (Berlin: Akademie Verlag) [24] Nocedal J and Wright S J 2000 Numerical Optimization (Springer Series in Operation Research) (New York: Springer) [25] Alassaad R M and Byrne D M 2007 Error analysis in inverse scatterometry: I. Modeling J. Opt. Soc. Am. A 24 326–38 [26] Elschner J and Schmidt G 2003 Conical diffraction by periodic structures: variation of interfaces and gradient formulas Math. Nachr. 252 24–42
+[27] Elschner J and Schmidt G 1998 Numerical solution of optimal design problems for binary gratings J. Comput. Phys. 146 603–26 [28] Gross H, Rathsfeld A, Scholze F, B ̈ar M and Dersch U 2007 Optimal sets of measurement data for profile reconstruction in scatterometry Proc. SPIE 6617 66171B [29] Gross H and Rathsfeld A 2008 Sensitivity analysis for indirect measurement in scatterometry and the reconstruction of periodic grating structures Waves in Random and Complex Media 18 129–49
+[30] Logofatu P C 2002 Sensitivity analysis of grating parameter estimation Appl. Opt. 41 7179–86 [31] Scholze F, Laubis C, Buchholz C, Fischer A, Pl ̈oger S, Scholz F, Wagner H and Ulm G 2005 Status of EUV reflectometry at PTB Proc. SPIE 5751 749–58 [32] Scholze F, T ̈ummler J and Ulm G 2003 High-accuracy radiometry in the EUV range at the PTB soft X-ray radiometry beam line Metrologia 40 224–8 [33] Perlich J, Kamm F-M, Rau J, Scholze F and Ulm G 2004 Characterization of extreme ultraviolet masks by extreme ultraviolet scatterometry J. Vac. Sci. Technol. B 22 3059–62 [34] Scholze F, Laubis C, Dersch U, Pomplun J, Burger S and Schmidt F 2007 The influence of line edge roughness and CD uniformity on EUV scatterometry for CD characterization of EUV masks Proc. SPIE 6617 66171A [35] Windt D L 1998 IMD-Software for modeling the optical properties of multilayer films Comput. Phys. 12 360–70 [36] Stearns D G 1989 The scattering of x rays from nonideal multilayer structures J. Appl. Phys. 65 491–506 [37] Joint Committee for Guides in Metrology (BIPM, IEC, IFCC, ILAC, ISO, IUPAC, IUPAP, and OIML) 2008 Evaluation of measurement data—Supplement 1 to the Guide to the Expression of Uncertainty in Measurement—Propagation of distributions using a Monte Carlo method (Bureau International des Poids et Mesures JCGM 101) [38] Germer T A, Patrick H J, Silver R M and Bunday B 2009 Developing an uncertainty analysis for optical scatterometry Proc. SPIE 7272 72720T [39] Gross H, Rathsfeld A, Scholze F, Model R and B ̈ar M 2008 Computational methods estimating uncertainties for profile reconstruction in scatterometry Proc. SPIE 6995 69950T
+11

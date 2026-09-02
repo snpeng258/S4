@@ -1,0 +1,59 @@
+# Fallback A: φ 2° + SWA 0.5° + cd/depth 1.0 nm → ~74k 格点，184 条件
+# 用法: python3 build_library.py --config config_build_swa05_fast.yaml --workers W --condition-workers C
+
+structure:
+  pitch_nm: 80
+  cd_nm: 39.52
+  depth_nm: 39.32
+  lswa_deg: 89.63
+  rswa_deg: 89.26
+  n_slices: 10
+  grating_material: Au
+  substrate_material: SiO2
+
+optical:
+  wl_nm: 14.55
+  angle_deg: 70
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 31
+  order_min: -15
+  order_max: 15
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      - {min: 55, max: 61, odd_only: true}
+    angles_deg: [70]
+    azimuths_deg: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90]
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse
+  cache_size: 128
+
+inverse:
+  method: lib_pop_ga_lm
+  order_collection: decoupling
+  decoupling:
+    enabled: true
+  param_names: [cd_nm, depth_nm, lswa_deg, rswa_deg]
+
+library:
+  file: ../data/inverse/spectra_hhg_swa05_phi2.npz
+  build_workers: 16
+  condition_workers: 8
+  checkpoint_every: 2000
+  grid:
+    cd_nm:    {min: 32, max: 48, step: 1.0}
+    depth_nm: {min: 32, max: 48, step: 1.0}
+    lswa_deg: {min: 80, max: 95, step: 0.5}
+    rswa_deg: {min: 80, max: 95, step: 0.5}
+  prior:
+    enabled: false
+    swa_deg_range: [80, 95]

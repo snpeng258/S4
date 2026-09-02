@@ -1,0 +1,62 @@
+# 建库专用：SWA 0.5° + cd/depth 1.0 nm，φ∈[0,90] 步长 1°，q55–61 @ 70°
+# 用法:
+#   python3 build_library.py --config config_build_swa05.yaml --dry-run
+#   python3 build_library.py --config config_build_swa05.yaml --workers 2 --resume
+# 预估: ~278k 格点 × 364 条件，workers=2 约 230h，NPZ ~25 GB
+
+structure:
+  pitch_nm: 80
+  cd_nm: 39.52
+  depth_nm: 39.32
+  lswa_deg: 89.63
+  rswa_deg: 89.26
+  n_slices: 10
+  grating_material: Au
+  substrate_material: SiO2
+
+optical:
+  wl_nm: 14.55
+  angle_deg: 70
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 31
+  order_min: -15
+  order_max: 15
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      - {min: 55, max: 61, odd_only: true}
+    angles_deg: [70]
+    azimuths_deg: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse
+  cache_size: 128
+
+inverse:
+  method: lib_pop_ga_lm
+  order_collection: decoupling
+  decoupling:
+    enabled: true
+  param_names: [cd_nm, depth_nm, lswa_deg, rswa_deg]
+
+library:
+  file: ../data/inverse/spectra_hhg_swa05_cd1.npz
+  build_workers: 16
+  condition_workers: 8
+  checkpoint_every: 2000
+  grid:
+    cd_nm:    {min: 32, max: 48, step: 1.0}
+    depth_nm: {min: 32, max: 48, step: 1.0}
+    lswa_deg: {min: 80, max: 95, step: 0.5}
+    rswa_deg: {min: 80, max: 95, step: 0.5}
+  prior:
+    enabled: false
+    swa_deg_range: [80, 95]
