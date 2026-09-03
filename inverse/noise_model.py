@@ -22,7 +22,7 @@ def _zero_channel() -> "ChannelNoiseConfig":
         camera="DoBEAM2000-2",
         relative_a=0.01,
         n0_electrons=1.0e6,
-        readout_e_rms=13.0,
+        readout_e_rms=5.0,
         n_roi_pixels=400,
         dark_e_per_pixel_s=125.0,
         t_exp_s=0.01,
@@ -32,7 +32,7 @@ def _zero_channel() -> "ChannelNoiseConfig":
 def _first_channel() -> "ChannelNoiseConfig":
     return ChannelNoiseConfig(
         camera="XV4040BSI-HG",
-        relative_a=0.0,
+        relative_a=0.01,
         n0_electrons=1.0e6,
         readout_e_rms=2.5,
         n_roi_pixels=400,

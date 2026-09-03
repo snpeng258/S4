@@ -36,7 +36,7 @@
 \sigma_j^2=(a f_j)^2 + f_j/N_0 + b^2
 \]
 
-零级保留 \(a=1\%\)；\(\pm 1\) 的 \(a=0\)。反演权重 \(1/\sigma_j\)（再乘解耦角色因子）。`eval.mode: noise` 扫描 `eval.noise_n0_electrons`。无噪声：`inverse.noise.apply: false`。
+零级与 \(\pm 1\) 共用入射光功率抖动 \(a=1\%\)。零级读出暂按 \(5\,\mathrm{e^-}\)。反演权重 \(1/\sigma_j\)（再乘解耦角色因子）。`eval.mode: noise` 扫描 `eval.noise_n0_electrons`。无噪声：`inverse.noise.apply: false`。
 
 ### HHG recipe（当前默认已启用）
 

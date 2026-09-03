@@ -101,15 +101,15 @@ inverse:
     apply: true
     zero:                       # m=0, DoBEAM2000-2（CMV4000 量级）
       camera: DoBEAM2000-2
-      relative_a: 0.01          # 零级仍有光源相对抖动
+      relative_a: 0.01          # 入射光功率相对抖动 a（两路共用）
       n0_electrons: 1.0e6
-      readout_e_rms: 13.0
+      readout_e_rms: 5.0        # 暂定；有标定后再改
       n_roi_pixels: 400
       dark_e_per_pixel_s: 125.0
       t_exp_s: 0.01
     first:                      # |m|>=1, XV4040BSI High Gain
       camera: XV4040BSI-HG
-      relative_a: 0.0           # ±1 与零级分采，不再加光源相对抖动
+      relative_a: 0.01          # 同一光源，±1 同样加功率抖动 a
       n0_electrons: 1.0e6
       readout_e_rms: 2.5
       n_roi_pixels: 400
