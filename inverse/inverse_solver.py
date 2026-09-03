@@ -196,7 +196,9 @@ class InverseProblem:
             self.wsqrt = static_role_weights(cfg, self.r_meas, self._block_sizes)
             warn_missing_roles(cfg)
         else:
-            self.wsqrt = snr_weights(self.r_meas, cfg.inverse, block_sizes=self._block_sizes)
+            self.wsqrt = snr_weights(
+                self.r_meas, cfg.inverse, cfg=cfg, block_sizes=self._block_sizes
+            )
         self._wsqrt_lm: np.ndarray | None = None
         self._cd_reg_sqrt: float = 0.0
         self._cd_anchor_val: float | None = None
@@ -362,7 +364,7 @@ def run_inverse(
         raise ValueError(f"unknown inverse.method={method!r}; choose from {INVERSE_METHODS}")
 
     if r_meas is None:
-        r_meas = generate_synthetic_measurement(cfg, cfg.inverse.noise_level)
+        r_meas = generate_synthetic_measurement(cfg)
 
     use_yaml_init = method == "ga_lm"
     problem = InverseProblem(cfg, r_meas, use_yaml_init=use_yaml_init)

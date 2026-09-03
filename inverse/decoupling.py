@@ -79,7 +79,12 @@ def static_role_weights(
     if not decoupling_is_active(cfg):
         raise ValueError("static_role_weights requires decoupling mode")
     layout = collectible_layout(cfg)
-    wsqrt = _snr_weights(np.asarray(r_meas, dtype=float), cfg.inverse, block_sizes=block_sizes)
+    wsqrt = _snr_weights(
+        np.asarray(r_meas, dtype=float),
+        cfg.inverse,
+        cfg=cfg,
+        block_sizes=block_sizes,
+    )
     dec = cfg.inverse.decoupling
     mult = np.array([_static_role_multiplier(s.role, dec) for s in layout], dtype=float)
     if dec.dynamic_lm.use_kx0_shadow_prior:

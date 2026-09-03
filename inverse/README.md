@@ -28,7 +28,15 @@
 | `eval.task: scan_sweep` | 同上 | 多参数正向扫描 |
 | `eval.mode` | 仅 `evaluate.py` 且 `task=inverse` | methods / noise / timing / ga_workers / all |
 
-`n_trials` 仅 `mode: noise` 或 `all` 时使用。
+### 噪声模型（合成测量 + WLS 权重）
+
+零级（`inverse.noise.zero`，DoBEAM2000-2）与 \(\pm 1\)（`inverse.noise.first`，XV4040BSI High Gain）分相机。合成测量对光电子做泊松抽样，暗电流泊松后减均值，再加读出高斯。WLS 用对应方差：
+
+\[
+\sigma_j^2=(a f_j)^2 + f_j/N_0 + b^2
+\]
+
+零级保留 \(a=1\%\)；\(\pm 1\) 的 \(a=0\)。反演权重 \(1/\sigma_j\)（再乘解耦角色因子）。`eval.mode: noise` 扫描 `eval.noise_n0_electrons`。无噪声：`inverse.noise.apply: false`。
 
 ### HHG recipe（当前默认已启用）
 
@@ -46,7 +54,7 @@
 | `swa` | φ≈90°, m=±1 | lswa/rswa（若可传播） |
 | `lateral` | 非 90° 多 φ, m=0 | cd_nm（LM 中按 J 动态细分） |
 
-- **GA / 库匹配**：`static_weights` × 现有 SNR 权重
+- **GA / 库匹配**：`static_weights` × 探测器 \(1/\sigma\) 权重（或旧 SNR 启发式）
 - **LM**：外层周期性有限差分 Jacobian → 动态 `wsqrt` + CD 软正则（`cd_anchor: ga`）
 - 诊断：`p_est.json` 的 `lm_weight_history`（耦合比 r、λ_cd 等）
 

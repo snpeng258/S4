@@ -164,6 +164,21 @@ def block_sizes(cfg: ScatterometryConfig) -> list[int]:
     return [len(orders) for orders in active_orders_per_condition(cfg)]
 
 
+def stored_order_m_vector(cfg: ScatterometryConfig) -> np.ndarray:
+    """Order m for each entry of the full concatenated R_m vector."""
+    ms = np.asarray(order_m_values(cfg), dtype=int)
+    n_cond = len(expand_measurement_conditions(cfg))
+    return np.tile(ms, n_cond)
+
+
+def collectible_order_m(cfg: ScatterometryConfig) -> np.ndarray:
+    """Order m for each collectible observable (same order as apply_collection)."""
+    ms: list[int] = []
+    for orders in active_orders_per_condition(cfg):
+        ms.extend(int(m) for m in orders)
+    return np.asarray(ms, dtype=int)
+
+
 def n_collectible(cfg: ScatterometryConfig) -> int:
     return int(active_indices(cfg).size)
 

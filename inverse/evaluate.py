@@ -113,23 +113,38 @@ def _apply_dual_noise_xaxis(ax: plt.Axes, noise_dbs: list[float]) -> None:
     ax_top.set_xlabel("noise (% of peak R)")
 
 
+def _apply_n0_xaxis(ax: plt.Axes, n0_vals: list[float]) -> None:
+    ax.set_xscale("log")
+    ax.set_xticks(n0_vals)
+    ax.set_xticklabels([f"{n0:.3g}" for n0 in n0_vals])
+    ax.set_xlabel(r"$N_0$ (photoelectrons at $R=1$)")
+
+
 def plot_noise_sweep(df_records: list[dict], param_names: list[str], out_dir: Path, dpi: int) -> None:
     if not df_records:
         return
-    noise_dbs = sorted({r["noise_db"] for r in df_records})
+    if "n0_electrons" in df_records[0]:
+        keys = sorted({float(r["n0_electrons"]) for r in df_records})
+        match = lambda rec, k: float(rec["n0_electrons"]) == k
+        xlabel_fn = _apply_n0_xaxis
+    else:
+        keys = sorted({r["noise_db"] for r in df_records})
+        match = lambda rec, k: rec["noise_db"] == k
+        xlabel_fn = _apply_dual_noise_xaxis
+
     fig, axes = plt.subplots(1, len(param_names), figsize=(4 * len(param_names), 4.5), squeeze=False)
     for j, pname in enumerate(param_names):
         ax = axes[0, j]
         means, stds = [], []
-        for db in noise_dbs:
-            errs = [abs(r["rel_errors"][pname]) for r in df_records if r["noise_db"] == db]
+        for k in keys:
+            errs = [abs(r["rel_errors"][pname]) for r in df_records if match(r, k)]
             means.append(np.mean(errs))
             stds.append(np.std(errs))
-        ax.errorbar(noise_dbs, means, yerr=stds, fmt="-o", capsize=3)
+        ax.errorbar(keys, means, yerr=stds, fmt="-o", capsize=3)
         ax.set_ylabel("|rel error| (%)")
         ax.set_title(pname)
         ax.grid(True, alpha=0.3)
-        _apply_dual_noise_xaxis(ax, noise_dbs)
+        xlabel_fn(ax, keys)
     fig.suptitle("Parameter error vs noise")
     fig.tight_layout()
     fig.savefig(out_dir / "eval_noise_curve.png", dpi=dpi, facecolor="w")
@@ -137,16 +152,22 @@ def plot_noise_sweep(df_records: list[dict], param_names: list[str], out_dir: Pa
 
     fig2, ax2 = plt.subplots(figsize=(7, 4.5))
     data = []
-    for db in noise_dbs:
+    for k in keys:
         vals = []
         for pname in param_names:
-            vals.extend([abs(r["rel_errors"][pname]) for r in df_records if r["noise_db"] == db])
+            vals.extend([abs(r["rel_errors"][pname]) for r in df_records if match(r, k)])
         data.append(vals)
-    ax2.boxplot(data, positions=noise_dbs, widths=1.2)
+    if "n0_electrons" in df_records[0]:
+        ax2.boxplot(data, positions=list(range(len(keys))), widths=0.6)
+        ax2.set_xticks(list(range(len(keys))))
+        ax2.set_xticklabels([f"{k:.3g}" for k in keys])
+        ax2.set_xlabel(r"$N_0$ (photoelectrons at $R=1$)")
+    else:
+        ax2.boxplot(data, positions=keys, widths=1.2)
+        xlabel_fn(ax2, keys)
     ax2.set_ylabel("|rel error| (%)")
     ax2.set_title("Error distribution")
     ax2.grid(True, alpha=0.3, axis="y")
-    _apply_dual_noise_xaxis(ax2, noise_dbs)
     fig2.tight_layout()
     fig2.savefig(out_dir / "eval_noise_boxplot.png", dpi=dpi, facecolor="w")
     plt.close(fig2)
@@ -168,15 +189,45 @@ def plot_timing(timing: dict[str, float], forward_evals: int, out_dir: Path, dpi
 
 def evaluate_noise(cfg: ScatterometryConfig) -> list[dict]:
     records = []
+    n0_list = list(cfg.eval.noise_n0_electrons or [])
+    if n0_list and cfg.inverse.noise.apply:
+        for n0 in n0_list:
+            for trial in range(cfg.eval.n_trials):
+                reset_runner()
+                trial_cfg = cfg.copy()
+                trial_cfg.inverse.noise.set_n0_electrons(float(n0))
+                rng = np.random.default_rng(
+                    cfg.inverse.ga_seed + trial if cfg.inverse.ga_seed else trial
+                )
+                r_meas = generate_synthetic_measurement(
+                    trial_cfg, rng=rng, n0_electrons=float(n0)
+                )
+                inv_cfg = cfg.copy()
+                inv_cfg.inverse.noise.set_n0_electrons(float(n0))
+                result = run_inverse(inv_cfg, r_meas=r_meas)
+                records.append({
+                    "n0_electrons": float(n0),
+                    "trial": trial,
+                    "rel_errors": result.relative_errors_pct,
+                    "resnorm": result.resnorm,
+                    "timing": result.timing,
+                    "forward_evals": result.forward_eval_count,
+                })
+                print(
+                    f"N0={n0:.3g} trial={trial} errors={result.relative_errors_pct}"
+                )
+        return records
+
     for noise_db in cfg.eval.noise_levels_db:
         noise_frac = noise_db_to_fraction(noise_db)
         for trial in range(cfg.eval.n_trials):
             reset_runner()
             trial_cfg = cfg.copy()
-            trial_cfg.inverse.noise_level = 0.0
+            trial_cfg.inverse.noise.apply = False
             rng = np.random.default_rng(cfg.inverse.ga_seed + trial if cfg.inverse.ga_seed else trial)
             r_meas = generate_synthetic_measurement(trial_cfg, noise_db=noise_db, rng=rng)
             inv_cfg = cfg.copy()
+            inv_cfg.inverse.noise.apply = False
             inv_cfg.inverse.noise_level = noise_frac
             result = run_inverse(inv_cfg, r_meas=r_meas)
             records.append({
@@ -201,7 +252,8 @@ def evaluate_timing(cfg: ScatterometryConfig) -> dict:
     _, _ = simulate_reflectivity_multi(cfg)
     t_forward = time.perf_counter() - t0
     t1 = time.perf_counter()
-    result = run_inverse(cfg)
+    r_meas = generate_synthetic_measurement(cfg, noiseless=True)
+    result = run_inverse(cfg, r_meas=r_meas)
     t_inv = time.perf_counter() - t1
     timing = dict(result.timing)
     timing["t_s4_forward_single"] = t_forward
@@ -249,7 +301,7 @@ def _trial_ga_seed(base: int | None, trial: int, stride: int) -> int | None:
 
 def evaluate_ga_workers(cfg: ScatterometryConfig, out_dir: Path | None = None) -> dict:
     reset_runner()
-    r_meas = generate_synthetic_measurement(cfg, noise_level=0.0)
+    r_meas = generate_synthetic_measurement(cfg, noiseless=True)
     records: list[dict] = []
     sweep = cfg.eval.ga_workers_sweep
     n_trials = cfg.eval.ga_workers_trials
@@ -401,7 +453,7 @@ def plot_methods_comparison(records: list[dict], param_names: list[str], out_dir
 def evaluate_methods(cfg: ScatterometryConfig) -> list[dict]:
     """Compare ga_lm, lib_pop_ga_lm, lib_pop_rand_ga_lm on the same r_meas."""
     reset_runner()
-    r_meas = generate_synthetic_measurement(cfg, noise_level=0.0)
+    r_meas = generate_synthetic_measurement(cfg, noiseless=True)
     records: list[dict] = []
     for i, method in enumerate(INVERSE_METHODS):
         reset_runner()

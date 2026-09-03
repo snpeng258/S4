@@ -1,7 +1,10 @@
-"""SNR-based sqrt weights for inverse residuals (shared by GA/LM and decoupling)."""
+"""Observation weights for inverse residuals (detector σ or legacy SNR heuristic)."""
 from __future__ import annotations
 
 import numpy as np
+
+from noise_model import inverse_sigma_weights
+from order_collection import collectible_order_m
 
 
 def snr_weights_block(r_meas: np.ndarray, inv) -> np.ndarray:
@@ -25,9 +28,22 @@ def snr_weights(
     r_meas: np.ndarray,
     inv,
     *,
+    cfg=None,
     block_sizes: list[int] | None = None,
     n_orders: int | None = None,
+    order_m: np.ndarray | None = None,
 ) -> np.ndarray:
+    if getattr(inv, "noise", None) is not None and inv.noise.apply:
+        om = order_m if order_m is not None else (
+            collectible_order_m(cfg) if cfg is not None else None
+        )
+        if om is None:
+            raise ValueError("detector weights require order_m or cfg")
+        r = np.asarray(r_meas, dtype=float)
+        om = np.asarray(om, dtype=int)
+        if om.shape != r.shape:
+            raise ValueError(f"order_m length {om.size} != r_meas {r.size}")
+        return inverse_sigma_weights(r, inv.noise, om)
     if block_sizes is not None:
         parts: list[np.ndarray] = []
         offset = 0

@@ -8,9 +8,10 @@ from pathlib import Path
 import numpy as np
 
 from config import ScatterometryConfig, load_config, parse_config_arg
-from order_collection import collection_summary
+from order_collection import collection_summary, stored_order_m_vector
 from recipe import cfg_with_condition, expand_measurement_conditions, n_orders
 from s4_runner import S4Runner, reflectivity_vector
+from noise_model import add_detector_noise
 
 
 _runner: S4Runner | None = None
@@ -108,20 +109,47 @@ def noise_fraction_to_db(fraction: float) -> float:
 
 def generate_synthetic_measurement(
     cfg: ScatterometryConfig,
-    noise_level: float = 0.0,
+    noise_level: float | None = None,
     rng: np.random.Generator | None = None,
     noise_db: float | None = None,
+    *,
+    noiseless: bool = False,
+    n0_electrons: float | None = None,
 ) -> np.ndarray:
-    """Full stored-order vector; inverse applies collectible mask."""
+    """Full stored-order vector; inverse applies collectible mask.
+
+    Default: per-order detector model (Poisson shot + camera floor + optional
+    flicker). m=0 and |m|>=1 use inverse.noise.zero / .first. Legacy additive
+    peak-relative noise is used only if noise_db / noise_level is passed, or if
+    cfg.inverse.noise.apply is false and noise_level>0.
+    """
     vec, _ = simulate_reflectivity_multi(cfg)
-    if noise_db is not None:
-        noise_level = noise_db_to_fraction(noise_db)
-    if noise_level <= 0:
+    if noiseless:
         return vec.copy()
     rng = rng or np.random.default_rng()
-    scale = noise_level * max(float(vec.max()), 1e-12)
-    noisy = vec + rng.normal(0.0, scale, size=vec.shape)
-    return np.clip(noisy, 0.0, None)
+    noise = cfg.inverse.noise
+    use_legacy = noise_db is not None or (
+        noise_level is not None and noise_level > 0 and not noise.apply
+    )
+    if noise_db is not None:
+        noise_level = noise_db_to_fraction(noise_db)
+        use_legacy = True
+    if use_legacy:
+        level = float(noise_level or 0.0)
+        if level <= 0:
+            return vec.copy()
+        scale = level * max(float(vec.max()), 1e-12)
+        noisy = vec + rng.normal(0.0, scale, size=vec.shape)
+        return np.clip(noisy, 0.0, None)
+    if not noise.apply:
+        return vec.copy()
+    return add_detector_noise(
+        vec,
+        noise,
+        rng,
+        stored_order_m_vector(cfg),
+        n0_electrons=n0_electrons,
+    )
 
 
 def save_reflectivity_tsv(path: Path, r_map: dict[int, float]) -> None:

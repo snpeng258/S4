@@ -10,6 +10,8 @@ import yaml
 
 import numpy as np
 
+from noise_model import DetectorNoiseConfig, parse_detector_noise
+
 PARAM_NAMES = ("pitch_nm", "cd_nm", "depth_nm", "lswa_deg", "rswa_deg")
 INVERSE_METHODS = ("ga_lm", "lib_pop_ga_lm", "lib_pop_rand_ga_lm")
 EVAL_TASKS = ("inverse", "scan_sweep")
@@ -287,6 +289,7 @@ class InverseConfig:
     reg_weight: float = 0.0
     noise_level: float = 0.0
     noise_threshold: float = 1.0
+    noise: DetectorNoiseConfig = field(default_factory=DetectorNoiseConfig)
     use_ga: bool = True
     use_lm: bool = True
     ga_maxiter: int = 50
@@ -311,9 +314,13 @@ class EvalConfig:
     task: str = "inverse"
     # mode 仅 evaluate.py 且 task=inverse: noise | timing | ga_workers | methods | all
     mode: str = "all"
-    # Noise floor in dB relative to peak R (amplitude): sigma/R_peak = 10^(dB/20).
+    # Legacy peak-relative sweep: sigma/R_peak = 10^(dB/20). Ignored if noise_n0_electrons is set.
     noise_levels_db: list[float] = field(
         default_factory=lambda: [-40.0, -30.0, -25.0, -20.0, -15.0]
+    )
+    # Detector-noise sweep: photoelectrons at R=1 (shot term f/N0). Preferred over noise_levels_db.
+    noise_n0_electrons: list[float] = field(
+        default_factory=lambda: [1.0e5, 3.0e5, 1.0e6, 3.0e6, 1.0e7]
     )
     n_trials: int = 10
     ga_workers_sweep: list[int] = field(
@@ -367,7 +374,9 @@ def load_config(path: str | Path) -> ScatterometryConfig:
             inv["ga_mutation"] = tuple(inv["ga_mutation"])
         dec_raw = inv.pop("decoupling", None)
         dec = _parse_decoupling(dec_raw)
-        cfg.inverse = InverseConfig(**inv, decoupling=dec)
+        noise_raw = inv.pop("noise", None)
+        noise = parse_detector_noise(noise_raw)
+        cfg.inverse = InverseConfig(**inv, decoupling=dec, noise=noise)
         if cfg.inverse.order_collection.lower() == "decoupling":
             cfg.inverse.decoupling.enabled = True
     if "eval" in raw:

@@ -94,8 +94,27 @@ inverse:
   perturb_frac: 0.05
   bound_frac: 0.2
   reg_weight: 0.0
+  # 旧的 peak-relative 加噪已弃用。零级与 |m|>=1 分相机；散粒为泊松抽样
   noise_level: 0.0
   noise_threshold: 3.0
+  noise:
+    apply: true
+    zero:                       # m=0, DoBEAM2000-2（CMV4000 量级）
+      camera: DoBEAM2000-2
+      relative_a: 0.01          # 零级仍有光源相对抖动
+      n0_electrons: 1.0e6
+      readout_e_rms: 13.0
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 125.0
+      t_exp_s: 0.01
+    first:                      # |m|>=1, XV4040BSI High Gain
+      camera: XV4040BSI-HG
+      relative_a: 0.0           # ±1 与零级分采，不再加光源相对抖动
+      n0_electrons: 1.0e6
+      readout_e_rms: 2.5
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 0.01
+      t_exp_s: 1.0
   use_ga: true
   use_lm: true
   ga_maxiter: 20
@@ -172,13 +191,7 @@ eval:
   # 仅 task=inverse 且入口=evaluate.py:
   #   methods | noise | timing | ga_workers | all
   mode: all
-  noise_levels_db:
-    - -15
-    - -20
-    - -25
-    - -30
-    - -35
-    - -40
+  noise_n0_electrons: [1.0e5, 3.0e5, 1.0e6, 3.0e6, 1.0e7]
   n_trials: 10
   ga_workers_sweep: [1, 2, 3, 4, 8, 16, 24, 28, 32, 36, 40, 48, 56]
   ga_workers_trials: 3
