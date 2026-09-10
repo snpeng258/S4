@@ -18,7 +18,8 @@
 | `inverse` | `method`、`order_collection`、`decoupling`、GA/LM 参数 |
 | `library` | 光谱库 grid、prior、`build_workers` |
 | `scan` | 扫描轴、Jacobian；可选 `scan.recipe`（与逆问题独立） |
-| `eval` | **`task`**（inverse / scan_sweep）、**`mode`**（批量评价） |
+| `eval` | **`task`**（inverse / scan_sweep / fim_study）、**`mode`**（批量评价） |
+| `fim` | 一层雅可比 / FIM 的掩膜与 \(N_0\)/\(a\) 扫描（见 [`config_fim.yaml`](config_fim.yaml)） |
 
 ### eval.task 与 eval.mode
 
@@ -26,6 +27,7 @@
 |------|------|------|
 | `eval.task: inverse` | `inverse_solver.py` / `evaluate.py` | 逆问题 GA+LM |
 | `eval.task: scan_sweep` | 同上 | 多参数正向扫描 |
+| `eval.task: fim_study` | `fim_study.py` / `evaluate.py` | 一张全级次 \(J\) + 行掩膜 FIM / CRLB |
 | `eval.mode` | 仅 `evaluate.py` 且 `task=inverse` | methods / noise / timing / ga_workers / all |
 
 ### 噪声模型（合成测量 + WLS 权重）
@@ -81,6 +83,20 @@ scan:
 
 `eval.task: scan_sweep` 后运行 `python3 evaluate.py`。
 
+### 一层雅可比 / FIM（`fim_study`）
+
+在真值结构上对**全存储级次**做一次有限差分 \(J\)（不读谱库、不跑 GA+LM），再用行掩膜比较布局。\(\Sigma\) 用与反演相同的分相机 `observation_variance`（**不含**解耦角色权重）。
+
+```bash
+cd inverse
+python3 fim_study.py --config config_fim.yaml --layout-only   # 只打印 (φ,m) 传播表，不调用 S4
+python3 fim_study.py --config config_fim.yaml                # ~100 次 S4
+```
+
+输出在 `../runs/inverse/fim_study/`（gitignore）。FIM 与出图默认只留可传播的 \(m\in\{-1,0,1\}\)（`fim.keep_orders`）：`fim_R_lambda_phi.png` 以及每个级次的 \(\partial R/\partial p\)、白化图（\((\lambda,\varphi)\) 平面）。掩膜：`prop`（可传播的 0/±1）、`decoupling`、`m0_all`、`only90`、`no90`、`near90`、`far`、`mid`、`two_cam`、`drop_phi45`。同一张 \(J\) 上再扫 \(N_0\) 与 \(a\)。也可 `python3 evaluate.py --config config_fim.yaml`。S4 的 `NG` 不变，屏蔽高级次只影响分析和图，不加快求解。
+
+密采样（\(\lambda=10\)–\(30\,\mathrm{nm}\)、步长 1 nm；\(\varphi=0\)–\(90^\circ\)、步长 \(5^\circ\)；depth 40 nm、占空比 0.5）用 `run_fim_dense.py`：80 nm 组 `NG=31`，300 nm 组 `NG=61`。每组约 399 个条件、1995 次 S4。先 `--layout-only` 看传播表。
+
 ## 使用
 
 ```bash
@@ -90,6 +106,10 @@ python3 forward_model.py
 python3 build_library.py          # 或 --resume
 python3 inverse_solver.py         # 读 eval.task
 python3 evaluate.py               # eval.mode=methods / noise / ...
+python3 fim_study.py --config config_fim.yaml --layout-only
+python3 fim_study.py --config config_fim.yaml
+python3 run_fim_dense.py --layout-only
+python3 run_fim_dense.py
 ```
 
 ## 输出

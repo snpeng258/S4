@@ -8,7 +8,7 @@ import numpy as np
 
 from config import GridAxisConfig, MeasurementRecipe, OpticalConfig, ScatterometryConfig
 
-EVAL_TASKS = ("inverse", "scan_sweep")
+EVAL_TASKS = ("inverse", "scan_sweep", "fim_study")
 
 
 @dataclass(frozen=True)
