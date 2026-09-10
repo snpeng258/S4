@@ -475,6 +475,13 @@ def main() -> None:
         run_scan_sweep(cfg, out_dir)
         return
 
+    if task == "fim_study":
+        from fim_study import run_fim_study
+
+        print("eval.task=fim_study: running Jacobian/FIM study (no GA+LM).")
+        run_fim_study(cfg, out_dir)
+        return
+
     s, inv = cfg.structure, cfg.inverse
     _eval_mode_hint(cfg, cfg_path)
     print("Reference (true) structure:")

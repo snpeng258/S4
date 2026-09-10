@@ -14,7 +14,26 @@ from noise_model import DetectorNoiseConfig, parse_detector_noise
 
 PARAM_NAMES = ("pitch_nm", "cd_nm", "depth_nm", "lswa_deg", "rswa_deg")
 INVERSE_METHODS = ("ga_lm", "lib_pop_ga_lm", "lib_pop_rand_ga_lm")
-EVAL_TASKS = ("inverse", "scan_sweep")
+EVAL_TASKS = ("inverse", "scan_sweep", "fim_study")
+DEFAULT_FIM_MASKS = (
+    "prop",
+    "decoupling",
+    "m0_all",
+    "only90",
+    "no90",
+    "near90",
+    "far",
+    "mid",
+    "two_cam",
+    "drop_phi45",
+)
+DEFAULT_FIM_WINDOWS = {
+    "only90": [90.0],
+    "near90": [60.0, 90.0],
+    "far": [0.0, 30.0],
+    "mid": [30.0, 45.0],
+    "two_cam": [0.0, 30.0, 60.0, 90.0],
+}
 
 
 @dataclass
@@ -308,9 +327,86 @@ class InverseConfig:
     decoupling: DecouplingConfig = field(default_factory=DecouplingConfig)
 
 
+def _default_fim_param_scales() -> dict[str, float]:
+    return {
+        "cd_nm": 1.0,
+        "depth_nm": 1.0,
+        "lswa_deg": 1.0,
+        "rswa_deg": 1.0,
+    }
+
+
+def _default_fim_windows() -> dict[str, list[float]]:
+    return {k: list(v) for k, v in DEFAULT_FIM_WINDOWS.items()}
+
+
+@dataclass
+class FimStudyConfig:
+    """Layer-1 Jacobian / FIM study (row masks on one full-order J)."""
+
+    eps_frac: float = 0.01
+    masks: list[str] = field(default_factory=lambda: list(DEFAULT_FIM_MASKS))
+    n0_electrons: list[float] | None = None
+    flicker_a: list[float | None] = field(default_factory=lambda: [None, 0.0])
+    param_scales: dict[str, float] = field(default_factory=_default_fim_param_scales)
+    azimuth_windows: dict[str, list[float]] = field(default_factory=_default_fim_windows)
+    azimuth_tol_deg: float = 0.5
+    rcond: float = 1e-12
+    n0_sweep_masks: list[str] = field(
+        default_factory=lambda: ["prop", "decoupling", "only90"]
+    )
+    corr_masks: list[str] = field(
+        default_factory=lambda: ["prop", "decoupling", "m0_all", "only90"]
+    )
+
+
+def _parse_fim(raw: dict | None) -> FimStudyConfig:
+    if not raw:
+        return FimStudyConfig()
+    data = dict(raw)
+    windows = _default_fim_windows()
+    raw_windows = data.pop("azimuth_windows", None) or {}
+    for name, vals in raw_windows.items():
+        if vals is None:
+            continue
+        if isinstance(vals, (int, float)):
+            windows[str(name)] = [float(vals)]
+        else:
+            windows[str(name)] = [float(v) for v in vals]
+    scales = _default_fim_param_scales()
+    raw_scales = data.pop("param_scales", None) or {}
+    for name, val in raw_scales.items():
+        scales[str(name)] = float(val)
+    flicker_raw = data.pop("flicker_a", [None, 0.0])
+    flicker: list[float | None] = []
+    if flicker_raw is None:
+        flicker = [None]
+    else:
+        for item in flicker_raw:
+            flicker.append(None if item is None else float(item))
+    n0_raw = data.pop("n0_electrons", None)
+    n0_vals: list[float] | None
+    if n0_raw is None:
+        n0_vals = None
+    else:
+        n0_vals = [float(v) for v in n0_raw]
+    return FimStudyConfig(
+        eps_frac=float(data.get("eps_frac", 0.01)),
+        masks=[str(m) for m in data.get("masks", list(DEFAULT_FIM_MASKS))],
+        n0_electrons=n0_vals,
+        flicker_a=flicker,
+        param_scales=scales,
+        azimuth_windows=windows,
+        azimuth_tol_deg=float(data.get("azimuth_tol_deg", 0.5)),
+        rcond=float(data.get("rcond", 1e-12)),
+        n0_sweep_masks=[str(m) for m in data.get("n0_sweep_masks", ["prop", "decoupling", "only90"])],
+        corr_masks=[str(m) for m in data.get("corr_masks", ["prop", "decoupling", "m0_all", "only90"])],
+    )
+
+
 @dataclass
 class EvalConfig:
-    # task: inverse | scan_sweep  (inverse_solver.py 与 evaluate.py 均读)
+    # task: inverse | scan_sweep | fim_study  (inverse_solver.py 与 evaluate.py 均读)
     task: str = "inverse"
     # mode 仅 evaluate.py 且 task=inverse: noise | timing | ga_workers | methods | all
     mode: str = "all"
@@ -341,6 +437,7 @@ class ScatterometryConfig:
     library: LibraryConfig = field(default_factory=LibraryConfig)
     scan: ScanConfig = field(default_factory=ScanConfig)
     eval: EvalConfig = field(default_factory=EvalConfig)
+    fim: FimStudyConfig = field(default_factory=FimStudyConfig)
     config_path: Path | None = None
 
     def copy(self) -> "ScatterometryConfig":
@@ -419,6 +516,8 @@ def load_config(path: str | Path) -> ScatterometryConfig:
             if bands:
                 r_copy["harmonic_order_ranges"] = _parse_harmonic_order_ranges(bands)
             cfg.scan.recipe = MeasurementRecipe(**r_copy)
+    if "fim" in raw:
+        cfg.fim = _parse_fim(raw["fim"])
     cfg.config_path = path
     return cfg
 
@@ -471,6 +570,7 @@ def save_config(cfg: ScatterometryConfig, path: str | Path) -> None:
         },
         "scan": _scan_to_dict(cfg.scan),
         "eval": asdict(cfg.eval),
+        "fim": asdict(cfg.fim),
     }
     inv = data["inverse"]
     if isinstance(inv.get("ga_mutation"), tuple):

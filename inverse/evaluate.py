@@ -500,6 +500,13 @@ def main() -> None:
         print(f"Results in {out_dir}")
         return
 
+    if task == "fim_study":
+        from fim_study import run_fim_study
+
+        run_fim_study(cfg, out_dir)
+        print(f"Results in {out_dir}")
+        return
+
     mode = cfg.eval.mode.lower()
     known = ("noise", "timing", "ga_workers", "methods", "all")
     print(f"eval.mode={mode}")

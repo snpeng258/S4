@@ -4,6 +4,7 @@
 # 任务开关（改 eval.task 即可，其它段保留不动）:
 #   inverse      → GA+LM 或 evaluate 批量评价（见 eval.mode）
 #   scan_sweep   → 多波长/多角度正向扫描 + Jacobian（见 scan.axes）
+#   fim_study    → 一层雅可比 / FIM（用 config_fim.yaml，不跑 GA+LM、不读谱库）
 # build_library.py 不读 eval.task
 #
 # 快速单波长试跑：注释掉 optical.recipe 整段，并改 library.file → ../data/inverse/spectra.npz
@@ -187,6 +188,7 @@ eval:
   # python3 evaluate.py / inverse_solver.py 均读 eval.task
   #   inverse     - 逆问题（evaluate 按 mode 批量）
   #   scan_sweep  - 正向扫描
+  #   fim_study   - 雅可比/FIM（见 config_fim.yaml）
   task: inverse
   # 仅 task=inverse 且入口=evaluate.py:
   #   methods | noise | timing | ga_workers | all

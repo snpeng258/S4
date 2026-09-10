@@ -1,0 +1,119 @@
+# Layer-1 Jacobian / FIM study (no library, no GA+LM)
+#   python3 fim_study.py --config config_fim.yaml --layout-only
+#   python3 fim_study.py --config config_fim.yaml
+#   python3 evaluate.py --config config_fim.yaml
+#
+# One finite-difference J on the full stored R_m vector (~100 S4 calls),
+# then every layout is a propagating-order row mask. Σ = observation_variance
+# (role weights are not in FIM). Outputs under ../runs/inverse/fim_study/
+
+structure:
+  pitch_nm: 80
+  cd_nm: 39.52
+  depth_nm: 39.32
+  lswa_deg: 89.63
+  rswa_deg: 89.26
+  n_slices: 10
+  grating_material: Au
+  substrate_material: SiO2
+
+optical:
+  wl_nm: 29.63
+  angle_deg: 70
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 31
+  order_min: -15
+  order_max: 15
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      - {min: 55, max: 61, odd_only: true}
+    angles_deg: [70]
+    azimuths_deg: [0, 30, 45, 60, 90]
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse/fim_study
+  cache_size: 128
+
+inverse:
+  method: lib_pop_rand_ga_lm
+  order_collection: decoupling
+  decoupling:
+    enabled: true
+    azimuth_tol_deg: 0.5
+    roles:
+      depth_anchor: { azimuth_deg: 90, orders: [0] }
+      swa:          { azimuth_deg: 90, orders: [-1, 1] }
+      lateral:
+        azimuths_deg: [0, 30, 45, 60]
+        orders: [0]
+    static_weights:
+      depth_anchor: 1.0
+      swa: 0.8
+      lateral: 1.0
+      aux: 0.2
+  param_names:
+    - cd_nm
+    - depth_nm
+    - lswa_deg
+    - rswa_deg
+  noise:
+    apply: true
+    zero:
+      camera: DoBEAM2000-2
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 5.0
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 125.0
+      t_exp_s: 0.01
+    first:
+      camera: XV4040BSI-HG
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 2.5
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 0.01
+      t_exp_s: 1.0
+
+library:
+  file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
+  build_workers: 2
+  condition_workers: 1
+
+eval:
+  task: fim_study
+  mode: all
+  noise_n0_electrons: [1.0e5, 3.0e5, 1.0e6, 3.0e6, 1.0e7]
+  plot: true
+  plot_dpi: 150
+
+fim:
+  eps_frac: 0.01
+  # With the 5-azimuth recipe, two_cam ≡ drop_phi45 (both = prop minus φ=45).
+  masks: [prop, decoupling, m0_all, only90, no90, near90, far, mid, two_cam, drop_phi45]
+  # null = use inverse.noise.*.relative_a from this file
+  flicker_a: [null, 0.0]
+  n0_sweep_masks: [prop, decoupling, only90]
+  corr_masks: [prop, decoupling, m0_all, only90]
+  param_scales:
+    cd_nm: 1.0
+    depth_nm: 1.0
+    lswa_deg: 1.0
+    rswa_deg: 1.0
+  azimuth_windows:
+    only90: [90]
+    near90: [60, 90]
+    far: [0, 30]
+    mid: [30, 45]
+    two_cam: [0, 30, 60, 90]
+  azimuth_tol_deg: 0.5
+  rcond: 1.0e-12
