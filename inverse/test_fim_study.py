@@ -13,6 +13,7 @@ from fim_study import (
     full_observable_layout,
     mask_rows,
     noise_with_flicker,
+    order_lambda_phi_grid,
     write_layout_only,
 )
 from noise_model import observation_variance
@@ -85,6 +86,7 @@ def test_masks_are_propagating_subsets():
         for r, keep in zip(rows, sel):
             if keep:
                 assert r.propagating, f"{name} kept evanescent {r}"
+                assert r.order_m in (-1, 0, 1), f"{name} kept |m|>1 {r}"
 
 
 def test_decoupling_drops_non90_pm1_and_aux():
@@ -103,13 +105,16 @@ def test_decoupling_drops_non90_pm1_and_aux():
     assert not any(r.role == "aux" for r in picked)
 
 
-def test_prop_keeps_non90_minus1_and_90_m2():
+def test_prop_keeps_pm1_drops_m2():
     rows = _toy_layout()
     sel = mask_rows(rows, "prop", windows=WINDOWS, tol=0.5)
     picked = {(r.azimuth_deg, r.order_m) for r, k in zip(rows, sel) if k}
     assert (0.0, -1) in picked
-    assert (90.0, 2) in picked
+    assert (90.0, 2) not in picked
     assert (0.0, 1) not in picked
+    all_m = mask_rows(rows, "prop", windows=WINDOWS, tol=0.5, keep_orders=None)
+    picked_all = {(r.azimuth_deg, r.order_m) for r, k in zip(rows, all_m) if k}
+    assert (90.0, 2) in picked_all
 
 
 def test_far_has_no_swa_channel():
@@ -183,6 +188,7 @@ def test_load_config_fim_yaml():
     assert cfg.fim.flicker_a[0] is None
     assert cfg.fim.flicker_a[1] == 0.0
     assert cfg.fim.azimuth_windows["far"] == [0.0, 30.0]
+    assert cfg.fim.keep_orders == [-1, 0, 1]
 
 
 def test_layout_only_no_s4(tmp_path: Path | None = None):
@@ -203,6 +209,9 @@ def test_layout_only_no_s4(tmp_path: Path | None = None):
     for r, keep in zip(rows, dec):
         if keep and r.order_m != 0:
             assert abs(r.azimuth_deg - 90.0) < 1.0
+    for r, keep in zip(rows, prop):
+        if keep:
+            assert r.order_m in (-1, 0, 1)
 
 
 def expand_n(cfg) -> list:
@@ -221,6 +230,8 @@ def test_write_layout_only(tmp_path=None):
         assert payload["n_conditions"] == 20
         assert payload["n_orders_stored"] == 31
         assert payload["n_s4_forwards_for_J"] == 100
+        assert payload["keep_orders"] == [-1, 0, 1]
+        assert payload["n_measurable"] <= payload["n_propagating"]
         assert (out / "propagating_table.txt").is_file()
         assert (out / "mask_table.txt").is_file()
     finally:
@@ -232,11 +243,28 @@ def test_write_layout_only(tmp_path=None):
             out.rmdir()
 
 
+def test_lambda_phi_grid_cutoff_is_nan():
+    rows = [
+        _row(flat_index=0, order_m=0, wl_nm=13.0, azimuth_deg=0.0, propagating=True),
+        _row(flat_index=1, order_m=0, wl_nm=13.0, azimuth_deg=90.0, propagating=False),
+        _row(flat_index=2, order_m=1, wl_nm=14.0, azimuth_deg=90.0, propagating=True),
+    ]
+    values = np.array([0.2, 0.3, 0.4])
+    wls, phis = [13.0, 14.0], [0.0, 90.0]
+    g0 = order_lambda_phi_grid(rows, values, 0, wls, phis)
+    assert g0[0, 0] == 0.2
+    assert np.isnan(g0[0, 1])
+    assert np.isnan(g0[1, 0])
+    g1 = order_lambda_phi_grid(rows, values, 1, wls, phis)
+    assert g1[1, 1] == 0.4
+    assert np.isnan(g1[0, 0])
+
+
 def main() -> None:
     tests = [
         test_masks_are_propagating_subsets,
         test_decoupling_drops_non90_pm1_and_aux,
-        test_prop_keeps_non90_minus1_and_90_m2,
+        test_prop_keeps_pm1_drops_m2,
         test_far_has_no_swa_channel,
         test_fim_identity,
         test_fim_unidentifiable_column,
@@ -246,6 +274,7 @@ def main() -> None:
         test_load_config_fim_yaml,
         test_layout_only_no_s4,
         test_write_layout_only,
+        test_lambda_phi_grid_cutoff_is_nan,
     ]
     for fn in tests:
         fn()

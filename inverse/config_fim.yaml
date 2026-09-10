@@ -98,6 +98,8 @@ eval:
 
 fim:
   eps_frac: 0.01
+  # Measurement set: only these orders enter FIM masks and 2-D (λ, φ) figures.
+  keep_orders: [-1, 0, 1]
   # With the 5-azimuth recipe, two_cam ≡ drop_phi45 (both = prop minus φ=45).
   masks: [prop, decoupling, m0_all, only90, no90, near90, far, mid, two_cam, drop_phi45]
   # null = use inverse.noise.*.relative_a from this file

@@ -93,7 +93,7 @@ python3 fim_study.py --config config_fim.yaml --layout-only   # 只打印 (φ,m)
 python3 fim_study.py --config config_fim.yaml                # ~100 次 S4
 ```
 
-输出在 `../runs/inverse/fim_study/`（gitignore）：`fim_study.json`、`jacobian.npz`、CRLB / 相关 / \(N_0\) 图。默认掩膜：`prop`（全部可传播）、`decoupling`（当前反演）、`m0_all`、`only90`、`no90`、`near90`、`far`、`mid`、`two_cam`、`drop_phi45`。同一张 \(J\) 上再扫 `eval.noise_n0_electrons` 与 `fim.flicker_a: [null, 0]`。也可 `python3 evaluate.py --config config_fim.yaml`。
+输出在 `../runs/inverse/fim_study/`（gitignore）。FIM 与出图默认只留可传播的 \(m\in\{-1,0,1\}\)（`fim.keep_orders`）：`fim_R_lambda_phi.png` 以及每个级次的 \(\partial R/\partial p\)、白化图（\((\lambda,\varphi)\) 平面）。掩膜：`prop`（可传播的 0/±1）、`decoupling`、`m0_all`、`only90`、`no90`、`near90`、`far`、`mid`、`two_cam`、`drop_phi45`。同一张 \(J\) 上再扫 \(N_0\) 与 \(a\)。也可 `python3 evaluate.py --config config_fim.yaml`。S4 的 `NG` 不变，屏蔽高级次只影响分析和图，不加快求解。
 
 ## 使用
 

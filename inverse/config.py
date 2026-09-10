@@ -340,11 +340,16 @@ def _default_fim_windows() -> dict[str, list[float]]:
     return {k: list(v) for k, v in DEFAULT_FIM_WINDOWS.items()}
 
 
+def _default_fim_keep_orders() -> list[int]:
+    return [-1, 0, 1]
+
+
 @dataclass
 class FimStudyConfig:
     """Layer-1 Jacobian / FIM study (row masks on one full-order J)."""
 
     eps_frac: float = 0.01
+    keep_orders: list[int] = field(default_factory=_default_fim_keep_orders)
     masks: list[str] = field(default_factory=lambda: list(DEFAULT_FIM_MASKS))
     n0_electrons: list[float] | None = None
     flicker_a: list[float | None] = field(default_factory=lambda: [None, 0.0])
@@ -390,8 +395,13 @@ def _parse_fim(raw: dict | None) -> FimStudyConfig:
         n0_vals = None
     else:
         n0_vals = [float(v) for v in n0_raw]
+    keep_raw = data.pop("keep_orders", None)
+    keep_orders = (
+        [int(m) for m in keep_raw] if keep_raw is not None else _default_fim_keep_orders()
+    )
     return FimStudyConfig(
         eps_frac=float(data.get("eps_frac", 0.01)),
+        keep_orders=keep_orders,
         masks=[str(m) for m in data.get("masks", list(DEFAULT_FIM_MASKS))],
         n0_electrons=n0_vals,
         flicker_a=flicker,

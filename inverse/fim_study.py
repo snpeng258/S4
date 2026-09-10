@@ -2,6 +2,7 @@
 
 Does not run GA+LM and does not read the spectrum library. Σ is the detector
 variance (observation_variance); decoupling role weights are not included.
+FIM masks and (λ, φ) figures default to measurable orders m ∈ {-1, 0, 1}.
 
     python3 fim_study.py --config config_fim.yaml --layout-only
     python3 fim_study.py --config config_fim.yaml
@@ -83,6 +84,20 @@ def full_observable_layout(cfg: ScatterometryConfig) -> list[ObservableRow]:
     return rows
 
 
+def keep_order_mask(
+    rows: list[ObservableRow],
+    keep_orders: list[int] | tuple[int, ...] | None,
+) -> np.ndarray:
+    """True on rows whose diffraction order is in the measurement set.
+
+    Empty / None means no extra order filter (all stored m).
+    """
+    if not keep_orders:
+        return np.ones(len(rows), dtype=bool)
+    want = {int(m) for m in keep_orders}
+    return np.array([int(r.order_m) in want for r in rows], dtype=bool)
+
+
 def mask_rows(
     rows: list[ObservableRow],
     name: str,
@@ -90,25 +105,28 @@ def mask_rows(
     windows: dict[str, list[float]],
     tol: float,
     drop_azimuth: float = 45.0,
+    keep_orders: list[int] | tuple[int, ...] | None = (-1, 0, 1),
 ) -> np.ndarray:
-    """Boolean row mask. Every layout is a subset of propagating orders."""
+    """Boolean row mask. Subset of propagating orders in keep_orders (default 0, ±1)."""
     prop = np.array([r.propagating for r in rows], dtype=bool)
     m = np.array([r.order_m for r in rows], dtype=int)
+    keep = keep_order_mask(rows, keep_orders)
+    base = prop & keep
     if name == "prop":
-        return prop
+        return base
     if name == "decoupling":
-        return prop & np.array([r.role != "aux" for r in rows], dtype=bool)
+        return base & np.array([r.role != "aux" for r in rows], dtype=bool)
     if name == "m0_all":
-        return prop & (m == 0)
+        return base & (m == 0)
     if name == "no90":
-        return prop & np.array([not az_near(r.azimuth_deg, 90.0, tol) for r in rows])
+        return base & np.array([not az_near(r.azimuth_deg, 90.0, tol) for r in rows])
     if name == "drop_phi45":
-        return prop & np.array(
+        return base & np.array(
             [not az_near(r.azimuth_deg, drop_azimuth, tol) for r in rows]
         )
     if name in windows:
         targets = windows[name]
-        return prop & np.array([az_in(r.azimuth_deg, targets, tol) for r in rows])
+        return base & np.array([az_in(r.azimuth_deg, targets, tol) for r in rows])
     known = list(SPECIAL_MASKS) + list(windows)
     raise ValueError(f"unknown FIM mask {name!r}; known={known}")
 
@@ -273,22 +291,41 @@ def propagating_groups(rows: list[ObservableRow]) -> list[dict]:
     return out
 
 
-def format_propagating_table(rows: list[ObservableRow]) -> str:
+def format_propagating_table(
+    rows: list[ObservableRow],
+    keep_orders: list[int] | tuple[int, ...] | None = (-1, 0, 1),
+) -> str:
+    want = {int(m) for m in keep_orders} if keep_orders else None
     lines = [
         f"{'phi':>8} {'m':>4} {'prop':>5} {'n_prop/n_wl':>12} {'role':<14}",
         "-" * 52,
     ]
+    hidden = 0
     for g in propagating_groups(rows):
         flag = "yes" if g["propagating"] else ("part" if g["partial"] else "no")
         if flag == "no":
+            continue
+        if want is not None and int(g["order_m"]) not in want:
+            hidden += int(g["n_propagating"])
             continue
         lines.append(
             f"{g['azimuth_deg']:8g} {g['order_m']:4d} {flag:>5} "
             f"{g['n_propagating']:4d}/{g['n_wl']:<6d} {g['role']:<14}"
         )
     n_prop = sum(1 for r in rows if r.propagating)
+    n_keep = sum(
+        1
+        for r in rows
+        if r.propagating and (want is None or int(r.order_m) in want)
+    )
     lines.append("-" * 52)
-    lines.append(f"propagating rows: {n_prop} / {len(rows)} stored")
+    if want is not None:
+        lines.append(
+            f"measurable (prop ∩ m∈{sorted(want)}): {n_keep} / {len(rows)} stored; "
+            f"higher-order propagating rows hidden: {hidden}"
+        )
+    else:
+        lines.append(f"propagating rows: {n_prop} / {len(rows)} stored")
     return "\n".join(lines)
 
 
@@ -390,9 +427,10 @@ def _true_params(cfg: ScatterometryConfig) -> tuple[list[str], np.ndarray]:
 def build_masks(cfg: ScatterometryConfig, rows: list[ObservableRow]) -> dict[str, np.ndarray]:
     windows = cfg.fim.azimuth_windows
     tol = float(cfg.fim.azimuth_tol_deg)
+    keep = list(cfg.fim.keep_orders)
     out = {}
     for name in cfg.fim.masks:
-        out[name] = mask_rows(rows, name, windows=windows, tol=tol)
+        out[name] = mask_rows(rows, name, windows=windows, tol=tol, keep_orders=keep)
     return out
 
 
@@ -404,6 +442,13 @@ def layout_payload(cfg: ScatterometryConfig, rows: list[ObservableRow]) -> dict:
         "n_orders_stored": n_orders(cfg),
         "n_stored_rows": len(rows),
         "n_propagating": int(sum(1 for r in rows if r.propagating)),
+        "keep_orders": [int(m) for m in cfg.fim.keep_orders],
+        "n_measurable": int(
+            np.count_nonzero(
+                keep_order_mask(rows, cfg.fim.keep_orders)
+                & np.array([r.propagating for r in rows])
+            )
+        ),
         "n_s4_forwards_for_J": len(expand_measurement_conditions(cfg)) * (1 + len(names)),
         "param_names": names,
         "param_true": {n: float(v) for n, v in zip(names, p)},
@@ -419,7 +464,7 @@ def layout_payload(cfg: ScatterometryConfig, rows: list[ObservableRow]) -> dict:
 
 def write_layout_only(cfg: ScatterometryConfig, out_dir: Path) -> dict:
     rows = full_observable_layout(cfg)
-    table = format_propagating_table(rows)
+    table = format_propagating_table(rows, keep_orders=cfg.fim.keep_orders)
     masks = build_masks(cfg, rows)
     mask_txt = format_mask_table(rows, masks)
     payload = layout_payload(cfg, rows)
@@ -445,23 +490,29 @@ def write_layout_only(cfg: ScatterometryConfig, out_dir: Path) -> dict:
     return payload
 
 
-def _sorted_prop_indices(rows: list[ObservableRow]) -> np.ndarray:
-    keyed = [
-        (r.azimuth_deg, r.order_m, r.wl_nm, r.flat_index)
-        for r in rows
-        if r.propagating
-    ]
-    keyed.sort()
-    return np.array([k[-1] for k in keyed], dtype=int)
+def lambda_phi_axes(rows: list[ObservableRow]) -> tuple[list[float], list[float]]:
+    wls = sorted({float(r.wl_nm) for r in rows})
+    phis = sorted({float(r.azimuth_deg) for r in rows})
+    return wls, phis
 
 
-def _heatmap_ylabels(rows: list[ObservableRow], idx: np.ndarray) -> list[str]:
-    labels = []
-    for i in idx:
-        r = rows[int(i)]
-        q = f"q{r.harmonic_order}" if r.harmonic_order is not None else f"{r.wl_nm:.3g}nm"
-        labels.append(f"φ{r.azimuth_deg:g} m{r.order_m:+d} {q}")
-    return labels
+def order_lambda_phi_grid(
+    rows: list[ObservableRow],
+    values: np.ndarray,
+    order_m: int,
+    wls: list[float],
+    phis: list[float],
+) -> np.ndarray:
+    """Fill a (n_λ × n_φ) grid for one diffraction order. Cut-off cells stay NaN."""
+    grid = np.full((len(wls), len(phis)), np.nan)
+    wl_i = {w: i for i, w in enumerate(wls)}
+    ph_i = {a: j for j, a in enumerate(phis)}
+    vals = np.asarray(values)
+    for r in rows:
+        if int(r.order_m) != int(order_m) or not r.propagating:
+            continue
+        grid[wl_i[float(r.wl_nm)], ph_i[float(r.azimuth_deg)]] = float(vals[r.flat_index])
+    return grid
 
 
 def _robust_lim(arr: np.ndarray) -> float:
@@ -472,10 +523,84 @@ def _robust_lim(arr: np.ndarray) -> float:
     return v if v > 0 else 1.0
 
 
-def plot_jacobian_heatmap(
+def _imshow_lambda_phi(
+    ax,
+    grid: np.ndarray,
+    wls: list[float],
+    phis: list[float],
+    *,
+    cmap: str,
+    vmin: float | None,
+    vmax: float | None,
+    diverging: bool,
+):
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import Normalize
+
+    cmap_obj = plt.get_cmap(cmap).copy()
+    cmap_obj.set_bad(color="#eeeeee")
+    if diverging:
+        lim = vmax if vmax is not None else _robust_lim(grid)
+        norm = Normalize(vmin=-lim, vmax=lim)
+    else:
+        finite = grid[np.isfinite(grid)]
+        lo = 0.0 if vmin is None else vmin
+        hi = float(np.max(finite)) if finite.size and vmax is None else (vmax or 1.0)
+        if hi <= lo:
+            hi = lo + 1.0
+        norm = Normalize(vmin=lo, vmax=hi)
+    masked = np.ma.masked_invalid(grid)
+    im = ax.imshow(
+        masked,
+        origin="lower",
+        aspect="auto",
+        cmap=cmap_obj,
+        norm=norm,
+        interpolation="nearest",
+    )
+    ax.set_xticks(np.arange(len(phis)))
+    ax.set_xticklabels([f"{p:g}" for p in phis])
+    ax.set_yticks(np.arange(len(wls)))
+    ax.set_yticklabels([f"{w:.3g}" for w in wls])
+    ax.set_xlabel(r"$\varphi$ (deg)")
+    ax.set_ylabel(r"$\lambda$ (nm)")
+    return im
+
+
+def plot_R_lambda_phi(
+    r0: np.ndarray,
+    rows: list[ObservableRow],
+    orders: list[int],
+    out_path: Path,
+    dpi: int,
+) -> None:
+    import matplotlib.pyplot as plt
+
+    wls, phis = lambda_phi_axes(rows)
+    fig, axes = plt.subplots(1, len(orders), figsize=(4.2 * len(orders), 3.8), sharey=True)
+    if len(orders) == 1:
+        axes = [axes]
+    last = None
+    for ax, m in zip(axes, orders):
+        grid = order_lambda_phi_grid(rows, r0, m, wls, phis)
+        last = _imshow_lambda_phi(
+            ax, grid, wls, phis, cmap="viridis", vmin=0.0, vmax=None, diverging=False
+        )
+        n_fin = int(np.isfinite(grid).sum())
+        ax.set_title(rf"$m={m:+d}$  ({n_fin} cells)")
+        fig.colorbar(last, ax=ax, fraction=0.046, pad=0.04)
+    fig.suptitle(r"Reflectivity $R_m(\lambda,\varphi)$  (gray = cut-off / not kept)")
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi, facecolor="w")
+    plt.close(fig)
+
+
+def plot_J_lambda_phi(
     jac: np.ndarray,
     rows: list[ObservableRow],
     names: list[str],
+    order_m: int,
     out_path: Path,
     dpi: int,
     *,
@@ -484,49 +609,28 @@ def plot_jacobian_heatmap(
 ) -> None:
     import matplotlib.pyplot as plt
 
-    idx = _sorted_prop_indices(rows)
-    if idx.size == 0:
-        return
-    M = jac[idx]
-    if sigma is not None:
-        M = M / np.maximum(sigma[idx], 1e-30)[:, None]
-    labels = _heatmap_ylabels(rows, idx)
-    n_rows, n_p = M.shape
-    h = min(max(5.0, 0.16 * n_rows), 18.0)
-    fig, axes = plt.subplots(1, n_p, figsize=(3.1 * n_p, h), sharey=True)
-    if n_p == 1:
-        axes = [axes]
-    vmax = _robust_lim(M)
-    for ax, j, name in zip(axes, range(n_p), names):
-        im = ax.imshow(
-            M[:, j : j + 1],
-            aspect="auto",
-            cmap="RdBu_r",
-            vmin=-vmax,
-            vmax=vmax,
-            interpolation="nearest",
+    wls, phis = lambda_phi_axes(rows)
+    n_p = len(names)
+    ncols = 2
+    nrows = int(np.ceil(n_p / ncols))
+    fig, axes = plt.subplots(nrows, ncols, figsize=(4.6 * ncols, 3.6 * nrows), sharex=True, sharey=True)
+    axes_f = np.atleast_1d(axes).ravel()
+    cols = []
+    for j in range(n_p):
+        col = jac[:, j]
+        if sigma is not None:
+            col = col / np.maximum(sigma, 1e-30)
+        cols.append(order_lambda_phi_grid(rows, col, order_m, wls, phis))
+    stacked = np.concatenate([g[np.isfinite(g)] for g in cols]) if any(np.isfinite(g).any() for g in cols) else np.array([1.0])
+    vmax = _robust_lim(stacked)
+    for ax, grid, pname in zip(axes_f, cols, names):
+        im = _imshow_lambda_phi(
+            ax, grid, wls, phis, cmap="RdBu_r", vmin=None, vmax=vmax, diverging=True
         )
-        ax.set_xticks([0])
-        ax.set_xticklabels([name], rotation=30, ha="right")
-        ax.set_title(name, fontsize=10)
-        if n_rows <= 48:
-            ax.set_yticks(np.arange(n_rows))
-            ax.set_yticklabels(labels, fontsize=6)
-        else:
-            # tick at first row of each (φ, m) block
-            ticks = []
-            tick_labels = []
-            prev = None
-            for k, lab_i in enumerate(idx):
-                key = (rows[int(lab_i)].azimuth_deg, rows[int(lab_i)].order_m)
-                if key != prev:
-                    ticks.append(k)
-                    tick_labels.append(f"φ{key[0]:g} m{key[1]:+d}")
-                    prev = key
-            ax.set_yticks(ticks)
-            ax.set_yticklabels(tick_labels, fontsize=7)
+        ax.set_title(pname)
         fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-    axes[0].set_ylabel("observable (propagating only)")
+    for ax in axes_f[n_p:]:
+        ax.set_axis_off()
     fig.suptitle(title)
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -741,7 +845,7 @@ def run_fim_study(
     rows = full_observable_layout(cfg)
     names, p = _true_params(cfg)
     masks = build_masks(cfg, rows)
-    print(format_propagating_table(rows))
+    print(format_propagating_table(rows, keep_orders=cfg.fim.keep_orders))
     print()
     print(format_mask_table(rows, masks))
     equiv = equivalent_mask_names(masks)
@@ -849,7 +953,8 @@ def run_fim_study(
     }
 
     (out_dir / "propagating_table.txt").write_text(
-        format_propagating_table(rows) + "\n", encoding="utf-8"
+        format_propagating_table(rows, keep_orders=cfg.fim.keep_orders) + "\n",
+        encoding="utf-8",
     )
     (out_dir / "mask_table.txt").write_text(format_mask_table(rows, masks) + "\n", encoding="utf-8")
     (out_dir / "fim_study.json").write_text(
@@ -874,15 +979,19 @@ def run_fim_study(
     if do_plot:
         dpi = int(cfg.eval.plot_dpi)
         try:
-            plot_jacobian_heatmap(
-                jac, rows, names, out_dir / "fim_jacobian.png", dpi,
-                title=r"Jacobian $\partial R/\partial p$ (propagating rows)",
-            )
-            plot_jacobian_heatmap(
-                jac, rows, names, out_dir / "fim_jacobian_whitened.png", dpi,
-                sigma=sigma_default,
-                title=r"Whitened Jacobian $\Sigma^{-1/2} J$ (propagating rows)",
-            )
+            orders = [int(m) for m in cfg.fim.keep_orders]
+            plot_R_lambda_phi(r0, rows, orders, out_dir / "fim_R_lambda_phi.png", dpi)
+            for m in orders:
+                tag = "m0" if m == 0 else f"m{m:+d}"
+                plot_J_lambda_phi(
+                    jac, rows, names, m, out_dir / f"fim_J_{tag}.png", dpi,
+                    title=rf"$\partial R_{{{m:+d}}}/\partial p$  $(\lambda,\varphi)$",
+                )
+                plot_J_lambda_phi(
+                    jac, rows, names, m, out_dir / f"fim_Jw_{tag}.png", dpi,
+                    sigma=sigma_default,
+                    title=rf"$\Sigma^{{-1/2}}\partial R_{{{m:+d}}}/\partial p$  $(\lambda,\varphi)$",
+                )
             plot_corr_heatmaps(
                 base_records, names, list(cfg.fim.corr_masks),
                 out_dir / "fim_corr.png", dpi,
