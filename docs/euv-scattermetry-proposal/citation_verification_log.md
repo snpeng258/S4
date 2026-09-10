@@ -35,6 +35,14 @@
 | 工业尺度验证 | Barnes et al. (2025), *Lab-based multi-wavelength EUV diffractometry for critical dimension metrology* | `7RNGQTBY` | [10.1117/12.3050342](https://doi.org/10.1117/12.3050342) | 多波长 HHG、CD-SAXS 交叉验证、倾斜/有限光束/标定误差 |
 | 波长选择 | Barnes (2021), *Optimizing wavelengths for optics-based measurements of advanced electronics* | `DN4D6BA8` | [10.1117/12.2593306](https://doi.org/10.1117/12.2593306) | 波长、偏振、入射角和结构可观测性的联合设计 |
 
+## 手稿阅读（未入 Zotero 核验池）
+
+下列条目尚未核验 Zotero PDF，不计入上表 19 篇，暂不用于正式提案论证。
+
+| 角色 | 文献 | 来源 | 阅读笔记 |
+|---|---|---|---|
+| 测量构型优化 | Yao, Liu, Liu, Peng (2026 稿), *Recall-Guided Measurement Configuration Optimization for EUV Scatterometry* | `LAM 20260810 (1).docx`（本工作区未同步） | [Recall-Guided Measurement Configuration Optimization for EUV Scatterometry.md](Recall-Guided%20Measurement%20Configuration%20Optimization%20for%20EUV%20Scatterometry.md) |
+
 ## 初步证据主题（待用户确认后进入研究提案大纲）
 
 1. EUV 散射计量的核心优势不是单一的“波长更短”，而是较大入射角下的小测量光斑、非零级衍射信息、材料/薄层敏感性，以及对周期三维结构的非破坏测量能力。
