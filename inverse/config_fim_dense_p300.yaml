@@ -1,0 +1,112 @@
+# Dense (λ, φ) FIM: pitch 300 nm, duty 0.5, depth 40 nm, NG=61
+#   python3 run_fim_dense.py --pitch 300 --layout-only
+#   python3 run_fim_dense.py --pitch 300
+# 21 × 19 conditions × 5 FD ≈ 1995 S4 calls
+
+structure:
+  pitch_nm: 300
+  cd_nm: 150.0
+  depth_nm: 40.0
+  lswa_deg: 89.63
+  rswa_deg: 89.26
+  n_slices: 10
+  grating_material: Au
+  substrate_material: SiO2
+
+optical:
+  wl_nm: 20.0
+  angle_deg: 70
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 61
+  order_min: -15
+  order_max: 15
+  recipe:
+    wavelengths_nm: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+    angles_deg: [70]
+    azimuths_deg: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90]
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse/fim_study_dense_p300
+  cache_size: 128
+
+inverse:
+  method: lib_pop_rand_ga_lm
+  order_collection: decoupling
+  decoupling:
+    enabled: true
+    azimuth_tol_deg: 0.5
+    roles:
+      depth_anchor: { azimuth_deg: 90, orders: [0] }
+      swa:          { azimuth_deg: 90, orders: [-1, 1] }
+      lateral:
+        azimuths_deg: null
+        orders: [0]
+    static_weights:
+      depth_anchor: 1.0
+      swa: 0.8
+      lateral: 1.0
+      aux: 0.2
+  param_names:
+    - cd_nm
+    - depth_nm
+    - lswa_deg
+    - rswa_deg
+  noise:
+    apply: true
+    zero:
+      camera: DoBEAM2000-2
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 5.0
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 125.0
+      t_exp_s: 0.01
+    first:
+      camera: XV4040BSI-HG
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 2.5
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 0.01
+      t_exp_s: 1.0
+
+library:
+  file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
+  build_workers: 2
+  condition_workers: 8
+
+eval:
+  task: fim_study
+  mode: all
+  noise_n0_electrons: [1.0e5, 3.0e5, 1.0e6, 3.0e6, 1.0e7]
+  plot: true
+  plot_dpi: 150
+
+fim:
+  eps_frac: 0.01
+  keep_orders: [-1, 0, 1]
+  masks: [prop, decoupling, m0_all, only90, no90, near90, far, mid, two_cam, drop_phi45]
+  flicker_a: [null, 0.0]
+  n0_sweep_masks: [prop, decoupling, only90]
+  corr_masks: [prop, decoupling, m0_all, only90]
+  param_scales:
+    cd_nm: 1.0
+    depth_nm: 1.0
+    lswa_deg: 1.0
+    rswa_deg: 1.0
+  azimuth_windows:
+    only90: [90]
+    near90: [60, 90]
+    far: [0, 30]
+    mid: [30, 45]
+    two_cam: [0, 30, 60, 90]
+  azimuth_tol_deg: 0.5
+  rcond: 1.0e-12

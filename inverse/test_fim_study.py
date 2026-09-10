@@ -243,6 +243,50 @@ def test_write_layout_only(tmp_path=None):
             out.rmdir()
 
 
+def test_load_dense_fim_configs():
+    here = Path(__file__).resolve().parent
+    p80 = load_config(here / "config_fim_dense_p80.yaml")
+    p300 = load_config(here / "config_fim_dense_p300.yaml")
+    from recipe import expand_measurement_conditions
+
+    assert p80.structure.pitch_nm == 80.0
+    assert p80.structure.cd_nm == 40.0
+    assert p80.structure.depth_nm == 40.0
+    assert p80.optical.NG == 31
+    assert p300.structure.pitch_nm == 300.0
+    assert p300.structure.cd_nm == 150.0
+    assert p300.structure.depth_nm == 40.0
+    assert p300.optical.NG == 61
+    for cfg in (p80, p300):
+        conds = expand_measurement_conditions(cfg)
+        assert len(conds) == 21 * 19
+        wls = sorted({c.wl_nm for c in conds})
+        phis = sorted({c.azimuth_deg for c in conds})
+        assert wls[0] == 10.0 and wls[-1] == 30.0
+        assert phis[0] == 0.0 and phis[-1] == 90.0
+        assert cfg.inverse.decoupling.roles.lateral.azimuths_deg is None
+        assert cfg.eval.task == "fim_study"
+
+
+def test_dense_p80_minus1_is_not_always_cut_off():
+    """Kinematic −1 exists at φ=0 for the 80 nm / 10–30 nm grid; it may still be dark."""
+    from order_collection import propagating_orders
+
+    cfg = load_config(Path(__file__).with_name("config_fim_dense_p80.yaml"))
+    at0 = propagating_orders(
+        pitch_nm=80.0, wl_nm=13.0, angle_deg=70.0, azimuth_deg=0.0,
+        order_min=-1, order_max=1,
+    )
+    assert -1 in at0
+    assert 1 not in at0
+    at90_long = propagating_orders(
+        pitch_nm=80.0, wl_nm=30.0, angle_deg=70.0, azimuth_deg=90.0,
+        order_min=-1, order_max=1,
+    )
+    assert 0 in at90_long
+    assert -1 not in at90_long
+
+
 def test_lambda_phi_grid_cutoff_is_nan():
     rows = [
         _row(flat_index=0, order_m=0, wl_nm=13.0, azimuth_deg=0.0, propagating=True),
@@ -274,6 +318,8 @@ def main() -> None:
         test_load_config_fim_yaml,
         test_layout_only_no_s4,
         test_write_layout_only,
+        test_load_dense_fim_configs,
+        test_dense_p80_minus1_is_not_always_cut_off,
         test_lambda_phi_grid_cutoff_is_nan,
     ]
     for fn in tests:

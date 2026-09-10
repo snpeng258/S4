@@ -523,6 +523,17 @@ def _robust_lim(arr: np.ndarray) -> float:
     return v if v > 0 else 1.0
 
 
+def _axis_ticks(values: list[float], *, fmt, max_labels: int) -> tuple[np.ndarray, list[str]]:
+    n = len(values)
+    if n == 0:
+        return np.array([]), []
+    step = max(1, int(np.ceil(n / max_labels)))
+    idx = list(range(0, n, step))
+    if idx[-1] != n - 1:
+        idx.append(n - 1)
+    return np.array(idx, dtype=int), [fmt(values[i]) for i in idx]
+
+
 def _imshow_lambda_phi(
     ax,
     grid: np.ndarray,
@@ -558,10 +569,12 @@ def _imshow_lambda_phi(
         norm=norm,
         interpolation="nearest",
     )
-    ax.set_xticks(np.arange(len(phis)))
-    ax.set_xticklabels([f"{p:g}" for p in phis])
-    ax.set_yticks(np.arange(len(wls)))
-    ax.set_yticklabels([f"{w:.3g}" for w in wls])
+    xt, xl = _axis_ticks(phis, fmt=lambda p: f"{p:g}", max_labels=13)
+    yt, yl = _axis_ticks(wls, fmt=lambda w: f"{w:.3g}", max_labels=12)
+    ax.set_xticks(xt)
+    ax.set_xticklabels(xl)
+    ax.set_yticks(yt)
+    ax.set_yticklabels(yl)
     ax.set_xlabel(r"$\varphi$ (deg)")
     ax.set_ylabel(r"$\lambda$ (nm)")
     return im
