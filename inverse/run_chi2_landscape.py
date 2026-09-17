@@ -1,8 +1,9 @@
-"""χ² landscape on a 2-D structure slice (Gross 2009 Fig. 4 analog).
+"""Inverse-loss landscape on a 2-D structure slice (Gross 2009 Fig. 4 analog).
 
-Fixes one of {cd, depth, swa}, sweeps the other two against a single
-measurement. Forwards are the full stored R_m vector; FIM masks are applied
-afterwards so prop / decoupling / m0_all / only90 share the same S4 calls.
+Z is the same data term the solver minimizes (GA ``_loss`` / LM data residual):
+``sum((wsqrt * (R - R_meas))**2)``, with ``wsqrt`` from ``snr_weights`` or
+``static_role_weights``. Forwards stay the full stored R_m vector; each FIM
+mask is applied afterwards so prop / decoupling / m0_all / only90 share S4.
 
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --dry-run
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
@@ -23,12 +24,19 @@ from pathlib import Path
 import numpy as np
 import yaml
 
-from config import GridAxisConfig, ScatterometryConfig, load_config, parse_config_arg
-from fim_study import full_observable_layout, mask_rows
+from config import (
+    GridAxisConfig,
+    ScatterometryConfig,
+    load_config,
+    parse_config_arg,
+    role_weights_enabled,
+)
+from decoupling import static_role_weights
 from forward_model import generate_synthetic_measurement, reset_runner, simulate_reflectivity_multi
-from noise_model import observation_variance
-from order_collection import FIM_MASK_MODES, stored_order_m_vector
+from order_collection import FIM_MASK_MODES, apply_collection, block_sizes
 from recipe import expand_measurement_conditions
+from residual_weights import snr_weights
+from run_crlb_mc import apply_mask
 
 HERE = Path(__file__).resolve().parent
 SLICES = ("cd_depth", "cd_swa")
@@ -139,35 +147,48 @@ def apply_structure(cfg: ScatterometryConfig, cd: float, depth: float, swa: floa
     return out
 
 
-def _fim_windows(cfg: ScatterometryConfig) -> dict[str, list[float]]:
-    return {k: list(v) for k, v in cfg.fim.azimuth_windows.items()}
+def inverse_objective_wsqrt(cfg: ScatterometryConfig, r_meas_full: np.ndarray) -> np.ndarray:
+    """Same collectible sqrt-weights as InverseProblem (fixed on R_meas)."""
+    r_m = apply_collection(r_meas_full, cfg)
+    blocks = block_sizes(cfg)
+    use_roles = role_weights_enabled(cfg) and cfg.inverse.order_collection.lower() == "decoupling"
+    if use_roles:
+        return static_role_weights(cfg, r_m, blocks)
+    return snr_weights(r_m, cfg.inverse, cfg=cfg, block_sizes=blocks)
 
 
-def mask_selectors(cfg: ScatterometryConfig, masks: tuple[str, ...]) -> dict[str, np.ndarray]:
-    rows = full_observable_layout(cfg)
-    windows = _fim_windows(cfg)
-    tol = float(cfg.fim.azimuth_tol_deg)
-    keep = cfg.fim.keep_orders
-    return {
-        name: mask_rows(rows, name, windows=windows, tol=tol, keep_orders=keep)
-        for name in masks
-    }
+def inverse_objective_loss(
+    r_full: np.ndarray,
+    r_meas_full: np.ndarray,
+    wsqrt: np.ndarray,
+    cfg: ScatterometryConfig,
+    *,
+    params: np.ndarray | None = None,
+    p_ref: np.ndarray | None = None,
+) -> float:
+    """GA ``_loss`` data term (+ optional ``reg_weight``). Not the unweighted resnorm."""
+    r_c = apply_collection(np.asarray(r_full, dtype=float), cfg)
+    r_m = apply_collection(np.asarray(r_meas_full, dtype=float), cfg)
+    loss = float(np.sum((np.asarray(wsqrt, dtype=float) * (r_c - r_m)) ** 2))
+    if (
+        params is not None
+        and p_ref is not None
+        and cfg.inverse.reg_weight > 0
+    ):
+        loss += float(cfg.inverse.reg_weight * np.sum((np.asarray(params) / np.asarray(p_ref) - 1.0) ** 2))
+    return loss
 
 
-def chi2_from_residual(r: np.ndarray, r_meas: np.ndarray, sigma: np.ndarray, sel: np.ndarray) -> float:
-    d = (np.asarray(r, dtype=float)[sel] - np.asarray(r_meas, dtype=float)[sel]) / np.maximum(
-        np.asarray(sigma, dtype=float)[sel], 1e-30
-    )
-    return float(np.dot(d, d))
-
-
-def evaluate_masks(
-    r: np.ndarray,
-    r_meas: np.ndarray,
-    sigma: np.ndarray,
-    selectors: dict[str, np.ndarray],
-) -> dict[str, float]:
-    return {name: chi2_from_residual(r, r_meas, sigma, sel) for name, sel in selectors.items()}
+def mask_objectives(
+    cfg: ScatterometryConfig,
+    masks: tuple[str, ...],
+    r_meas_full: np.ndarray,
+) -> dict[str, tuple[ScatterometryConfig, np.ndarray]]:
+    out: dict[str, tuple[ScatterometryConfig, np.ndarray]] = {}
+    for name in masks:
+        work = apply_mask(cfg, name)
+        out[name] = (work, inverse_objective_wsqrt(work, r_meas_full))
+    return out
 
 
 def _init_pool_worker(config_path: str) -> None:
@@ -184,6 +205,14 @@ def _compute_point(task: tuple[int, float, float, float]) -> tuple[int, np.ndarr
     trial = apply_structure(_worker_cfg, cd, depth, swa)
     r_vec, _ = simulate_reflectivity_multi(trial, condition_workers=1)
     return idx, np.asarray(r_vec, dtype=float)
+
+
+def landscape_out_dir(cfg: ScatterometryConfig, noiseless: bool) -> Path:
+    """Noisy runs go to ``<dir>_noisy`` so they do not overwrite the clean surface."""
+    root = (HERE / cfg.paths.output_dir).resolve()
+    if noiseless or root.name.endswith("_noisy"):
+        return root
+    return root.with_name(root.name + "_noisy")
 
 
 def _npz_path(out_dir: Path, spec: LandscapeSpec) -> Path:
@@ -243,10 +272,10 @@ def plot_landscape(
     ax0.plot(truth_xy[0], truth_xy[1], "kx", ms=8, mew=1.5, label="truth")
     if np.any(np.isfinite(chi2)):
         iy, ix = np.unravel_index(int(np.nanargmin(chi2)), chi2.shape)
-        ax0.plot(xs[ix], ys[iy], "o", ms=6, mfc="none", mec="#00bfbf", mew=1.5, label="min χ²")
+        ax0.plot(xs[ix], ys[iy], "o", ms=6, mfc="none", mec="#00bfbf", mew=1.5, label="min loss")
     ax0.set_xlabel(x_name)
     ax0.set_ylabel(y_name)
-    ax0.set_title("iso-χ²")
+    ax0.set_title("iso-loss")
     ax0.legend(fontsize=8, loc="best")
 
     ax1 = fig.add_subplot(1, 2, 2, projection="3d")
@@ -261,7 +290,7 @@ def plot_landscape(
     )
     ax1.set_xlabel(x_name)
     ax1.set_ylabel(y_name)
-    ax1.set_zlabel(r"$\chi^2$")
+    ax1.set_zlabel("inverse loss")
     fig.colorbar(surf, ax=ax1, shrink=0.6, pad=0.08)
     fig.suptitle(title)
     fig.tight_layout()
@@ -279,8 +308,7 @@ def summarize(
     R: np.ndarray,
     r_meas: np.ndarray,
     filled: np.ndarray,
-    selectors: dict[str, np.ndarray],
-    sigma: np.ndarray,
+    objectives: dict[str, tuple[ScatterometryConfig, np.ndarray]],
     out_dir: Path,
 ) -> dict:
     ny, nx = len(ys), len(xs)
@@ -289,6 +317,7 @@ def summarize(
         "depth_nm": float(cfg.structure.depth_nm),
         "swa_deg": float(cfg.structure.swa_deg),
     }
+    p_ref = np.array([cfg.structure.get_param(n) for n in cfg.inverse.param_names], dtype=float)
     payload = {
         "slice": spec.slice,
         "x_name": spec.x_name,
@@ -296,6 +325,7 @@ def summarize(
         "fixed": spec.fixed,
         "truth": truth,
         "noiseless": spec.noiseless,
+        "z_axis": "inverse_loss",
         "n_conditions": len(expand_measurement_conditions(cfg)),
         "n_points": int(params.shape[0]),
         "n_filled": int(np.count_nonzero(filled)),
@@ -303,17 +333,24 @@ def summarize(
     }
     do_plot = bool(cfg.eval.plot)
     dpi = int(cfg.eval.plot_dpi)
-    for name, sel in selectors.items():
+    for name, (work, wsqrt) in objectives.items():
         grid = np.full((ny, nx), np.nan)
         for i, ok in enumerate(filled):
             if not ok:
                 continue
             iy, ix = divmod(i, nx)
-            grid[iy, ix] = chi2_from_residual(R[i], r_meas, sigma, sel)
-        rec: dict = {"n_rows": int(np.count_nonzero(sel)), "chi2_min": None, "at": None}
+            grid[iy, ix] = inverse_objective_loss(
+                R[i], r_meas, wsqrt, work, params=params[i], p_ref=p_ref
+            )
+        rec: dict = {
+            "n_rows": int(wsqrt.size),
+            "loss_min": None,
+            "at": None,
+            "sum_w": float(np.sum(np.asarray(wsqrt) ** 2)),
+        }
         if np.any(np.isfinite(grid)):
             iy, ix = np.unravel_index(int(np.nanargmin(grid)), grid.shape)
-            rec["chi2_min"] = float(grid[iy, ix])
+            rec["loss_min"] = float(grid[iy, ix])
             rec["at"] = {spec.x_name: float(xs[ix]), spec.y_name: float(ys[iy]), **spec.fixed}
             rec["delta_to_truth"] = {
                 spec.x_name: float(xs[ix] - truth[spec.x_name]),
@@ -322,7 +359,7 @@ def summarize(
         payload["masks"][name] = rec
         print(
             f"  {name:<12} n={rec['n_rows']:4d}  "
-            f"minχ²={rec['chi2_min'] if rec['chi2_min'] is None else format(rec['chi2_min'], '.4g')}  "
+            f"min_loss={rec['loss_min'] if rec['loss_min'] is None else format(rec['loss_min'], '.4g')}  "
             f"at={rec['at']}"
         )
         if do_plot and np.any(np.isfinite(grid)):
@@ -333,7 +370,7 @@ def summarize(
                 x_name=spec.x_name,
                 y_name=spec.y_name,
                 truth_xy=(truth[spec.x_name], truth[spec.y_name]),
-                title=f"{spec.slice}  {name}  n={int(np.count_nonzero(filled))}",
+                title=f"{spec.slice}  {name}  inverse loss  n={int(np.count_nonzero(filled))}",
                 out_path=out_dir / f"chi2_{spec.slice}_{name}.png",
                 dpi=dpi,
             )
@@ -354,7 +391,7 @@ def run_landscape(
     seed: int,
     noiseless: bool,
 ) -> dict:
-    out_dir = (HERE / cfg.paths.output_dir).resolve()
+    out_dir = landscape_out_dir(cfg, noiseless)
     out_dir.mkdir(parents=True, exist_ok=True)
     xs, ys, params = structure_grid(spec)
     n_pts = params.shape[0]
@@ -371,9 +408,6 @@ def run_landscape(
     reset_runner()
     rng = np.random.default_rng(seed)
     r_meas = generate_synthetic_measurement(cfg, rng=rng, noiseless=noiseless)
-    order_m = stored_order_m_vector(cfg)
-    sigma = np.sqrt(observation_variance(r_meas, cfg.inverse.noise, order_m))
-    selectors = mask_selectors(cfg, spec.masks)
 
     n_full = int(r_meas.size)
     R = np.full((n_pts, n_full), np.nan)
@@ -385,7 +419,6 @@ def run_landscape(
             R = np.asarray(prev["R"], dtype=float)
             filled = np.asarray(prev["filled"], dtype=bool)
             r_meas = np.asarray(prev["r_meas"], dtype=float)
-            sigma = np.sqrt(observation_variance(r_meas, cfg.inverse.noise, order_m))
             print(f"resume: {int(np.count_nonzero(filled))}/{n_pts} already filled")
         else:
             print("resume file does not match this grid; starting over")
@@ -435,11 +468,12 @@ def run_landscape(
 
     _save_npz(npz_path, spec=spec, xs=xs, ys=ys, params=params, R=R, r_meas=r_meas, filled=filled)
     print(f"Saved {npz_path}")
-    return summarize(cfg, spec, xs, ys, params, R, r_meas, filled, selectors, sigma, out_dir)
+    objectives = mask_objectives(cfg, spec.masks, r_meas)
+    return summarize(cfg, spec, xs, ys, params, R, r_meas, filled, objectives, out_dir)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="χ² landscape on a CD–depth or CD–SWA slice")
+    parser = argparse.ArgumentParser(description="Inverse-loss landscape on a CD–depth or CD–SWA slice")
     parser.add_argument("--config", default=None, help="config_chi2_p80.yaml / config_chi2_p300.yaml")
     parser.add_argument("--slice", choices=SLICES, default=None)
     parser.add_argument("--workers", type=int, default=None)
@@ -464,6 +498,7 @@ def main() -> None:
         print(f"  x {spec.x_name} {xs[0]:g}…{xs[-1]:g}")
         print(f"  y {spec.y_name} {ys[0]:g}…{ys[-1]:g}")
         print(f"  fixed {spec.fixed}  noiseless={noiseless}  masks={list(spec.masks)}")
+        print(f"  out={landscape_out_dir(cfg, noiseless)}")
         return
     run_landscape(
         cfg,
