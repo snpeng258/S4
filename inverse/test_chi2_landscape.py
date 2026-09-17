@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from config import GridAxisConfig, load_config
 from order_collection import FIM_MASK_MODES, n_observables_full
@@ -12,7 +13,10 @@ from run_chi2_landscape import (
     inverse_objective_loss,
     inverse_objective_wsqrt,
     landscape_out_dir,
+    log_contour_levels,
+    log_png_path,
     parse_landscape,
+    replot_directory,
     structure_grid,
 )
 from run_crlb_mc import apply_mask, fim_mask_pairs, layout_pairs
@@ -109,3 +113,57 @@ def test_noisy_output_dir_is_sibling():
     assert noisy.parent == clean.parent
     cfg300 = load_config(Path(__file__).with_name("config_chi2_p300.yaml"))
     assert landscape_out_dir(cfg300, False).name == "p300_noisy"
+
+
+def test_log_contour_levels_skip_zero_and_span_decades():
+    z = np.array(
+        [
+            [0.0, 1e-7, 1e-5],
+            [1e-6, 1e-4, 1e-3],
+            [2e-6, 3e-5, 2e-3],
+        ]
+    )
+    levels = log_contour_levels(z, n=8)
+    assert levels is not None
+    assert levels[0] > 0
+    assert np.all(np.diff(levels) > 0)
+    assert levels[-1] / levels[0] > 10
+    assert log_png_path(Path("chi2_cd_depth_m0_all.png")).name == "chi2_cd_depth_m0_all_log.png"
+    assert log_png_path(Path("foo_log.png")).name == "foo_log.png"
+
+
+def test_log_contour_levels_all_zero():
+    assert log_contour_levels(np.zeros((4, 4))) is None
+
+
+def test_replot_writes_log_sibling(tmp_path: Path):
+    pytest.importorskip("matplotlib")
+    import json
+
+    xs = np.linspace(32.0, 48.0, 5)
+    ys = np.linspace(32.0, 48.0, 5)
+    xx, yy = np.meshgrid(xs, ys)
+    grid = (xx - 40.0) ** 2 + (yy - 40.0) ** 2
+    grid[2, 2] = 0.0
+    slice_name = "cd_depth"
+    np.savez(tmp_path / f"chi2_{slice_name}.npz", x=xs, y=ys)
+    np.save(tmp_path / f"chi2_{slice_name}_decoupling.npy", grid)
+    (tmp_path / f"chi2_{slice_name}.json").write_text(
+        json.dumps(
+            {
+                "slice": slice_name,
+                "x_name": "cd_nm",
+                "y_name": "depth_nm",
+                "truth": {"cd_nm": 40.0, "depth_nm": 40.0, "swa_deg": 89.45},
+                "n_filled": 25,
+                "masks": {"decoupling": {}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    written = replot_directory(tmp_path, dpi=80)
+    names = {p.name for p in written}
+    assert "chi2_cd_depth_decoupling.png" in names
+    assert "chi2_cd_depth_decoupling_log.png" in names
+    assert (tmp_path / "chi2_cd_depth_decoupling.png").stat().st_size > 0
+    assert (tmp_path / "chi2_cd_depth_decoupling_log.png").stat().st_size > 0

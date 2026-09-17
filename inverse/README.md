@@ -117,6 +117,7 @@ python3 run_crlb_mc.py --config config_crlb_mc_p80.yaml --mask decoupling --mode
 python3 run_chi2_landscape.py --config config_chi2_p80.yaml --dry-run
 python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
 python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
+python3 run_chi2_landscape.py --replot ../runs/inverse/chi2_landscape
 ```
 
 紧凑 recipe 上把 FIM/CRLB 和带噪反演对上：见 [`docs/CRLB_MC.md`](docs/CRLB_MC.md)。\(\chi^2\) 全局切片（S4-8 Fig. 4）：见 [`docs/CHI2_LANDSCAPE.md`](docs/CHI2_LANDSCAPE.md)。服务器上按文档开 `tmux` 即可，不必同步原对话。
