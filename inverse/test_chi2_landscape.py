@@ -6,14 +6,16 @@ from pathlib import Path
 import numpy as np
 
 from config import GridAxisConfig, load_config
-from order_collection import FIM_MASK_MODES
+from order_collection import FIM_MASK_MODES, n_observables_full
 from recipe import expand_measurement_conditions
 from run_chi2_landscape import (
-    chi2_from_residual,
+    inverse_objective_loss,
+    inverse_objective_wsqrt,
+    landscape_out_dir,
     parse_landscape,
     structure_grid,
 )
-from run_crlb_mc import fim_mask_pairs, layout_pairs
+from run_crlb_mc import apply_mask, fim_mask_pairs, layout_pairs
 
 
 def _raw(path: Path) -> dict:
@@ -22,19 +24,16 @@ def _raw(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
 
-def test_chi2_zero_on_identical_vectors():
-    r = np.array([0.1, 0.2, 0.3])
-    sigma = np.array([0.01, 0.02, 0.03])
-    sel = np.array([True, True, False])
-    assert chi2_from_residual(r, r, sigma, sel) == 0.0
-
-
-def test_chi2_is_weighted_square():
-    r = np.array([2.0, 0.0])
-    r0 = np.array([0.0, 0.0])
-    sigma = np.array([2.0, 1.0])
-    sel = np.array([True, True])
-    assert abs(chi2_from_residual(r, r0, sigma, sel) - 1.0) < 1e-12
+def test_inverse_loss_matches_solver_weights():
+    cfg = apply_mask(load_config(Path(__file__).with_name("config_chi2_p80.yaml")), "decoupling")
+    n = n_observables_full(cfg)
+    r_meas = np.linspace(0.05, 0.4, n)
+    wsqrt = inverse_objective_wsqrt(cfg, r_meas)
+    assert abs(float(np.sum(wsqrt ** 2)) - 1.0) < 1e-12
+    assert inverse_objective_loss(r_meas, r_meas, wsqrt, cfg) == 0.0
+    r_off = r_meas + 0.01
+    loss = inverse_objective_loss(r_off, r_meas, wsqrt, cfg)
+    assert loss > 0.0
 
 
 def test_p80_cd_depth_grid():
@@ -99,3 +98,14 @@ def test_grid_axis_count():
     assert abs(pts[0] - 134.0) < 1e-12
     assert abs(pts[8] - 150.0) < 1e-12
     assert abs(pts[-1] - 166.0) < 1e-12
+
+
+def test_noisy_output_dir_is_sibling():
+    cfg = load_config(Path(__file__).with_name("config_chi2_p80.yaml"))
+    clean = landscape_out_dir(cfg, True)
+    noisy = landscape_out_dir(cfg, False)
+    assert clean.name == "p80"
+    assert noisy.name == "p80_noisy"
+    assert noisy.parent == clean.parent
+    cfg300 = load_config(Path(__file__).with_name("config_chi2_p300.yaml"))
+    assert landscape_out_dir(cfg300, False).name == "p300_noisy"
