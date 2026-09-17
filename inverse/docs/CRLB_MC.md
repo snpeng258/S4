@@ -15,6 +15,8 @@
 
 四个 mask：`prop`、`decoupling`、`m0_all`、`only90`。行集与 `fim_study.mask_rows` 对齐（可传播的 \(m\in\{-1,0,1\}\)）。
 
+同一套紧凑 recipe 上的 \(\chi^2\) 全局切片（不跑反演）见 [`CHI2_LANDSCAPE.md`](CHI2_LANDSCAPE.md)，输出在 `chi2_landscape/`，不要写进本实验的 `crlb_mc/` 目录。
+
 ## 不要上传对话
 
 服务器上的 Cursor 只要能读本仓库。做法：
