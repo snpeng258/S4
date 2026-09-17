@@ -110,7 +110,11 @@ python3 fim_study.py --config config_fim.yaml --layout-only
 python3 fim_study.py --config config_fim.yaml
 python3 run_fim_dense.py --layout-only
 python3 run_fim_dense.py
+python3 run_crlb_mc.py --config config_crlb_mc_p80.yaml --mode layout
+python3 run_crlb_mc.py --config config_crlb_mc_p80.yaml --mask decoupling --mode A
 ```
+
+紧凑 recipe 上把 FIM/CRLB 和带噪反演对上：见 [`docs/CRLB_MC.md`](docs/CRLB_MC.md)。服务器上按该文档开 `tmux` 即可，不必同步原对话。
 
 ## 输出
 

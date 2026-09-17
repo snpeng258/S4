@@ -11,9 +11,21 @@ from config import ScatterometryConfig
 from library_slice import map_conditions_to_library_blocks, stored_conditions_from_measurement
 from recipe import OpticalCondition, expand_measurement_conditions, n_orders
 
-OrderCollectionMode = Literal["all", "propagating", "list", "decoupling"]
+OrderCollectionMode = Literal[
+    "all", "propagating", "list", "decoupling", "prop", "m0_all", "only90"
+]
 
-COLLECTION_MODES: tuple[str, ...] = ("all", "propagating", "list", "decoupling")
+COLLECTION_MODES: tuple[str, ...] = (
+    "all",
+    "propagating",
+    "list",
+    "decoupling",
+    "prop",
+    "m0_all",
+    "only90",
+)
+FIM_MASK_MODES: tuple[str, ...] = ("prop", "decoupling", "m0_all", "only90")
+MEASURABLE_ORDERS: tuple[int, ...] = (-1, 0, 1)
 
 
 @dataclass(frozen=True)
@@ -105,6 +117,27 @@ def propagating_orders(
     return out
 
 
+def _keep_orders(cfg: ScatterometryConfig) -> set[int]:
+    keep = getattr(cfg.fim, "keep_orders", None)
+    if keep:
+        return {int(m) for m in keep}
+    return set(MEASURABLE_ORDERS)
+
+
+def _propagating_measurable(cond: OpticalCondition, cfg: ScatterometryConfig) -> list[int]:
+    o = cfg.optical
+    want = _keep_orders(cfg)
+    prop = propagating_orders(
+        pitch_nm=cfg.structure.pitch_nm,
+        wl_nm=cond.wl_nm,
+        angle_deg=cond.angle_deg,
+        azimuth_deg=cond.azimuth_deg,
+        order_min=o.order_min,
+        order_max=o.order_max,
+    )
+    return [m for m in prop if int(m) in want]
+
+
 def collectible_orders_for_condition(
     cond: OpticalCondition,
     cfg: ScatterometryConfig,
@@ -135,6 +168,19 @@ def collectible_orders_for_condition(
 
     if mode == "decoupling":
         return _decoupling_orders_for_condition(cond, cfg)
+
+    if mode == "prop":
+        return _propagating_measurable(cond, cfg)
+
+    if mode == "m0_all":
+        return [m for m in _propagating_measurable(cond, cfg) if int(m) == 0]
+
+    if mode == "only90":
+        from decoupling import _is_near_90
+
+        if not _is_near_90(cond.azimuth_deg, inv.decoupling.azimuth_tol_deg):
+            return []
+        return _propagating_measurable(cond, cfg)
 
     raise ValueError(
         f"unknown inverse.order_collection={mode!r}; choose from {COLLECTION_MODES}"

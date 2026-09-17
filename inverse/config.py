@@ -294,12 +294,23 @@ def decoupling_is_active(cfg: "ScatterometryConfig") -> bool:
     return bool(inv.decoupling.enabled)
 
 
+def role_weights_enabled(cfg: "ScatterometryConfig") -> bool:
+    """Role / kx0 multipliers and dynamic LM. None => on only when decoupling is active."""
+    flag = cfg.inverse.use_role_weights
+    if flag is None:
+        return decoupling_is_active(cfg)
+    return bool(flag)
+
+
 @dataclass
 class InverseConfig:
     method: str = "ga_lm"
-    # all | propagating | list | decoupling
+    # all | propagating | list | decoupling | prop | m0_all | only90
+    # prop / m0_all / only90 match FIM masks (propagating ∩ m∈{-1,0,1}).
     order_collection: str = "propagating"
     accepted_orders: list[int] | None = None
+    # None = auto (on iff decoupling is active). False = raw 1/σ, matches FIM.
+    use_role_weights: bool | None = None
     param_names: list[str] = field(
         default_factory=lambda: ["cd_nm", "depth_nm", "lswa_deg", "rswa_deg"]
     )
