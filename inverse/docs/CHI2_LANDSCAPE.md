@@ -35,7 +35,13 @@ L(p)=\sum_j w_j\bigl(R_j(p)-R_{\mathrm{meas},j}\bigr)^2,\qquad w_j\propto 1/\sig
 
 不要和 `crlb_mc/p80`、`crlb_mc/p300` 写到一起。CRLB 的 A 若已经占了 4×8 核，80 nm 景观用 8 个形貌进程，300 nm 用 4 个。每个进程的 `condition_workers` 固定为 1。
 
-主实验是 **2 周期 × 2 噪声 = 4 次**，主图看每张 `chi2_cd_depth_decoupling.png`（左等高线、右曲面，一张里两幅）。
+主实验是 **2 周期 × 2 噪声 = 4 次**。线性主图仍是每张 `chi2_cd_depth_decoupling.png`（左等高线、右曲面）。对数等高线是同目录的 `*_log.png`：圈距按 \(\log L\)，用来看 loss 掉到 \(10^{-6}\)～\(10^{-7}\) 那一截；线性那版不删、不改名。
+
+已有 `chi2_*.npz` 时不必再跑 S4：
+
+```bash
+python3 run_chi2_landscape.py --replot ../runs/inverse/chi2_landscape
+```
 
 ```bash
 cd inverse
@@ -67,11 +73,13 @@ runs/inverse/chi2_landscape/p80/
   chi2_cd_depth.npz
   chi2_cd_depth.json
   chi2_cd_depth_decoupling.png
+  chi2_cd_depth_decoupling_log.png
   chi2_cd_depth_m0_all.png
+  chi2_cd_depth_m0_all_log.png
   ...
 ```
 
-图左侧是等高线（黑叉真值，青圈 loss 最小），右侧是曲面。`json` 里每个 mask 有 `loss_min` 和相对真值的偏移。无噪声时真值格点的 loss 应接近 0。数值比未归一化的 \(\chi^2\) 小，因为 \(\sum w=1\)。
+线性图左侧是均匀切的等高线（黑叉真值，青圈 loss 最小），右侧是曲面。`*_log.png` 左侧按对数取圈，右侧 Z 是 \(\log_{10} L\)，无噪声真值格点 \(L=0\) 落在最内圈里面。`json` 里每个 mask 有 `loss_min` 和相对真值的偏移。数值比未归一化的 \(\chi^2\) 小，因为 \(\sum w=1\)。
 
 ## 怎样读
 

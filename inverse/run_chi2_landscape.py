@@ -9,6 +9,7 @@ mask is applied afterwards so prop / decoupling / m0_all / only90 share S4.
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
     python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --slice cd_swa
+    python3 run_chi2_landscape.py --replot ../runs/inverse/chi2_landscape
 """
 from __future__ import annotations
 
@@ -247,6 +248,28 @@ def _save_npz(
     tmp.replace(path)
 
 
+def log_contour_levels(chi2: np.ndarray, n: int = 12) -> np.ndarray | None:
+    """Log-spaced iso-loss levels. Zeros (noiseless truth) are skipped; they sit inside the first ring."""
+    finite = np.asarray(chi2, dtype=float)
+    finite = finite[np.isfinite(finite) & (finite > 0)]
+    if finite.size < 2:
+        return None
+    vmax = float(np.percentile(finite, 99))
+    zmin = float(np.min(finite))
+    lo = max(zmin, vmax / 1e8)
+    if not np.isfinite(vmax) or vmax <= 0 or lo >= vmax:
+        return None
+    levels = np.logspace(np.log10(lo), np.log10(vmax), n)
+    levels = np.unique(np.round(levels, decimals=16))
+    return levels if levels.size >= 2 else None
+
+
+def log_png_path(out_path: Path) -> Path:
+    if out_path.stem.endswith("_log"):
+        return out_path
+    return out_path.with_name(out_path.stem + "_log" + out_path.suffix)
+
+
 def plot_landscape(
     xs: np.ndarray,
     ys: np.ndarray,
@@ -258,45 +281,145 @@ def plot_landscape(
     title: str,
     out_path: Path,
     dpi: int,
+    scale: str = "linear",
 ) -> None:
+    import matplotlib
+
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib import cm
+    from matplotlib.colors import LogNorm
     from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
     z = np.ma.masked_invalid(chi2)
     fig = plt.figure(figsize=(11.2, 4.6))
     ax0 = fig.add_subplot(1, 2, 1)
-    levels = 24
-    cs = ax0.contour(xs, ys, z, levels=levels, cmap="viridis")
-    ax0.clabel(cs, inline=True, fontsize=7, fmt="%1.2g")
+    if scale == "log":
+        levels = log_contour_levels(chi2)
+        if levels is None:
+            plt.close(fig)
+            return
+        norm = LogNorm(vmin=float(levels[0]), vmax=float(levels[-1]))
+        cs = ax0.contour(xs, ys, z, levels=levels, cmap="viridis", norm=norm)
+        ax0.clabel(cs, inline=True, fontsize=7, fmt="%1.0e")
+        ax0.set_title("iso-loss (log)")
+    else:
+        cs = ax0.contour(xs, ys, z, levels=24, cmap="viridis")
+        ax0.clabel(cs, inline=True, fontsize=7, fmt="%1.2g")
+        ax0.set_title("iso-loss")
     ax0.plot(truth_xy[0], truth_xy[1], "kx", ms=8, mew=1.5, label="truth")
     if np.any(np.isfinite(chi2)):
         iy, ix = np.unravel_index(int(np.nanargmin(chi2)), chi2.shape)
         ax0.plot(xs[ix], ys[iy], "o", ms=6, mfc="none", mec="#00bfbf", mew=1.5, label="min loss")
     ax0.set_xlabel(x_name)
     ax0.set_ylabel(y_name)
-    ax0.set_title("iso-loss")
     ax0.legend(fontsize=8, loc="best")
 
     ax1 = fig.add_subplot(1, 2, 2, projection="3d")
     xx, yy = np.meshgrid(xs, ys)
     finite = np.asarray(chi2, dtype=float)
     finite = finite[np.isfinite(finite)]
-    vmax = float(np.percentile(finite, 98)) if finite.size else 1.0
-    vmin = float(np.min(finite)) if finite.size else 0.0
-    surf = ax1.plot_surface(
-        xx, yy, np.clip(np.where(np.isfinite(chi2), chi2, np.nan), vmin, vmax),
-        cmap=cm.jet, linewidth=0, antialiased=True, vmin=vmin, vmax=vmax,
-    )
+    if scale == "log":
+        levels = log_contour_levels(chi2)
+        lo = float(levels[0]) if levels is not None else 1e-16
+        hi = float(levels[-1]) if levels is not None else 1.0
+        z3 = np.log10(np.clip(np.where(np.isfinite(chi2), chi2, np.nan), lo, hi))
+        surf = ax1.plot_surface(xx, yy, z3, cmap=cm.jet, linewidth=0, antialiased=True)
+        ax1.set_zlabel(r"$\log_{10}$ inverse loss")
+    else:
+        vmax = float(np.percentile(finite, 98)) if finite.size else 1.0
+        vmin = float(np.min(finite)) if finite.size else 0.0
+        surf = ax1.plot_surface(
+            xx, yy, np.clip(np.where(np.isfinite(chi2), chi2, np.nan), vmin, vmax),
+            cmap=cm.jet, linewidth=0, antialiased=True, vmin=vmin, vmax=vmax,
+        )
+        ax1.set_zlabel("inverse loss")
     ax1.set_xlabel(x_name)
     ax1.set_ylabel(y_name)
-    ax1.set_zlabel("inverse loss")
     fig.colorbar(surf, ax=ax1, shrink=0.6, pad=0.08)
     fig.suptitle(title)
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=dpi, facecolor="w")
     plt.close(fig)
+
+
+def plot_landscape_pair(
+    xs: np.ndarray,
+    ys: np.ndarray,
+    chi2: np.ndarray,
+    *,
+    x_name: str,
+    y_name: str,
+    truth_xy: tuple[float, float],
+    title: str,
+    out_path: Path,
+    dpi: int,
+) -> None:
+    """Write the linear PNG and a sibling ``*_log.png``; do not overwrite names."""
+    plot_landscape(
+        xs, ys, chi2, x_name=x_name, y_name=y_name, truth_xy=truth_xy,
+        title=title, out_path=out_path, dpi=dpi, scale="linear",
+    )
+    plot_landscape(
+        xs, ys, chi2, x_name=x_name, y_name=y_name, truth_xy=truth_xy,
+        title=f"{title}  (log)", out_path=log_png_path(out_path), dpi=dpi, scale="log",
+    )
+
+
+def replot_directory(out_dir: Path, *, dpi: int = 150) -> list[Path]:
+    """Rebuild linear + log PNGs from saved ``chi2_*.json`` / ``.npy`` / ``.npz``."""
+    written: list[Path] = []
+    for meta_path in sorted(out_dir.glob("chi2_*.json")):
+        payload = json.loads(meta_path.read_text(encoding="utf-8"))
+        slice_name = str(payload.get("slice") or "")
+        x_name = str(payload.get("x_name") or "cd_nm")
+        y_name = str(payload.get("y_name") or "depth_nm")
+        truth = payload.get("truth") or {}
+        if slice_name not in SLICES or x_name not in truth or y_name not in truth:
+            continue
+        npz_path = out_dir / f"chi2_{slice_name}.npz"
+        if not npz_path.is_file():
+            continue
+        npz = np.load(npz_path)
+        xs = np.asarray(npz["x"], dtype=float)
+        ys = np.asarray(npz["y"], dtype=float)
+        truth_xy = (float(truth[x_name]), float(truth[y_name]))
+        n_filled = int(payload.get("n_filled") or 0)
+        for mask in payload.get("masks") or {}:
+            grid_path = out_dir / f"chi2_{slice_name}_{mask}.npy"
+            if not grid_path.is_file():
+                continue
+            grid = np.asarray(np.load(grid_path), dtype=float)
+            out_png = out_dir / f"chi2_{slice_name}_{mask}.png"
+            plot_landscape_pair(
+                xs, ys, grid,
+                x_name=x_name, y_name=y_name, truth_xy=truth_xy,
+                title=f"{slice_name}  {mask}  inverse loss  n={n_filled}",
+                out_path=out_png, dpi=dpi,
+            )
+            written.append(out_png)
+            written.append(log_png_path(out_png))
+    return written
+
+
+def replot_tree(root: Path, *, dpi: int = 150) -> list[Path]:
+    root = root.expanduser().resolve()
+    dirs: list[Path] = []
+    if any(root.glob("chi2_*.json")):
+        dirs.append(root)
+    if root.is_dir():
+        for child in sorted(root.iterdir()):
+            if child.is_dir() and any(child.glob("chi2_*.json")):
+                dirs.append(child)
+    written: list[Path] = []
+    for d in dirs:
+        paths = replot_directory(d, dpi=dpi)
+        print(f"replot {d}: {len(paths)} pngs")
+        written.extend(paths)
+    if not written:
+        raise FileNotFoundError(f"no chi2_*.json landscapes under {root}")
+    return written
 
 
 def summarize(
@@ -363,7 +486,7 @@ def summarize(
             f"at={rec['at']}"
         )
         if do_plot and np.any(np.isfinite(grid)):
-            plot_landscape(
+            plot_landscape_pair(
                 xs,
                 ys,
                 grid,
@@ -481,7 +604,17 @@ def main() -> None:
     parser.add_argument("--noisy", action="store_true", help="add detector noise to R_meas")
     parser.add_argument("--no-resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--replot",
+        type=Path,
+        default=None,
+        help="rebuild linear + log PNGs from saved chi2_*.json/npy (no S4); file a run dir or chi2_landscape/",
+    )
     args = parser.parse_args()
+
+    if args.replot is not None:
+        replot_tree(args.replot)
+        return
 
     cfg_path = Path(args.config).expanduser() if args.config else parse_config_arg()
     cfg, raw = load_landscape_config(cfg_path)
