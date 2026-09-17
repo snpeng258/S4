@@ -9,7 +9,16 @@ from pathlib import Path
 import numpy as np
 from scipy.optimize import differential_evolution, least_squares
 
-from config import EVAL_TASKS, INVERSE_METHODS, PARAM_NAMES, ScatterometryConfig, decoupling_is_active, load_config, parse_config_arg
+from config import (
+    EVAL_TASKS,
+    INVERSE_METHODS,
+    PARAM_NAMES,
+    ScatterometryConfig,
+    decoupling_is_active,
+    load_config,
+    parse_config_arg,
+    role_weights_enabled,
+)
 from decoupling import (
     cd_anchor_value,
     dynamic_weights_from_jacobian,
@@ -192,7 +201,9 @@ class InverseProblem:
         self.names = list(cfg.inverse.param_names)
         self.p_ref, self.p0, self.lb, self.ub = _build_bounds(cfg, use_yaml_init=use_yaml_init)
         self._block_sizes = block_sizes(cfg)
-        if decoupling_is_active(cfg):
+        if role_weights_enabled(cfg):
+            if not decoupling_is_active(cfg):
+                raise ValueError("use_role_weights=True requires decoupling order collection")
             self.wsqrt = static_role_weights(cfg, self.r_meas, self._block_sizes)
             warn_missing_roles(cfg)
         else:
@@ -279,7 +290,11 @@ class InverseProblem:
 
     def run_lm(self, p_init: np.ndarray, *, p_ga: np.ndarray | None = None) -> np.ndarray:
         inv = self.base_cfg.inverse
-        if decoupling_is_active(self.base_cfg) and inv.decoupling.dynamic_lm.enabled:
+        if (
+            role_weights_enabled(self.base_cfg)
+            and decoupling_is_active(self.base_cfg)
+            and inv.decoupling.dynamic_lm.enabled
+        ):
             return self.run_lm_decoupled(p_init, p_ga=p_ga)
         x0 = _map_to_unbounded(p_init, self.lb, self.ub)
         res = least_squares(
@@ -357,6 +372,7 @@ def run_inverse(
     r_meas: np.ndarray | None = None,
     *,
     print_bounds: bool = True,
+    start_at_truth: bool = False,
 ) -> InverseResult:
     reset_runner()
     method = cfg.inverse.method
@@ -404,6 +420,9 @@ def run_inverse(
             "library_size": lib.size,
             "n_collectible": int(problem.r_meas.size),
         }
+
+    if start_at_truth:
+        problem.p0 = problem.p_ref.copy()
 
     p_init = problem.p0.copy()
     if cfg.inverse.use_ga:
@@ -473,6 +492,13 @@ def main() -> None:
         from scan_sweep import run_scan_sweep
 
         run_scan_sweep(cfg, out_dir)
+        return
+
+    if task == "fim_study":
+        from fim_study import run_fim_study
+
+        print("eval.task=fim_study: running Jacobian/FIM study (no GA+LM).")
+        run_fim_study(cfg, out_dir)
         return
 
     s, inv = cfg.structure, cfg.inverse
