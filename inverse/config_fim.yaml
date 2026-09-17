@@ -3,7 +3,7 @@
 #   python3 fim_study.py --config config_fim.yaml
 #   python3 evaluate.py --config config_fim.yaml
 #
-# One finite-difference J on the full stored R_m vector (~100 S4 calls),
+# One finite-difference J on the full stored R_m vector (~80 S4 calls),
 # then every layout is a propagating-order row mask. Σ = observation_variance
 # (role weights are not in FIM). Outputs under ../runs/inverse/fim_study/
 
@@ -11,8 +11,7 @@ structure:
   pitch_nm: 80
   cd_nm: 39.52
   depth_nm: 39.32
-  lswa_deg: 89.63
-  rswa_deg: 89.26
+  swa_deg: 89.45
   n_slices: 10
   grating_material: Au
   substrate_material: SiO2
@@ -63,8 +62,7 @@ inverse:
   param_names:
     - cd_nm
     - depth_nm
-    - lswa_deg
-    - rswa_deg
+    - swa_deg
   noise:
     apply: true
     zero:
@@ -109,8 +107,7 @@ fim:
   param_scales:
     cd_nm: 1.0
     depth_nm: 1.0
-    lswa_deg: 1.0
-    rswa_deg: 1.0
+    swa_deg: 1.0
   azimuth_windows:
     only90: [90]
     near90: [60, 90]

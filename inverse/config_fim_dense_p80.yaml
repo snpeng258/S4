@@ -1,14 +1,13 @@
 # Dense (λ, φ) FIM: pitch 80 nm, duty 0.5, depth 40 nm, NG=31
 #   python3 run_fim_dense.py --pitch 80 --layout-only
 #   python3 run_fim_dense.py --pitch 80
-# 21 × 19 conditions × 5 FD ≈ 1995 S4 calls
+# 21 × 19 conditions × 4 FD ≈ 1596 S4 calls
 
 structure:
   pitch_nm: 80
   cd_nm: 40.0
   depth_nm: 40.0
-  lswa_deg: 89.63
-  rswa_deg: 89.26
+  swa_deg: 89.45
   n_slices: 10
   grating_material: Au
   substrate_material: SiO2
@@ -58,8 +57,7 @@ inverse:
   param_names:
     - cd_nm
     - depth_nm
-    - lswa_deg
-    - rswa_deg
+    - swa_deg
   noise:
     apply: true
     zero:
@@ -101,8 +99,7 @@ fim:
   param_scales:
     cd_nm: 1.0
     depth_nm: 1.0
-    lswa_deg: 1.0
-    rswa_deg: 1.0
+    swa_deg: 1.0
   azimuth_windows:
     only90: [90]
     near90: [60, 90]

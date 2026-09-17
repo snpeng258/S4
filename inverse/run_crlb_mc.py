@@ -236,7 +236,6 @@ def metrics_for_mask(
         "corr": np.asarray(raw["corr"], dtype=float).tolist(),
         "singular": [names[i] for i, flag in enumerate(raw["singular"]) if flag],
         "rho_depth_cd": float(raw["corr"][0][1]) if raw["corr"].shape[0] >= 2 else None,
-        "rho_lswa_rswa": float(raw["corr"][2][3]) if raw["corr"].shape[0] >= 4 else None,
     }
 
 
@@ -253,12 +252,14 @@ def run_fim(cfg: ScatterometryConfig, workers: int, masks: tuple[str, ...] = FIM
     print(f"Saved {path}")
     for m, rec in payload["masks"].items():
         crlb = rec["crlb"]
-        print(
-            f"  {m:<12} n={rec['n_rows']:4d}  rank={rec['rank']}  "
-            f"CD={crlb['cd_nm']:.3g}  H={crlb['depth_nm']:.3g}  "
-            f"L={crlb['lswa_deg']:.3g}  R={crlb['rswa_deg']:.3g}  "
-            f"ρ(d,CD)={rec['rho_depth_cd']:+.2f}  ρ(L,R)={rec['rho_lswa_rswa']:+.2f}"
-        )
+        parts = [f"  {m:<12} n={rec['n_rows']:4d}  rank={rec['rank']}"]
+        for n in cfg.inverse.param_names:
+            v = crlb.get(n)
+            parts.append(f"{n}={v:.3g}" if v is not None and math.isfinite(v) else f"{n}=n/a")
+        rho = rec.get("rho_depth_cd")
+        if rho is not None and math.isfinite(float(rho)):
+            parts.append(f"ρ(d,CD)={rho:+.2f}")
+        print("  ".join(parts))
     return payload
 
 
@@ -298,6 +299,7 @@ def summarize_trials(records: list[dict], names: list[str], fim: dict | None) ->
     bias = {n: float(arr[n].mean() - ref[n]) for n in names}
     std = {n: float(arr[n].std(ddof=1)) if len(records) > 1 else 0.0 for n in names}
     rmse = {n: float(np.sqrt(np.mean((arr[n] - ref[n]) ** 2))) for n in names}
+    mae = {n: float(np.mean(np.abs(arr[n] - ref[n]))) for n in names}
     stacked = np.column_stack([arr[n] for n in names])
     emp_corr = np.corrcoef(stacked, rowvar=False) if len(records) > 2 else None
     crlb = (fim or {}).get("crlb") or {}
@@ -309,28 +311,26 @@ def summarize_trials(records: list[dict], names: list[str], fim: dict | None) ->
             efficiency[n] = None
         else:
             efficiency[n] = float(c) / s
-    lswa = arr.get("lswa_deg")
-    rswa = arr.get("rswa_deg")
-    swap_rate = None
-    if lswa is not None and rswa is not None:
-        true_l, true_r = ref["lswa_deg"], ref["rswa_deg"]
-        swap = (np.abs(lswa - true_r) + np.abs(rswa - true_l)) < (
-            np.abs(lswa - true_l) + np.abs(rswa - true_r)
-        )
-        swap_rate = float(np.mean(swap))
     return {
         "n": len(records),
         "bias": bias,
         "std": std,
+        "mae": mae,
         "rmse": rmse,
         "efficiency_crlb_over_std": efficiency,
         "empirical_corr": None if emp_corr is None else emp_corr.tolist(),
-        "rho_lswa_rswa": None if emp_corr is None else float(emp_corr[2, 3]),
-        "swap_rate": swap_rate,
         "mean_forward_evals": float(np.mean([r["forward_eval_count"] for r in records])),
         "mean_t_total": float(np.mean([r["timing"].get("t_total", 0.0) for r in records])),
         "fim": fim,
     }
+
+
+def _param_unit(name: str) -> str:
+    if name.endswith("_nm"):
+        return "nm"
+    if name.endswith("_deg"):
+        return "deg"
+    return ""
 
 
 def plot_scatter(records: list[dict], names: list[str], fim: dict | None, out_path: Path) -> None:
@@ -340,16 +340,38 @@ def plot_scatter(records: list[dict], names: list[str], fim: dict | None, out_pa
 
     arr = {n: np.array([r["p_est"][n] for r in records], dtype=float) for n in names}
     ref = records[0]["p_ref"]
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4.4))
-    pairs = (("cd_nm", "depth_nm"), ("lswa_deg", "rswa_deg"))
-    for ax, (x, y) in zip(axes, pairs):
-        ax.scatter(arr[x], arr[y], s=18, alpha=0.75, label="MC")
-        ax.scatter([ref[x]], [ref[y]], c="k", marker="x", s=60, label="truth")
-        ax.set_xlabel(x)
-        ax.set_ylabel(y)
-        ax.grid(True, alpha=0.3)
-    axes[0].legend(loc="best", fontsize=8)
-    fig.suptitle(f"n={len(records)}")
+    crlb = (fim or {}).get("crlb") or {}
+    n_hist = len(names)
+    fig, axes = plt.subplots(1, n_hist + 1, figsize=(4.0 * (n_hist + 1), 4.2))
+    axes = np.atleast_1d(axes).ravel()
+    ax0 = axes[0]
+    if "cd_nm" in arr and "depth_nm" in arr:
+        ax0.scatter(arr["cd_nm"], arr["depth_nm"], s=18, alpha=0.75, label="MC")
+        ax0.scatter([ref["cd_nm"]], [ref["depth_nm"]], c="k", marker="x", s=60, label="truth")
+        ax0.set_xlabel("cd_nm")
+        ax0.set_ylabel("depth_nm")
+    else:
+        x, y = names[0], names[min(1, len(names) - 1)]
+        ax0.scatter(arr[x], arr[y], s=18, alpha=0.75, label="MC")
+        ax0.scatter([ref[x]], [ref[y]], c="k", marker="x", s=60, label="truth")
+        ax0.set_xlabel(x)
+        ax0.set_ylabel(y)
+    ax0.legend(loc="best", fontsize=8)
+    ax0.grid(True, alpha=0.3)
+    for ax, n in zip(axes[1:], names):
+        err = arr[n] - ref[n]
+        ax.hist(err, bins=min(12, max(4, len(records) // 2)), color="#4C72B0", alpha=0.85)
+        ax.axvline(0.0, color="k", lw=1.0)
+        c = crlb.get(n)
+        if c is not None and math.isfinite(float(c)):
+            ax.axvline(float(c), color="#C44E52", ls="--", lw=1.0, label=f"CRLB={float(c):.3g}")
+            ax.axvline(-float(c), color="#C44E52", ls="--", lw=1.0)
+            ax.legend(fontsize=8)
+        unit = _param_unit(n)
+        ax.set_xlabel(f"{n} error" + (f" ({unit})" if unit else ""))
+        ax.set_ylabel("count")
+        ax.grid(True, alpha=0.3, axis="y")
+    fig.suptitle(f"n={len(records)}  (absolute errors)")
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, facecolor="w")
@@ -397,15 +419,18 @@ def run_mc(
             "p_est": result.p_est,
             "p_ref": result.p_ref,
             "relative_errors_pct": result.relative_errors_pct,
+            "absolute_errors": result.absolute_errors,
             "resnorm": result.resnorm,
             "forward_eval_count": result.forward_eval_count,
             "timing": result.timing,
         }
         _append_jsonl(trials_path, row)
+        est_bits = "  ".join(
+            f"{n}={result.p_est[n]:.4g}(Δ={result.absolute_errors[n]:+.3g})"
+            for n in work.inverse.param_names
+        )
         print(
-            f"[{trial + 1}/{n_trials}] {mask} {mode}  "
-            f"CD={result.p_est['cd_nm']:.4g}  H={result.p_est['depth_nm']:.4g}  "
-            f"L={result.p_est['lswa_deg']:.3f}  R={result.p_est['rswa_deg']:.3f}  "
+            f"[{trial + 1}/{n_trials}] {mask} {mode}  {est_bits}  "
             f"evals={result.forward_eval_count}  t={result.timing.get('t_total', 0):.1f}s"
         )
 
@@ -460,7 +485,11 @@ def run_probe(cfg: ScatterometryConfig, workers: int) -> None:
 def run_summarize(cfg: ScatterometryConfig) -> None:
     root = _out_root(cfg)
     names = list(cfg.inverse.param_names)
-    print(f"{'cell':<22} {'n':>3}  CD_std  H_std  L_std  R_std  eff_CD  ρ_LR  swap")
+    hdr = f"{'cell':<22} {'n':>3}"
+    for n in names:
+        short = {"cd_nm": "CD", "depth_nm": "H", "swa_deg": "SWA"}.get(n, n)
+        hdr += f"  {short+'_std':>8} {short+'_rmse':>9} {short+'_crlb':>9}"
+    print(hdr)
     for mode in ("A", "B"):
         for mask in FIM_MASK_MODES:
             path = root / f"{mask}_{mode}" / "summary.json"
@@ -468,22 +497,17 @@ def run_summarize(cfg: ScatterometryConfig) -> None:
                 continue
             s = json.loads(path.read_text(encoding="utf-8"))
             std = s.get("std") or {}
-            eff = s.get("efficiency_crlb_over_std") or {}
+            rmse = s.get("rmse") or {}
+            crlb = ((s.get("fim") or {}).get("crlb")) or {}
 
             def fmt(d, key, spec=".3g"):
                 v = d.get(key)
                 return "n/a" if v is None else format(v, spec)
 
-            rho = s.get("rho_lswa_rswa")
-            swap = s.get("swap_rate")
-            print(
-                f"{mask}_{mode:<19} {s.get('n', 0):3d}  "
-                f"{fmt(std, 'cd_nm'):>6} {fmt(std, 'depth_nm'):>6} "
-                f"{fmt(std, 'lswa_deg'):>6} {fmt(std, 'rswa_deg'):>6} "
-                f"{fmt(eff, 'cd_nm'):>6} "
-                f"{'n/a' if rho is None else format(rho, '+.2f'):>6} "
-                f"{'n/a' if swap is None else format(swap, '.2f')}"
-            )
+            line = f"{f'{mask}_{mode}':<22} {s.get('n', 0):3d}"
+            for n in names:
+                line += f"  {fmt(std, n):>8} {fmt(rmse, n):>9} {fmt(crlb, n):>9}"
+            print(line)
     print(f"root: {root}")
 
 

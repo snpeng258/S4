@@ -12,7 +12,9 @@ import numpy as np
 
 from noise_model import DetectorNoiseConfig, parse_detector_noise
 
-PARAM_NAMES = ("pitch_nm", "cd_nm", "depth_nm", "lswa_deg", "rswa_deg")
+PARAM_NAMES = ("pitch_nm", "cd_nm", "depth_nm", "swa_deg")
+INVERSE_PARAM_DEFAULTS = ("cd_nm", "depth_nm", "swa_deg")
+_LEGACY_SWA_NAMES = ("lswa_deg", "rswa_deg", "swa_deg")
 INVERSE_METHODS = ("ga_lm", "lib_pop_ga_lm", "lib_pop_rand_ga_lm")
 EVAL_TASKS = ("inverse", "scan_sweep", "fim_study")
 DEFAULT_FIM_MASKS = (
@@ -41,8 +43,7 @@ class StructureConfig:
     pitch_nm: float = 80.0
     cd_nm: float = 44.0
     depth_nm: float = 44.0
-    lswa_deg: float = 94.0
-    rswa_deg: float = 94.0
+    swa_deg: float = 90.0
     n_slices: int = 10
     grating_material: str = "Au"
     substrate_material: str = "SiO2"
@@ -164,7 +165,7 @@ class LibraryPriorConfig:
     enabled: bool = False
     lambda_prior: float = 0.01
     swa_deg_range: list[float] = field(default_factory=lambda: [85.0, 90.0])
-    penalize_asymmetry: bool = False
+    penalize_asymmetry: bool = False  # unused: a single swa_deg is always symmetric
     hard_reject_out_of_range: bool = True
 
 
@@ -172,8 +173,7 @@ def _default_library_grid() -> dict[str, GridAxisConfig]:
     return {
         "cd_nm": GridAxisConfig(32.0, 48.0, 1.0),
         "depth_nm": GridAxisConfig(32.0, 48.0, 1.0),
-        "lswa_deg": GridAxisConfig(85.0, 95.0, 1.0),
-        "rswa_deg": GridAxisConfig(85.0, 95.0, 1.0),
+        "swa_deg": GridAxisConfig(85.0, 95.0, 1.0),
     }
 
 
@@ -287,6 +287,63 @@ def _parse_decoupling(raw: dict | None) -> DecouplingConfig:
     )
 
 
+def parse_structure(raw: dict | None) -> StructureConfig:
+    """Accept swa_deg, or the old lswa_deg / rswa_deg pair (mean if both given)."""
+    if not raw:
+        return StructureConfig()
+    data = dict(raw)
+    left = data.pop("lswa_deg", None)
+    right = data.pop("rswa_deg", None)
+    if "swa_deg" not in data:
+        if left is not None and right is not None:
+            data["swa_deg"] = 0.5 * (float(left) + float(right))
+        elif left is not None:
+            data["swa_deg"] = float(left)
+        elif right is not None:
+            data["swa_deg"] = float(right)
+    return StructureConfig(**data)
+
+
+def normalize_param_names(names: list[str] | None) -> list[str]:
+    if not names:
+        return list(INVERSE_PARAM_DEFAULTS)
+    out: list[str] = []
+    seen_swa = False
+    for name in names:
+        if name in _LEGACY_SWA_NAMES:
+            if not seen_swa:
+                out.append("swa_deg")
+                seen_swa = True
+            continue
+        out.append(str(name))
+    return out
+
+
+def normalize_library_grid(grid: dict[str, GridAxisConfig]) -> dict[str, GridAxisConfig]:
+    out = dict(grid)
+    if "swa_deg" not in out and "lswa_deg" in out:
+        out["swa_deg"] = out["lswa_deg"]
+    out.pop("lswa_deg", None)
+    out.pop("rswa_deg", None)
+    return out
+
+
+def normalize_param_dict(values: dict[str, float] | None) -> dict[str, float] | None:
+    """Map old lswa/rswa keys onto a single swa_deg (mean if both given)."""
+    if not values:
+        return values
+    out: dict[str, float] = {}
+    swa_vals: list[float] = []
+    for key, val in values.items():
+        if str(key) in _LEGACY_SWA_NAMES:
+            swa_vals.append(float(val))
+        else:
+            out[str(key)] = float(val)
+    if swa_vals:
+        out["swa_deg"] = float(sum(swa_vals) / len(swa_vals))
+    return out
+
+
 def decoupling_is_active(cfg: "ScatterometryConfig") -> bool:
     inv = cfg.inverse
     if inv.order_collection.lower() == "decoupling":
@@ -312,7 +369,7 @@ class InverseConfig:
     # None = auto (on iff decoupling is active). False = raw 1/σ, matches FIM.
     use_role_weights: bool | None = None
     param_names: list[str] = field(
-        default_factory=lambda: ["cd_nm", "depth_nm", "lswa_deg", "rswa_deg"]
+        default_factory=lambda: list(INVERSE_PARAM_DEFAULTS)
     )
     perturb_frac: float = 0.05
     bound_frac: float = 0.2
@@ -342,8 +399,7 @@ def _default_fim_param_scales() -> dict[str, float]:
     return {
         "cd_nm": 1.0,
         "depth_nm": 1.0,
-        "lswa_deg": 1.0,
-        "rswa_deg": 1.0,
+        "swa_deg": 1.0,
     }
 
 
@@ -392,7 +448,10 @@ def _parse_fim(raw: dict | None) -> FimStudyConfig:
     scales = _default_fim_param_scales()
     raw_scales = data.pop("param_scales", None) or {}
     for name, val in raw_scales.items():
-        scales[str(name)] = float(val)
+        key = "swa_deg" if str(name) in _LEGACY_SWA_NAMES else str(name)
+        scales[key] = float(val)
+    scales.pop("lswa_deg", None)
+    scales.pop("rswa_deg", None)
     flicker_raw = data.pop("flicker_a", [None, 0.0])
     flicker: list[float | None] = []
     if flicker_raw is None:
@@ -472,7 +531,7 @@ def load_config(path: str | Path) -> ScatterometryConfig:
 
     cfg = ScatterometryConfig()
     if "structure" in raw:
-        cfg.structure = StructureConfig(**raw["structure"])
+        cfg.structure = parse_structure(raw["structure"])
     if "optical" in raw:
         opt_raw = dict(raw["optical"])
         recipe_raw = opt_raw.pop("recipe", None)
@@ -495,6 +554,10 @@ def load_config(path: str | Path) -> ScatterometryConfig:
         noise_raw = inv.pop("noise", None)
         noise = parse_detector_noise(noise_raw)
         cfg.inverse = InverseConfig(**inv, decoupling=dec, noise=noise)
+        cfg.inverse.param_names = normalize_param_names(cfg.inverse.param_names)
+        cfg.inverse.init_guess = normalize_param_dict(cfg.inverse.init_guess)
+        cfg.inverse.lb = normalize_param_dict(cfg.inverse.lb)
+        cfg.inverse.ub = normalize_param_dict(cfg.inverse.ub)
         if cfg.inverse.order_collection.lower() == "decoupling":
             cfg.inverse.decoupling.enabled = True
     if "eval" in raw:
@@ -516,6 +579,7 @@ def load_config(path: str | Path) -> ScatterometryConfig:
             if grid_raw
             else _default_library_grid()
         )
+        grid = normalize_library_grid(grid)
         cfg.library = LibraryConfig(
             file=lib_raw.get("file", "../data/inverse/spectra.npz"),
             build_workers=int(lib_raw.get("build_workers", 1)),
@@ -529,7 +593,9 @@ def load_config(path: str | Path) -> ScatterometryConfig:
         ss = sc.pop("structure_sweep", None)
         recipe_raw = sc.pop("recipe", None)
         if ss:
-            sc["structure_sweep"] = {k: GridAxisConfig(**v) for k, v in ss.items()}
+            sc["structure_sweep"] = normalize_library_grid(
+                {k: GridAxisConfig(**v) for k, v in ss.items()}
+            )
         cfg.scan = ScanConfig(**sc)
         if recipe_raw is not None:
             r_copy = dict(recipe_raw)

@@ -26,9 +26,9 @@ def slice_grating(struct: StructureConfig) -> list[SliceLayer]:
     top_cd = struct.cd_nm
     height = struct.depth_nm
     n = max(1, int(struct.n_slices))
-    lswa, rswa = struct.lswa_deg, struct.rswa_deg
+    swa = struct.swa_deg
 
-    if lswa == 90.0 and rswa == 90.0:
+    if swa == 90.0:
         return [
             SliceLayer(
                 thickness_norm=height / pitch,
@@ -37,14 +37,10 @@ def slice_grating(struct: StructureConfig) -> list[SliceLayer]:
             )
         ]
 
-    cot_l = 1.0 / math.tan(math.radians(lswa)) if lswa != 0 else 0.0
-    cot_r = 1.0 / math.tan(math.radians(rswa)) if rswa != 0 else 0.0
-    cot_swa = cot_l + cot_r
-    dif_cot = (-cot_l + cot_r) / 2.0
-
-    bottom_cd = top_cd + height * cot_swa
+    cot = 1.0 / math.tan(math.radians(swa)) if swa != 0 else 0.0
+    bottom_cd = top_cd + height * (2.0 * cot)
     middle_cd = _calcu_mid(top_cd, bottom_cd, n)
-    middle_offs = _calcu_mid(0.0, height * dif_cot, n)
+    middle_offs = np.zeros(n, dtype=float)
 
     thickness_norm = (height / n) / pitch
     # Top slice first (nearest Air), matching S4 AddLayer order after superstrate.

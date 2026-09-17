@@ -171,7 +171,7 @@ def main() -> None:
     print(f"Config: {cfg_path}")
     print(
         f"Structure: pitch={s.pitch_nm} cd={s.cd_nm} depth={s.depth_nm} "
-        f"LSWA={s.lswa_deg} RSWA={s.rswa_deg} n_slices={s.n_slices}"
+        f"SWA={s.swa_deg} n_slices={s.n_slices}"
     )
     n_cond = len(expand_measurement_conditions(cfg))
     print(

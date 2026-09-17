@@ -11,7 +11,7 @@
 | A | 只用 LM | 原始 \(1/\sigma\)（与 FIM 相同，无角色因子） | 真值 | 40 | 下限的尺度和排序准不准 |
 | B | 现用 GA+LM（80 nm 有库则 `lib_pop_rand_ga_lm`） | 解耦 mask 才开角色权重 | 库 / GA | 20 | 求解器能不能走到 CRLB 附近 |
 
-几何与密网格真值一致：80 nm 用 CD 40 / depth 40；300 nm 用 CD 150 / depth 40。墙 \(89.63^\circ/89.26^\circ\)。光学是现成反演 recipe：H55–61 奇次 × \(\theta=70^\circ\) × \(\varphi\in\{0,30,45,60,90\}\)。噪声 \(N_0=10^6\)、\(a=1\%\)。
+几何与密网格真值一致：80 nm 用 CD 40 / depth 40；300 nm 用 CD 150 / depth 40。单一侧壁角 \(89.45^\circ\)（左右墙相等；旧配置 \(89.63^\circ/89.26^\circ\) 的均值）。光学是现成反演 recipe：H55–61 奇次 × \(\theta=70^\circ\) × \(\varphi\in\{0,30,45,60,90\}\)。噪声 \(N_0=10^6\)、\(a=1\%\)。反演三参：`cd_nm, depth_nm, swa_deg`。旧的四参谱库必须按新 `library.grid` 重建。`ga_popsize` 用 36（须能被 3 整除）。
 
 四个 mask：`prop`、`decoupling`、`m0_all`、`only90`。行集与 `fim_study.mask_rows` 对齐（可传播的 \(m\in\{-1,0,1\}\)）。
 
@@ -19,7 +19,7 @@
 
 服务器上的 Cursor 只要能读本仓库。做法：
 
-1. `git fetch && git checkout cursor/fim-jacobian-study-7d74 && git pull`
+1. `git fetch && git checkout unify-swa && git pull`（合并后也可跟 `cursor/fim-jacobian-study-7d74`）
 2. 打开 `inverse/docs/CRLB_MC.md`（本文）
 3. 按下面的命令跑
 
@@ -62,7 +62,7 @@ python3 run_crlb_mc.py --config config_crlb_mc_p80.yaml --mode probe
 python3 run_crlb_mc.py --config config_crlb_mc_p300.yaml --mode probe
 ```
 
-`layout` 不调 S4，应打印四行 `OK`。`fim` 各算一张紧凑 \(J\)（约 \(20\times5\) 次 S4），写入：
+`layout` 不调 S4，应打印四行 `OK`。`fim` 各算一张紧凑 \(J\)（约 \(20\times 4\) 次 S4），写入：
 
 - `../runs/inverse/crlb_mc/p80/fim_compact.json`
 - `../runs/inverse/crlb_mc/p80/jacobian_compact.npz`
@@ -122,14 +122,14 @@ runs/inverse/crlb_mc/p80/
   m0_all_A/...
 ```
 
-`summary.json` 里：`std`、`rmse`、`bias`、`efficiency_crlb_over_std`（CRLB / \(\hat\sigma\)，贴 1 表示 A 达到下限）、经验相关、`swap_rate`。
+`summary.json` 里只看绝对量：`std`、`mae`、`rmse`、`bias`（nm / deg）、`efficiency_crlb_over_std`（CRLB / \(\hat\sigma\)，贴 1 表示 A 达到下限）。不再记录左右墙相关或 `swap_rate`。
 
-看图：`scatter.png` 的 \((\mathrm{lswa},\mathrm{rswa})\)。`m0_all` 应贴在 \(L+R\approx\mathrm{const}\) 上。
+看图：`scatter.png` 左侧是 CD–depth 散点，其余是各参 \((\hat p-p)\) 直方图，虚线是 \(\pm\mathrm{CRLB}\)。先比绝对 CRLB / std / RMSE 的数值，不要再讲左右墙互换。
 
 ## 怎样才算对上
 
-- **排序对、尺度差几倍**：FIM 能指导配方，绝对 CRLB 当不了误差条。
-- **`m0_all` 单墙 RMSE 看起来还行**：看 \(\rho(L,R)\) 和 \(L-R\) 的散点，不要只看单墙。
+- **排序对、尺度差几倍**：FIM 能指导配方；仍以绝对 CRLB / std / RMSE（nm、deg）报数。
+- **`m0_all` 的 SWA CRLB 很大**：零级几乎认不出墙角，看 `swa_deg` 的绝对下限，不要再拆左右墙。
 - **A 贴 CRLB、B 差一个数量级**：局部信息够，全局会掉坑。
 - **A 也比 CRLB 差很多**：先确认比的是紧凑 `fim_compact.json`，不是密网格那张表；A 必须关角色权重（脚本已关）。
 

@@ -129,7 +129,8 @@ def validate_library(lib: SpectralLibrary, cfg: ScatterometryConfig) -> None:
     _meta_compatible(lib.meta, cfg)
     if list(cfg.inverse.param_names) != lib.param_names:
         raise ValueError(
-            f"library param_names {lib.param_names} != config {cfg.inverse.param_names}"
+            f"library param_names {lib.param_names} != config {cfg.inverse.param_names}; "
+            "rebuild the library after unifying SWA (one swa_deg axis, left=right)"
         )
 
     stored_m = lib.meta["measurement"]

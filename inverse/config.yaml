@@ -13,8 +13,7 @@ structure:
   pitch_nm: 80
   cd_nm: 39.52
   depth_nm: 39.32
-  lswa_deg: 89.63
-  rswa_deg: 89.26
+  swa_deg: 89.45
   n_slices: 10
   grating_material: Au
   substrate_material: SiO2
@@ -90,8 +89,7 @@ inverse:
   param_names:
     - cd_nm
     - depth_nm
-    - lswa_deg
-    - rswa_deg
+    - swa_deg
   perturb_frac: 0.05
   bound_frac: 0.2
   reg_weight: 0.0
@@ -119,8 +117,8 @@ inverse:
   use_ga: true
   use_lm: true
   ga_maxiter: 20
-  # 绝对 DE 个体数 P（须能被 n_params 整除；4 参时 popsize 乘子 = P/4）
-  ga_popsize: 40
+  # 绝对 DE 个体数 P（须能被 n_params 整除；3 参时 36 → 乘子 12）
+  ga_popsize: 36
   ga_mutation:
     - 0.5
     - 1.0
@@ -135,8 +133,7 @@ inverse:
   # init_guess:
   #   cd_nm: 42
   #   depth_nm: 38
-  #   lswa_deg: 85
-  #   rswa_deg: 85
+  #   swa_deg: 85
   # lb:
   #   cd_nm: 32
   # ub:
@@ -144,13 +141,13 @@ inverse:
 
 library:
   # meta 须与 optical.recipe 一致；单波长试跑改为 ../data/inverse/spectra.npz
+  # 统一 swa_deg 后须重建：旧四参库（独立 l/r SWA）不兼容
   file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
   build_workers: 2   # build_benchmark.json: workers_best=2
   grid:
     cd_nm:    {min: 32, max: 48, step: 1.0}
     depth_nm: {min: 32, max: 48, step: 1.0}
-    lswa_deg: {min: 80, max: 95, step: 1.0}
-    rswa_deg: {min: 80, max: 95, step: 1.0}
+    swa_deg: {min: 80, max: 95, step: 1.0}
   # 单波长细 grid 示例（与 spectra.npz 配套）:
   # file: ../data/inverse/spectra.npz
   # build_workers: 1

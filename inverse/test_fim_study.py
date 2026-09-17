@@ -229,7 +229,7 @@ def test_write_layout_only(tmp_path=None):
         payload = write_layout_only(cfg, out)
         assert payload["n_conditions"] == 20
         assert payload["n_orders_stored"] == 31
-        assert payload["n_s4_forwards_for_J"] == 100
+        assert payload["n_s4_forwards_for_J"] == 80
         assert payload["keep_orders"] == [-1, 0, 1]
         assert payload["n_measurable"] <= payload["n_propagating"]
         assert (out / "propagating_table.txt").is_file()
@@ -266,6 +266,8 @@ def test_load_dense_fim_configs():
         assert phis[0] == 0.0 and phis[-1] == 90.0
         assert cfg.inverse.decoupling.roles.lateral.azimuths_deg is None
         assert cfg.eval.task == "fim_study"
+        assert cfg.structure.swa_deg == 89.45
+        assert cfg.inverse.param_names == ["cd_nm", "depth_nm", "swa_deg"]
 
 
 def test_dense_p80_minus1_is_not_always_cut_off():
