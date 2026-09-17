@@ -149,10 +149,8 @@ def dynamic_weights_from_jacobian(
             w[row] *= boost_d
 
     swa_rows = [i for i, s in enumerate(layout) if s.role == "swa"]
-    for pname in ("lswa_deg", "rswa_deg"):
-        pi = _param_index(names, pname)
-        if pi is None:
-            continue
+    pi = _param_index(names, "swa_deg")
+    if pi is not None:
         for row in swa_rows:
             sens = abs(float(J[row, pi]))
             w[row] *= 1.0 + min(sens, 10.0)

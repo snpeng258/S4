@@ -8,8 +8,7 @@ structure:
   pitch_nm: 80
   cd_nm: 39.52
   depth_nm: 39.32
-  lswa_deg: 89.63
-  rswa_deg: 89.26
+  swa_deg: 89.45
   n_slices: 10
   grating_material: Au
   substrate_material: SiO2
@@ -45,7 +44,7 @@ inverse:
   order_collection: decoupling
   decoupling:
     enabled: true
-  param_names: [cd_nm, depth_nm, lswa_deg, rswa_deg]
+  param_names: [cd_nm, depth_nm, swa_deg]
 
 library:
   file: ../data/inverse/spectra_hhg_swa05_cd1.npz
@@ -55,8 +54,7 @@ library:
   grid:
     cd_nm:    {min: 32, max: 48, step: 1.0}
     depth_nm: {min: 32, max: 48, step: 1.0}
-    lswa_deg: {min: 80, max: 95, step: 0.5}
-    rswa_deg: {min: 80, max: 95, step: 0.5}
+    swa_deg: {min: 80, max: 95, step: 0.5}
   prior:
     enabled: false
     swa_deg_range: [80, 95]

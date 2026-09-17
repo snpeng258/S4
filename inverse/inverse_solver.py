@@ -46,6 +46,7 @@ class InverseResult:
     p_est: dict[str, float]
     p_ref: dict[str, float]
     relative_errors_pct: dict[str, float]
+    absolute_errors: dict[str, float] = field(default_factory=dict)
     method: str = "ga_lm"
     ga_history: list[float] = field(default_factory=list)
     lm_history: list[float] = field(default_factory=list)
@@ -442,6 +443,7 @@ def run_inverse(
     p_ref_d = {n: float(problem.p_ref[i]) for i, n in enumerate(problem.names)}
     p_est_d = {n: float(p_est[i]) for i, n in enumerate(problem.names)}
     rel_err = {n: 100.0 * (p_est_d[n] - p_ref_d[n]) / (p_ref_d[n] + 1e-30) for n in problem.names}
+    abs_err = {n: p_est_d[n] - p_ref_d[n] for n in problem.names}
 
     cfg_est = _apply_params(cfg, problem.names, p_est)
     r_fit = problem._sim_collectible(cfg_est)
@@ -451,6 +453,7 @@ def run_inverse(
         p_est=p_est_d,
         p_ref=p_ref_d,
         relative_errors_pct=rel_err,
+        absolute_errors=abs_err,
         method=method,
         ga_history=problem.ga_history,
         lm_history=problem.lm_history,
@@ -514,7 +517,8 @@ def main() -> None:
     for n in inv.param_names:
         print(
             f"{n} = {result.p_est[n]:.6g} (ref={result.p_ref[n]:.6g}, "
-            f"err={result.relative_errors_pct[n]:+.2f}%)"
+            f"abs_err={result.absolute_errors[n]:+.4g}, "
+            f"rel_err={result.relative_errors_pct[n]:+.2f}%)"
         )
     print(f"resnorm={result.resnorm:.6g}, forward_evals={result.forward_eval_count}")
     print(f"timing: {result.timing}")
@@ -526,6 +530,7 @@ def main() -> None:
         "p_est": result.p_est,
         "p_ref": result.p_ref,
         "relative_errors_pct": result.relative_errors_pct,
+        "absolute_errors": result.absolute_errors,
         "resnorm": result.resnorm,
         "forward_eval_count": result.forward_eval_count,
         "timing": result.timing,

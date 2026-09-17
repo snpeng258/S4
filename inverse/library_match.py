@@ -22,11 +22,6 @@ def _prior_penalty(params: np.ndarray, names: list[str], prior: LibraryPriorConf
             below = np.maximum(swa_lo - params[:, j], 0.0)
             above = np.maximum(params[:, j] - swa_hi, 0.0)
             pen += (below + above) ** 2
-    if prior.penalize_asymmetry:
-        idx = {n: i for i, n in enumerate(names)}
-        if "lswa_deg" in idx and "rswa_deg" in idx:
-            d = params[:, idx["lswa_deg"]] - params[:, idx["rswa_deg"]]
-            pen += d * d
     return prior.lambda_prior * pen
 
 

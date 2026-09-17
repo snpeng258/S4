@@ -19,6 +19,29 @@ from inverse_solver import InverseResult, run_inverse
 from scan_sweep import run_scan_sweep
 
 
+def _param_unit(name: str) -> str:
+    if name.endswith("_nm"):
+        return "nm"
+    if name.endswith("_deg"):
+        return "deg"
+    return ""
+
+
+def _abs_error(record: dict, pname: str) -> float:
+    abs_e = record.get("abs_errors") or {}
+    if pname in abs_e:
+        return abs(float(abs_e[pname]))
+    rel = record.get("rel_errors") or {}
+    if pname in rel:
+        return abs(float(rel[pname]))
+    return float("nan")
+
+
+def _abs_ylabel(pname: str) -> str:
+    unit = _param_unit(pname)
+    return f"|abs error| ({unit})" if unit else "|abs error|"
+
+
 def _format_elapsed(seconds: float) -> str:
     if seconds >= 60.0:
         m, s = divmod(seconds, 60.0)
@@ -137,11 +160,11 @@ def plot_noise_sweep(df_records: list[dict], param_names: list[str], out_dir: Pa
         ax = axes[0, j]
         means, stds = [], []
         for k in keys:
-            errs = [abs(r["rel_errors"][pname]) for r in df_records if match(r, k)]
+            errs = [_abs_error(r, pname) for r in df_records if match(r, k)]
             means.append(np.mean(errs))
             stds.append(np.std(errs))
         ax.errorbar(keys, means, yerr=stds, fmt="-o", capsize=3)
-        ax.set_ylabel("|rel error| (%)")
+        ax.set_ylabel(_abs_ylabel(pname))
         ax.set_title(pname)
         ax.grid(True, alpha=0.3)
         xlabel_fn(ax, keys)
@@ -155,7 +178,7 @@ def plot_noise_sweep(df_records: list[dict], param_names: list[str], out_dir: Pa
     for k in keys:
         vals = []
         for pname in param_names:
-            vals.extend([abs(r["rel_errors"][pname]) for r in df_records if match(r, k)])
+            vals.extend([_abs_error(r, pname) for r in df_records if match(r, k)])
         data.append(vals)
     if "n0_electrons" in df_records[0]:
         ax2.boxplot(data, positions=list(range(len(keys))), widths=0.6)
@@ -165,8 +188,8 @@ def plot_noise_sweep(df_records: list[dict], param_names: list[str], out_dir: Pa
     else:
         ax2.boxplot(data, positions=keys, widths=1.2)
         xlabel_fn(ax2, keys)
-    ax2.set_ylabel("|rel error| (%)")
-    ax2.set_title("Error distribution")
+    ax2.set_ylabel("|abs error|")
+    ax2.set_title("Absolute error distribution")
     ax2.grid(True, alpha=0.3, axis="y")
     fig2.tight_layout()
     fig2.savefig(out_dir / "eval_noise_boxplot.png", dpi=dpi, facecolor="w")
@@ -209,12 +232,13 @@ def evaluate_noise(cfg: ScatterometryConfig) -> list[dict]:
                     "n0_electrons": float(n0),
                     "trial": trial,
                     "rel_errors": result.relative_errors_pct,
+                    "abs_errors": result.absolute_errors,
                     "resnorm": result.resnorm,
                     "timing": result.timing,
                     "forward_evals": result.forward_eval_count,
                 })
                 print(
-                    f"N0={n0:.3g} trial={trial} errors={result.relative_errors_pct}"
+                    f"N0={n0:.3g} trial={trial} abs={result.absolute_errors}"
                 )
         return records
 
@@ -235,13 +259,14 @@ def evaluate_noise(cfg: ScatterometryConfig) -> list[dict]:
                 "noise_level": noise_frac,
                 "trial": trial,
                 "rel_errors": result.relative_errors_pct,
+                "abs_errors": result.absolute_errors,
                 "resnorm": result.resnorm,
                 "timing": result.timing,
                 "forward_evals": result.forward_eval_count,
             })
             print(
                 f"noise={_noise_db_label(noise_db)} (sigma/R_peak={noise_frac:.4g}) "
-                f"trial={trial} errors={result.relative_errors_pct}"
+                f"trial={trial} abs={result.absolute_errors}"
             )
     return records
 
@@ -419,12 +444,12 @@ def plot_methods_comparison(records: list[dict], param_names: list[str], out_dir
     x = np.arange(len(methods))
     width = 0.6
     for j, pname in enumerate(param_names):
-        errs = [abs(r["rel_errors"][pname]) for r in records]
+        errs = [_abs_error(r, pname) for r in records]
         offset = (j - len(param_names) / 2 + 0.5) * width / len(param_names)
         axes[0].bar(x + offset, errs, width / len(param_names), label=pname)
     axes[0].set_xticks(x)
     axes[0].set_xticklabels(methods, rotation=15, ha="right")
-    axes[0].set_ylabel("|rel error| (%)")
+    axes[0].set_ylabel("|abs error| (nm / deg)")
     axes[0].set_title("Parameter error by method")
     axes[0].legend(fontsize=8)
     axes[0].grid(True, alpha=0.3, axis="y")
@@ -465,6 +490,7 @@ def evaluate_methods(cfg: ScatterometryConfig) -> list[dict]:
         record = {
             "method": method,
             "rel_errors": result.relative_errors_pct,
+            "abs_errors": result.absolute_errors,
             "resnorm": result.resnorm,
             "timing": result.timing,
             "forward_evals": result.forward_eval_count,
@@ -474,7 +500,7 @@ def evaluate_methods(cfg: ScatterometryConfig) -> list[dict]:
         records.append(record)
         t = result.timing
         print(
-            f"method={method} errors={result.relative_errors_pct} "
+            f"method={method} abs={result.absolute_errors} "
             f"resnorm={result.resnorm:.4g} "
             f"t_lib={t.get('t_lib_match', 0):.3f}s "
             f"t_total={t.get('t_total', 0):.1f}s "

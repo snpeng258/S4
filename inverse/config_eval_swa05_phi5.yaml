@@ -5,8 +5,7 @@ structure:
   pitch_nm: 80
   cd_nm: 39.52
   depth_nm: 39.32
-  lswa_deg: 89.63
-  rswa_deg: 89.26
+  swa_deg: 89.45
   n_slices: 10
   grating_material: Au
   substrate_material: SiO2
@@ -65,7 +64,7 @@ inverse:
       boost_lateral_when_coupled: 2.0
       use_kx0_shadow_prior: true
     cd_anchor: ga
-  param_names: [cd_nm, depth_nm, lswa_deg, rswa_deg]
+  param_names: [cd_nm, depth_nm, swa_deg]
   perturb_frac: 0.05
   bound_frac: 0.2
   reg_weight: 0.0
@@ -92,7 +91,7 @@ inverse:
   use_ga: true
   use_lm: true
   ga_maxiter: 20
-  ga_popsize: 40
+  ga_popsize: 36
   ga_mutation: [0.5, 1.0]
   ga_recombination: 0.7
   ga_seed: null
@@ -110,8 +109,7 @@ library:
   grid:
     cd_nm:    {min: 32, max: 48, step: 1.0}
     depth_nm: {min: 32, max: 48, step: 1.0}
-    lswa_deg: {min: 80, max: 95, step: 1.0}
-    rswa_deg: {min: 80, max: 95, step: 1.0}
+    swa_deg: {min: 80, max: 95, step: 1.0}
   prior:
     enabled: false
     lambda_prior: 0.01

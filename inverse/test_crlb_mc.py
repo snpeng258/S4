@@ -3,7 +3,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from config import load_config, role_weights_enabled
+from config import (
+    load_config,
+    normalize_param_dict,
+    normalize_param_names,
+    parse_structure,
+    role_weights_enabled,
+)
 from order_collection import FIM_MASK_MODES, n_collectible
 from run_crlb_mc import apply_experiment, apply_mask, fim_mask_pairs, layout_pairs, summarize_trials
 
@@ -71,8 +77,8 @@ def test_mode_b_decoupling_enables_solver_heuristics():
 
 
 def test_summarize_efficiency():
-    names = ["cd_nm", "depth_nm", "lswa_deg", "rswa_deg"]
-    ref = {"cd_nm": 40.0, "depth_nm": 40.0, "lswa_deg": 89.0, "rswa_deg": 89.0}
+    names = ["cd_nm", "depth_nm", "swa_deg"]
+    ref = {"cd_nm": 40.0, "depth_nm": 40.0, "swa_deg": 89.45}
     records = [
         {"p_est": {n: ref[n] + 0.1 for n in names}, "p_ref": ref, "forward_eval_count": 10, "timing": {"t_total": 1.0}},
         {"p_est": {n: ref[n] - 0.1 for n in names}, "p_ref": ref, "forward_eval_count": 12, "timing": {"t_total": 1.2}},
@@ -82,4 +88,34 @@ def test_summarize_efficiency():
     out = summarize_trials(records, names, fim)
     assert out["n"] == 3
     assert out["std"]["cd_nm"] > 0
+    assert out["mae"]["cd_nm"] > 0
+    assert out["rmse"]["swa_deg"] > 0
     assert out["efficiency_crlb_over_std"]["cd_nm"] > 0
+    assert "swap_rate" not in out
+    assert "rho_lswa_rswa" not in out
+
+
+def test_unified_swa_from_legacy_yaml():
+    cfg = _cfg_p80()
+    assert abs(cfg.structure.swa_deg - 89.45) < 1e-9
+    assert cfg.inverse.param_names == ["cd_nm", "depth_nm", "swa_deg"]
+    assert "lswa_deg" not in cfg.library.grid
+    assert "rswa_deg" not in cfg.library.grid
+    assert "swa_deg" in cfg.library.grid
+    assert cfg.inverse.ga_popsize % len(cfg.inverse.param_names) == 0
+
+
+def test_parse_structure_means_legacy_walls():
+    struct = parse_structure({"pitch_nm": 80, "cd_nm": 40, "depth_nm": 40, "lswa_deg": 89.63, "rswa_deg": 89.26})
+    assert abs(struct.swa_deg - 89.45) < 1e-9
+    assert not hasattr(struct, "lswa_deg")
+
+
+def test_normalize_param_names_and_guess():
+    assert normalize_param_names(["cd_nm", "depth_nm", "lswa_deg", "rswa_deg"]) == [
+        "cd_nm",
+        "depth_nm",
+        "swa_deg",
+    ]
+    guess = normalize_param_dict({"cd_nm": 42.0, "lswa_deg": 85.0, "rswa_deg": 87.0})
+    assert guess == {"cd_nm": 42.0, "swa_deg": 86.0}

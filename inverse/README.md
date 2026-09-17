@@ -13,7 +13,7 @@
 
 | 段 | 用途 |
 |----|------|
-| `structure` | pitch, cd, depth, lswa, rswa, n_slices |
+| `structure` | pitch, cd, depth, swa（左右墙相等）, n_slices |
 | `optical` | 偏振、NG、级次；`recipe`（HHG 多波长/多角度） |
 | `inverse` | `method`、`order_collection`、`decoupling`、GA/LM 参数 |
 | `library` | 光谱库 grid、prior、`build_workers` |
@@ -53,7 +53,7 @@
 | 角色 | 典型 (φ, m) | 主要参数 |
 |------|-------------|----------|
 | `depth_anchor` | φ≈90°, m=0 | depth_nm |
-| `swa` | φ≈90°, m=±1 | lswa/rswa（若可传播） |
+| `swa` | φ≈90°, m=±1 | swa_deg（左右墙取同一角） |
 | `lateral` | 非 90° 多 φ, m=0 | cd_nm（LM 中按 J 动态细分） |
 
 - **GA / 库匹配**：`static_weights` × 探测器 \(1/\sigma\) 权重（或旧 SNR 启发式）
@@ -90,12 +90,14 @@ scan:
 ```bash
 cd inverse
 python3 fim_study.py --config config_fim.yaml --layout-only   # 只打印 (φ,m) 传播表，不调用 S4
-python3 fim_study.py --config config_fim.yaml                # ~100 次 S4
+python3 fim_study.py --config config_fim.yaml                # ~80 次 S4
 ```
 
 输出在 `../runs/inverse/fim_study/`（gitignore）。FIM 与出图默认只留可传播的 \(m\in\{-1,0,1\}\)（`fim.keep_orders`）：`fim_R_lambda_phi.png` 以及每个级次的 \(\partial R/\partial p\)、白化图（\((\lambda,\varphi)\) 平面）。掩膜：`prop`（可传播的 0/±1）、`decoupling`、`m0_all`、`only90`、`no90`、`near90`、`far`、`mid`、`two_cam`、`drop_phi45`。同一张 \(J\) 上再扫 \(N_0\) 与 \(a\)。也可 `python3 evaluate.py --config config_fim.yaml`。S4 的 `NG` 不变，屏蔽高级次只影响分析和图，不加快求解。
 
-密采样（\(\lambda=10\)–\(30\,\mathrm{nm}\)、步长 1 nm；\(\varphi=0\)–\(90^\circ\)、步长 \(5^\circ\)；depth 40 nm、占空比 0.5）用 `run_fim_dense.py`：80 nm 组 `NG=31`，300 nm 组 `NG=61`。每组约 399 个条件、1995 次 S4。先 `--layout-only` 看传播表。
+密采样（\(\lambda=10\)–\(30\,\mathrm{nm}\)、步长 1 nm；\(\varphi=0\)–\(90^\circ\)、步长 \(5^\circ\)；depth 40 nm、占空比 0.5）用 `run_fim_dense.py`：80 nm 组 `NG=31`，300 nm 组 `NG=61`。每组约 399 个条件、\(399\times 4=1596\) 次 S4（1 个中心点 + 3 个参数扰动）。先 `--layout-only` 看传播表。
+
+反演参数是 `cd_nm, depth_nm, swa_deg`（左右侧壁角强制相等）。旧的四参谱库（含独立 `lswa_deg`/`rswa_deg`）不能再用，须按当前 `library.grid` 重建。FIM / CRLB / evaluate 看绝对误差（nm、deg），不再做左右墙相关或互换分析。`ga_popsize` 须能被 3 整除（默认配方用 36）。
 
 ## 使用
 
@@ -112,9 +114,12 @@ python3 run_fim_dense.py --layout-only
 python3 run_fim_dense.py
 python3 run_crlb_mc.py --config config_crlb_mc_p80.yaml --mode layout
 python3 run_crlb_mc.py --config config_crlb_mc_p80.yaml --mask decoupling --mode A
+python3 run_chi2_landscape.py --config config_chi2_p80.yaml --dry-run
+python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
+python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
 ```
 
-紧凑 recipe 上把 FIM/CRLB 和带噪反演对上：见 [`docs/CRLB_MC.md`](docs/CRLB_MC.md)。服务器上按该文档开 `tmux` 即可，不必同步原对话。
+紧凑 recipe 上把 FIM/CRLB 和带噪反演对上：见 [`docs/CRLB_MC.md`](docs/CRLB_MC.md)。\(\chi^2\) 全局切片（S4-8 Fig. 4）：见 [`docs/CHI2_LANDSCAPE.md`](docs/CHI2_LANDSCAPE.md)。服务器上按文档开 `tmux` 即可，不必同步原对话。
 
 ## 输出
 

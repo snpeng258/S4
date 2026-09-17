@@ -1,14 +1,13 @@
-# Compact-recipe FIM vs Monte-Carlo inverse (pitch 300 nm)
-# See docs/CRLB_MC.md
+# χ² landscape, pitch 80 nm (Gross 2009 Fig. 4 analog)
+# See docs/CHI2_LANDSCAPE.md
 #
-#   python3 run_crlb_mc.py --config config_crlb_mc_p300.yaml --mode layout
-#   python3 run_crlb_mc.py --config config_crlb_mc_p300.yaml --mode fim
-#   python3 run_crlb_mc.py --config config_crlb_mc_p300.yaml --mode probe
-#   python3 run_crlb_mc.py --config config_crlb_mc_p300.yaml --mask decoupling --mode A
+#   python3 run_chi2_landscape.py --config config_chi2_p80.yaml --dry-run
+#   python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
+#   python3 run_chi2_landscape.py --config config_chi2_p80.yaml --slice cd_swa
 
 structure:
-  pitch_nm: 300
-  cd_nm: 150.0
+  pitch_nm: 80
+  cd_nm: 40.0
   depth_nm: 40.0
   swa_deg: 89.45
   n_slices: 10
@@ -24,7 +23,7 @@ optical:
   pol_s_phase_deg: 0
   pol_p_amp: 0.0
   pol_p_phase_deg: 0
-  NG: 61
+  NG: 31
   order_min: -15
   order_max: 15
   recipe:
@@ -38,7 +37,7 @@ paths:
   s4_bin: null
   lua_script: lua/grating_slice_reflection.lua
   materials_db: ../shared
-  output_dir: ../runs/inverse/crlb_mc/p300
+  output_dir: ../runs/inverse/chi2_landscape/p80
   cache_size: 128
 
 inverse:
@@ -59,20 +58,8 @@ inverse:
       swa: 0.8
       lateral: 1.0
       aux: 0.2
-    dynamic_lm:
-      enabled: false
-      refresh_every_nfev: 20
-      inner_max_nfev: 15
-      outer_max_rounds: 10
-      coupling_eps: 1.0e-3
-      cd_reg_lambda0: 0.01
-      boost_lateral_when_coupled: 2.0
-      use_kx0_shadow_prior: true
     cd_anchor: ga
   param_names: [cd_nm, depth_nm, swa_deg]
-  perturb_frac: 0.05
-  bound_frac: 0.2
-  reg_weight: 0.0
   noise:
     apply: true
     zero:
@@ -91,38 +78,30 @@ inverse:
       n_roi_pixels: 400
       dark_e_per_pixel_s: 0.01
       t_exp_s: 1.0
-  use_ga: false
-  use_lm: true
-  ga_maxiter: 20
-  ga_popsize: 36
-  ga_mutation: [0.5, 1.0]
-  ga_recombination: 0.7
-  ga_seed: 0
-  ga_workers: 1
-  lm_max_nfev: 200
-  lm_ftol: 1.0e-8
-  lm_xtol: 1.0e-8
-  lm_verbose: 0
 
 library:
   file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
-  build_workers: 1
-  condition_workers: 8
-  grid:
-    cd_nm:    {min: 120, max: 180, step: 5.0}
-    depth_nm: {min: 20, max: 60, step: 5.0}
-    swa_deg: {min: 80, max: 95, step: 1.0}
+  build_workers: 8
+  condition_workers: 1
 
 eval:
   task: inverse
-  mode: all
-  n_trials: 40
   plot: true
   plot_dpi: 150
 
 fim:
-  eps_frac: 0.01
   keep_orders: [-1, 0, 1]
   masks: [prop, decoupling, m0_all, only90]
   azimuth_tol_deg: 0.5
-  corr_masks: [prop, decoupling, m0_all, only90]
+  azimuth_windows:
+    only90: [90]
+
+landscape:
+  slice: cd_depth
+  noiseless: true
+  workers: 8
+  checkpoint_every: 50
+  masks: [prop, decoupling, m0_all, only90]
+  cd_nm: {min: 32, max: 48, step: 1.0}
+  depth_nm: {min: 32, max: 48, step: 1.0}
+  swa_deg: {min: 85, max: 94, step: 0.5}

@@ -71,7 +71,7 @@ def _cache_key(cfg: ScatterometryConfig) -> str:
     layers = slice_grating(s)
     layer_sig = tuple((x.duty, x.offset_norm, x.thickness_norm) for x in layers)
     return (
-        f"{s.pitch_nm}|{s.cd_nm}|{s.depth_nm}|{s.lswa_deg}|{s.rswa_deg}|{s.n_slices}|"
+        f"{s.pitch_nm}|{s.cd_nm}|{s.depth_nm}|{s.swa_deg}|{s.n_slices}|"
         f"{o.wl_nm}|{o.angle_deg}|{o.azimuth_deg}|{o.NG}|{o.pol_s_amp}|{o.pol_p_amp}|{layer_sig}"
     )
 
