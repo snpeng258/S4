@@ -1,0 +1,108 @@
+# χ² landscape: pitch 300 nm square trench (CD = depth = 150 nm).
+# Isolates aspect ratio vs the existing p300 run (same pitch/CD, depth 40 → 150).
+# See docs/CHI2_LANDSCAPE.md
+#
+#   python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --dry-run
+#   python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --workers 4
+#   python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --slice cd_swa
+
+structure:
+  pitch_nm: 300
+  cd_nm: 150.0
+  depth_nm: 150.0
+  swa_deg: 89.45
+  n_slices: 10
+  grating_material: Au
+  substrate_material: SiO2
+
+optical:
+  wl_nm: 14.55
+  angle_deg: 70
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 61
+  order_min: -15
+  order_max: 15
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      - {min: 55, max: 61, odd_only: true}
+    angles_deg: [70]
+    azimuths_deg: [0, 30, 45, 60, 90]
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse/chi2_landscape/p300_d150
+  cache_size: 128
+
+inverse:
+  method: ga_lm
+  order_collection: decoupling
+  use_role_weights: false
+  decoupling:
+    enabled: true
+    azimuth_tol_deg: 0.5
+    roles:
+      depth_anchor: { azimuth_deg: 90, orders: [0] }
+      swa:          { azimuth_deg: 90, orders: [-1, 1] }
+      lateral:
+        azimuths_deg: [0, 30, 45, 60]
+        orders: [0]
+    static_weights:
+      depth_anchor: 1.0
+      swa: 0.8
+      lateral: 1.0
+      aux: 0.2
+    cd_anchor: ga
+  param_names: [cd_nm, depth_nm, swa_deg]
+  noise:
+    apply: true
+    zero:
+      camera: DoBEAM2000-2
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 5.0
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 125.0
+      t_exp_s: 0.01
+    first:
+      camera: XV4040BSI-HG
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 2.5
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 0.01
+      t_exp_s: 1.0
+
+library:
+  file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
+  build_workers: 4
+  condition_workers: 1
+
+eval:
+  task: inverse
+  plot: true
+  plot_dpi: 150
+
+fim:
+  keep_orders: [-1, 0, 1]
+  masks: [prop, decoupling, m0_all, only90]
+  azimuth_tol_deg: 0.5
+  azimuth_windows:
+    only90: [90]
+
+landscape:
+  slice: cd_depth
+  noiseless: true
+  workers: 4
+  checkpoint_every: 25
+  masks: [prop, decoupling, m0_all, only90]
+  cd_nm: {min: 134, max: 166, step: 2.0}
+  depth_nm: {min: 142, max: 158, step: 1.0}
+  swa_deg: {min: 85, max: 94, step: 0.5}

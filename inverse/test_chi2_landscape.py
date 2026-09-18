@@ -76,6 +76,24 @@ def test_p300_cd_depth_grid():
     assert abs(mid[1] - 40.0) < 1e-12
 
 
+def test_p300_d150_square_trench_grid():
+    path = Path(__file__).with_name("config_chi2_p300_d150.yaml")
+    cfg = load_config(path)
+    spec = parse_landscape(cfg, _raw(path), None)
+    assert cfg.structure.pitch_nm == 300.0
+    assert cfg.optical.NG == 61
+    assert abs(cfg.structure.cd_nm - 150.0) < 1e-12
+    assert abs(cfg.structure.depth_nm - 150.0) < 1e-12
+    assert spec.fixed == {"swa_deg": 89.45}
+    xs, ys, params = structure_grid(spec)
+    assert xs[0] == 134.0 and xs[-1] == 166.0
+    assert ys[0] == 142.0 and ys[-1] == 158.0
+    assert len(xs) == 17 and len(ys) == 17
+    mid = params[17 * 8 + 8]
+    assert abs(mid[0] - 150.0) < 1e-12
+    assert abs(mid[1] - 150.0) < 1e-12
+
+
 def test_cd_swa_slice_fixes_depth():
     path = Path(__file__).with_name("config_chi2_p80.yaml")
     cfg = load_config(path)
@@ -83,13 +101,20 @@ def test_cd_swa_slice_fixes_depth():
     assert spec.x_name == "cd_nm"
     assert spec.y_name == "swa_deg"
     assert spec.fixed == {"depth_nm": 40.0}
+    sq = Path(__file__).with_name("config_chi2_p300_d150.yaml")
+    spec_sq = parse_landscape(load_config(sq), _raw(sq), "cd_swa")
+    assert spec_sq.fixed == {"depth_nm": 150.0}
     xs, ys, params = structure_grid(spec)
     assert params.shape[0] == len(xs) * len(ys)
     assert np.allclose(params[:, 1], 40.0)
 
 
 def test_chi2_configs_share_fim_masks_with_inverse():
-    for name in ("config_chi2_p80.yaml", "config_chi2_p300.yaml"):
+    for name in (
+        "config_chi2_p80.yaml",
+        "config_chi2_p300.yaml",
+        "config_chi2_p300_d150.yaml",
+    ):
         cfg = load_config(Path(__file__).with_name(name))
         for mask in FIM_MASK_MODES:
             assert layout_pairs(cfg, mask) == fim_mask_pairs(cfg, mask), (name, mask)
@@ -113,6 +138,9 @@ def test_noisy_output_dir_is_sibling():
     assert noisy.parent == clean.parent
     cfg300 = load_config(Path(__file__).with_name("config_chi2_p300.yaml"))
     assert landscape_out_dir(cfg300, False).name == "p300_noisy"
+    cfg_sq = load_config(Path(__file__).with_name("config_chi2_p300_d150.yaml"))
+    assert landscape_out_dir(cfg_sq, True).name == "p300_d150"
+    assert landscape_out_dir(cfg_sq, False).name == "p300_d150_noisy"
 
 
 def test_log_contour_levels_skip_zero_and_span_decades():

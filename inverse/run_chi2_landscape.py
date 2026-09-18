@@ -8,6 +8,7 @@ mask is applied afterwards so prop / decoupling / m0_all / only90 share S4.
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --dry-run
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
     python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
+    python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --workers 4
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --slice cd_swa
     python3 run_chi2_landscape.py --replot ../runs/inverse/chi2_landscape
 """
@@ -597,7 +598,11 @@ def run_landscape(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Inverse-loss landscape on a CD–depth or CD–SWA slice")
-    parser.add_argument("--config", default=None, help="config_chi2_p80.yaml / config_chi2_p300.yaml")
+    parser.add_argument(
+        "--config",
+        default=None,
+        help="config_chi2_p80.yaml / config_chi2_p300.yaml / config_chi2_p300_d150.yaml",
+    )
     parser.add_argument("--slice", choices=SLICES, default=None)
     parser.add_argument("--workers", type=int, default=None)
     parser.add_argument("--seed", type=int, default=0)
