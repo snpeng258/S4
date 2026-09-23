@@ -18,19 +18,21 @@ L(p)=\sum_j w_j\bigl(R_j(p)-R_{\mathrm{meas},j}\bigr)^2,\qquad w_j\propto 1/\sig
 
 ## 配置
 
-| | 80 nm 方槽 | 300 nm 矮槽 | 300 nm 方槽 |
-|---|---|---|---|
-| 文件 | `config_chi2_p80.yaml` | `config_chi2_p300.yaml` | `config_chi2_p300_d150.yaml` |
-| 真值 | CD 40 / depth 40 / SWA \(89.45^\circ\) | CD 150 / depth 40 / SWA \(89.45^\circ\) | CD 150 / depth 150 / SWA \(89.45^\circ\) |
-| 深宽比 | 1 | 0.27 | 1 |
-| `NG` | 31 | 61 | 61 |
-| 默认网格 | CD、depth 各 32–48、步长 1 → \(17\times17=289\) | CD 134–166 步长 2、depth 32–48 步长 1 → \(17\times17=289\) | CD 134–166 步长 2、depth 142–158 步长 1 → \(17\times17=289\) |
-| 建议 workers | 8 | 4 | 4 |
-| 无噪声输出 | `../runs/inverse/chi2_landscape/p80/` | `../runs/inverse/chi2_landscape/p300/` | `../runs/inverse/chi2_landscape/p300_d150/` |
-| 有噪声输出 | `.../p80_noisy/` | `.../p300_noisy/` | `.../p300_d150_noisy/` |
-| S4 次数（约） | \(289\times20=5780\) | \(289\times20=5780\) | \(289\times20=5780\) |
+| | 80 nm 方槽 | 300 nm 矮槽 | 300 nm 方槽 | 80 nm 宽深度（第二谷） |
+|---|---|---|---|---|
+| 文件 | `config_chi2_p80.yaml` | `config_chi2_p300.yaml` | `config_chi2_p300_d150.yaml` | `config_chi2_p80_wide_depth.yaml` |
+| 真值 | CD 40 / depth 40 / SWA \(89.45^\circ\) | CD 150 / depth 40 / SWA \(89.45^\circ\) | CD 150 / depth 150 / SWA \(89.45^\circ\) | CD 40 / depth 40 / SWA \(89.45^\circ\) |
+| 深宽比 | 1 | 0.27 | 1 | 1 |
+| `NG` | 31 | 61 | 61 | 31 |
+| 默认网格 | CD、depth 各 32–48、步长 1 → \(17\times17=289\) | CD 134–166 步长 2、depth 32–48 步长 1 → \(17\times17=289\) | CD 134–166 步长 2、depth 142–158 步长 1 → \(17\times17=289\) | CD 32–48 步长 1、depth 16–64 步长 1 → \(17\times49=833\) |
+| 建议 workers | 8 | 4 | 4 | 8 |
+| 无噪声输出 | `../runs/inverse/chi2_landscape/p80/` | `../runs/inverse/chi2_landscape/p300/` | `../runs/inverse/chi2_landscape/p300_d150/` | `../runs/inverse/chi2_landscape/p80_wide_depth/` |
+| 有噪声输出 | `.../p80_noisy/` | `.../p300_noisy/` | `.../p300_d150_noisy/` | `.../p80_wide_depth_noisy/` |
+| S4 次数（约） | \(289\times20=5780\) | \(289\times20=5780\) | \(289\times20=5780\) | \(833\times20=16660\) |
 
 `p300_d150` 只把槽深从 40 nm 升到 150 nm，周期、CD、占空比、`NG`、光学 recipe 与 `p300` 相同。用来看 `only90` 沿 CD 变扁是不是深宽比造成的，而不是周期本身。`n_slices` 仍是 10（每层更厚），不要和 80 nm 那组的切片厚度混谈。
+
+`p80_wide_depth` 与 80 nm 方槽同一套光学和真值，只把 depth 从 \(\pm 8\,\mathrm{nm}\) 扩到 16–64 nm。掠入射反射条纹周期 \(\Delta h\sim\lambda/(2\cos\theta)\approx 19\)–\(21\,\mathrm{nm}\)，真值 40 nm 两侧约 19 nm 和 61 nm 落在窗口内。用来回答 S4-8 Fig. 4 那种沿高度的第二谷是否被原来的窄窗口挡住。CD 仍扫 32–48 nm。先跑无噪声；json 里每个 mask 有 `local_minima` 和 `depth_cut`（真值 CD 上的 1-D 谷）。`n_local_minima=1` 且 depth cut 也只有真值一处，才支持「recipe 拆掉了干涉简并」；若在虚线 \(\lambda/(2\cos\theta)\) 附近再出现一个 loss 可比较的点，则第二谷存在，只是窄窗口没扫到。
 
 光学与 CRLB–MC 相同：H55–61 奇次 × \(\theta=70^\circ\) × \(\varphi\in\{0,30,45,60,90\}\)。
 
@@ -38,7 +40,7 @@ L(p)=\sum_j w_j\bigl(R_j(p)-R_{\mathrm{meas},j}\bigr)^2,\qquad w_j\propto 1/\sig
 
 不要和 `crlb_mc/p80`、`crlb_mc/p300` 写到一起。CRLB 的 A 若已经占了 4×8 核，80 nm 景观用 8 个形貌进程，300 nm 用 4 个。每个进程的 `condition_workers` 固定为 1。
 
-主实验仍是 **2 周期 × 2 噪声 = 4 次**。方槽对照是另外 2 次（`p300_d150` 无噪声 / `--noisy`），不要和 `p300` 写进同一目录。线性主图仍是每张 `chi2_cd_depth_decoupling.png` 和 `chi2_cd_depth_only90.png`（左等高线、右曲面）。对数等高线是同目录的 `*_log.png`：圈距按 \(\log L\)，用来看 loss 掉到 \(10^{-6}\)～\(10^{-7}\) 那一截；线性那版不删、不改名。对照时先看 `only90`：若 300 nm 方槽的等高线从横沟收成扁椭圆，才支持「深宽比」而不是「周期」。
+主实验仍是 **2 周期 × 2 噪声 = 4 次**。方槽对照是另外 2 次（`p300_d150` 无噪声 / `--noisy`），不要和 `p300` 写进同一目录。寻找第二谷是另外 1 次（`p80_wide_depth` 无噪声；确认有谷再 `--noisy`），不要和 `p80` 写进同一目录。线性主图仍是每张 `chi2_cd_depth_decoupling.png` 和 `chi2_cd_depth_only90.png`（左等高线、右曲面）。对数等高线是同目录的 `*_log.png`：圈距按 \(\log L\)，用来看 loss 掉到 \(10^{-6}\)～\(10^{-7}\) 那一截；线性那版不删、不改名。对照时先看 `only90`：若 300 nm 方槽的等高线从横沟收成扁椭圆，才支持「深宽比」而不是「周期」。宽深度再看 `*_depth_cut.png` 和 json 的 `n_local_minima`。
 
 已有 `chi2_*.npz` 时不必再跑 S4：
 
@@ -52,16 +54,18 @@ cd inverse
 python3 run_chi2_landscape.py --config config_chi2_p80.yaml --dry-run
 python3 run_chi2_landscape.py --config config_chi2_p300.yaml --dry-run
 python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --dry-run
+python3 run_chi2_landscape.py --config config_chi2_p80_wide_depth.yaml --dry-run
 
 python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
 python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
 python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --workers 4
+python3 run_chi2_landscape.py --config config_chi2_p80_wide_depth.yaml --workers 8
 python3 run_chi2_landscape.py --config config_chi2_p80.yaml --noisy --seed 0 --workers 8
 python3 run_chi2_landscape.py --config config_chi2_p300.yaml --noisy --seed 0 --workers 4
 python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --noisy --seed 0 --workers 4
 ```
 
-`--noisy` 写到 `p80_noisy/` / `p300_noisy/` / `p300_d150_noisy/`，不会盖掉无噪声结果。中断后重跑会读**该目录**里已有的 `chi2_cd_depth.npz`。不要两个终端写同一个输出目录。
+`--noisy` 写到 `p80_noisy/` / `p300_noisy/` / `p300_d150_noisy/` / `p80_wide_depth_noisy/`，不会盖掉无噪声结果。中断后重跑会读**该目录**里已有的 `chi2_cd_depth.npz`。不要两个终端写同一个输出目录。宽深度这组大约是窄窗口的 2.9 倍 S4 次数，tmux 里先 `--dry-run` 核对 `S4≈16660`。
 
 第二张切片（墙角）：
 
@@ -90,8 +94,8 @@ runs/inverse/chi2_landscape/p80/
 
 ## 怎样读
 
-- **只有一个盆、最小点就在真值**：全局没有第二谷，B 模式若仍远差于 CRLB，更像求解器问题。
-- **两个（或更多）盆**：Fig. 4 那种多谷；看第二谷离真值多远、loss 高多少。
+- **只有一个盆、最小点就在真值**：在该窗口内没有第二谷，B 模式若仍远差于 CRLB，更像求解器问题。窄 \(\pm 8\,\mathrm{nm}\) 窗口不足以排除 Fig. 4 那种高度条纹。
+- **两个（或更多）盆**：Fig. 4 那种多谷；看第二谷离真值多远、loss 高多少。宽深度图上粉色方块是 8 邻域局部极小，灰色虚线是 \(\lambda/(2\cos\theta)\)。`*_depth_cut.png` 是钉死真值 CD 后 loss 随 depth。
 - **`m0_all` 沿 SWA / 某方向拉成长谷**：和该 mask 上墙角 CRLB 很大是同一件事。
 
 ## 单元测试（不调 S4）

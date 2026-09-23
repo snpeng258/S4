@@ -10,12 +10,17 @@ from config import GridAxisConfig, load_config
 from order_collection import FIM_MASK_MODES, n_observables_full
 from recipe import expand_measurement_conditions
 from run_chi2_landscape import (
+    describe_local_minima,
+    height_fringe_report,
     inverse_objective_loss,
     inverse_objective_wsqrt,
     landscape_out_dir,
+    local_minima_1d,
+    local_minima_2d,
     log_contour_levels,
     log_png_path,
     parse_landscape,
+    reflection_height_period_nm,
     replot_directory,
     structure_grid,
 )
@@ -109,11 +114,68 @@ def test_cd_swa_slice_fixes_depth():
     assert np.allclose(params[:, 1], 40.0)
 
 
+def test_p80_wide_depth_covers_one_fringe():
+    path = Path(__file__).with_name("config_chi2_p80_wide_depth.yaml")
+    cfg = load_config(path)
+    spec = parse_landscape(cfg, _raw(path), None)
+    assert landscape_out_dir(cfg, True).name == "p80_wide_depth"
+    assert landscape_out_dir(cfg, False).name == "p80_wide_depth_noisy"
+    xs, ys, params = structure_grid(spec)
+    assert xs[0] == 32.0 and xs[-1] == 48.0
+    assert ys[0] == 16.0 and ys[-1] == 64.0
+    assert len(xs) == 17 and len(ys) == 49
+    assert params.shape == (17 * 49, 3)
+    assert abs(ys[24] - 40.0) < 1e-12
+    mid = params[17 * 24 + 8]
+    assert abs(mid[0] - 40.0) < 1e-12
+    assert abs(mid[1] - 40.0) < 1e-12
+    fringe = height_fringe_report(cfg)
+    assert fringe["period_nm_min"] > 18.0
+    assert fringe["period_nm_max"] < 22.0
+    seconds = fringe["expected_second_depth_nm"]
+    assert min(seconds) > 16.0
+    assert max(seconds) < 64.0
+
+
+def test_reflection_height_period():
+    import math
+
+    got = reflection_height_period_nm(14.55, 70.0)
+    want = 14.55 / (2.0 * math.cos(math.radians(70.0)))
+    assert abs(got - want) < 1e-12
+    assert abs(reflection_height_period_nm(13.65, 6.0) - 13.65 / (2.0 * math.cos(math.radians(6.0)))) < 1e-12
+
+
+def test_local_minima_two_basins():
+    xs = np.linspace(32.0, 48.0, 17)
+    ys = np.linspace(16.0, 64.0, 49)
+    xx, yy = np.meshgrid(xs, ys)
+    grid = (xx - 40.0) ** 2 + (yy - 40.0) ** 2
+    grid = np.minimum(grid, (xx - 40.0) ** 2 + (yy - 61.0) ** 2 + 8.0)
+    mins = local_minima_2d(grid)
+    depths = sorted(float(ys[i]) for i, _ in mins)
+    assert len(mins) == 2
+    assert abs(depths[0] - 40.0) < 1e-9
+    assert abs(depths[1] - 61.0) < 1e-9
+    recs = describe_local_minima(
+        xs, ys, grid,
+        x_name="cd_nm", y_name="depth_nm",
+        truth={"cd_nm": 40.0, "depth_nm": 40.0},
+        fixed={"swa_deg": 89.45},
+    )
+    assert recs[0]["loss"] < recs[1]["loss"]
+    assert abs(recs[1]["depth_nm"] - 61.0) < 1e-9
+    cut = grid[:, 8]
+    cut_i = local_minima_1d(cut)
+    assert [ys[i] for i in cut_i] == [40.0, 61.0]
+
+
 def test_chi2_configs_share_fim_masks_with_inverse():
     for name in (
         "config_chi2_p80.yaml",
         "config_chi2_p300.yaml",
         "config_chi2_p300_d150.yaml",
+        "config_chi2_p80_wide_depth.yaml",
     ):
         cfg = load_config(Path(__file__).with_name(name))
         for mask in FIM_MASK_MODES:
@@ -193,5 +255,7 @@ def test_replot_writes_log_sibling(tmp_path: Path):
     names = {p.name for p in written}
     assert "chi2_cd_depth_decoupling.png" in names
     assert "chi2_cd_depth_decoupling_log.png" in names
+    assert "chi2_cd_depth_decoupling_depth_cut.png" in names
     assert (tmp_path / "chi2_cd_depth_decoupling.png").stat().st_size > 0
     assert (tmp_path / "chi2_cd_depth_decoupling_log.png").stat().st_size > 0
+    assert (tmp_path / "chi2_cd_depth_decoupling_depth_cut.png").stat().st_size > 0

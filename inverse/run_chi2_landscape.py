@@ -9,6 +9,7 @@ mask is applied afterwards so prop / decoupling / m0_all / only90 share S4.
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
     python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
     python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --workers 4
+    python3 run_chi2_landscape.py --config config_chi2_p80_wide_depth.yaml --workers 8
     python3 run_chi2_landscape.py --config config_chi2_p80.yaml --slice cd_swa
     python3 run_chi2_landscape.py --replot ../runs/inverse/chi2_landscape
 """
@@ -139,6 +140,133 @@ def structure_grid(spec: LandscapeSpec) -> tuple[np.ndarray, np.ndarray, np.ndar
             p = {spec.x_name: float(x), spec.y_name: float(y), **spec.fixed}
             params.append([p["cd_nm"], p["depth_nm"], p["swa_deg"]])
     return xs, ys, np.asarray(params, dtype=float)
+
+
+def reflection_height_period_nm(wl_nm: float, angle_deg: float) -> float:
+    """Path-length period for a 2π phase in specular reflection: λ / (2 cos θ)."""
+    c = math.cos(math.radians(float(angle_deg)))
+    if abs(c) < 1e-12:
+        return float("inf")
+    return float(wl_nm) / (2.0 * abs(c))
+
+
+def height_fringe_report(cfg: ScatterometryConfig) -> dict:
+    angle = float(cfg.optical.angle_deg)
+    wls = sorted({round(float(c.wl_nm), 6) for c in expand_measurement_conditions(cfg)})
+    periods = [reflection_height_period_nm(w, angle) for w in wls]
+    truth_h = float(cfg.structure.depth_nm)
+    expected: list[float] = []
+    seen: set[float] = set()
+    for p in periods:
+        for sign in (-1.0, 1.0):
+            h = truth_h + sign * p
+            key = round(h, 3)
+            if key not in seen:
+                seen.add(key)
+                expected.append(float(h))
+    expected.sort()
+    return {
+        "formula": "lambda / (2 * cos(theta))",
+        "angle_deg": angle,
+        "wavelengths_nm": wls,
+        "period_nm": periods,
+        "period_nm_min": min(periods) if periods else None,
+        "period_nm_max": max(periods) if periods else None,
+        "truth_depth_nm": truth_h,
+        "expected_second_depth_nm": expected,
+    }
+
+
+def local_minima_1d(z: np.ndarray) -> list[int]:
+    """Interior 1-D local minima; plateaus with a strictly lower neighbor are kept."""
+    z = np.asarray(z, dtype=float)
+    out: list[int] = []
+    for i in range(1, z.size - 1):
+        if not np.isfinite(z[i]):
+            continue
+        lesser_or_eq = True
+        strictly_less = False
+        for nb in (z[i - 1], z[i + 1]):
+            if not np.isfinite(nb):
+                continue
+            if z[i] > nb:
+                lesser_or_eq = False
+                break
+            if z[i] < nb:
+                strictly_less = True
+        if lesser_or_eq and strictly_less:
+            out.append(i)
+    return out
+
+
+def local_minima_2d(grid: np.ndarray) -> list[tuple[int, int]]:
+    """8-connected strict local minima as (iy, ix). Flat plateaus are skipped."""
+    z = np.asarray(grid, dtype=float)
+    ny, nx = z.shape
+    out: list[tuple[int, int]] = []
+    for iy in range(ny):
+        for ix in range(nx):
+            v = z[iy, ix]
+            if not np.isfinite(v):
+                continue
+            strictly_less = False
+            is_min = True
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    if dy == 0 and dx == 0:
+                        continue
+                    jy, jx = iy + dy, ix + dx
+                    if jy < 0 or jy >= ny or jx < 0 or jx >= nx:
+                        continue
+                    nb = z[jy, jx]
+                    if not np.isfinite(nb):
+                        continue
+                    if v > nb:
+                        is_min = False
+                        break
+                    if v < nb:
+                        strictly_less = True
+                if not is_min:
+                    break
+            if is_min and strictly_less:
+                out.append((iy, ix))
+    return out
+
+
+def describe_local_minima(
+    xs: np.ndarray,
+    ys: np.ndarray,
+    grid: np.ndarray,
+    *,
+    x_name: str,
+    y_name: str,
+    truth: dict[str, float],
+    fixed: dict[str, float] | None = None,
+) -> list[dict]:
+    finite = np.asarray(grid, dtype=float)
+    finite = finite[np.isfinite(finite)]
+    gmin = float(np.min(finite)) if finite.size else None
+    recs: list[dict] = []
+    extra_fixed = dict(fixed or {})
+    for iy, ix in local_minima_2d(grid):
+        loss = float(grid[iy, ix])
+        rec: dict = {
+            "loss": loss,
+            x_name: float(xs[ix]),
+            y_name: float(ys[iy]),
+            **extra_fixed,
+            "delta_to_truth": {
+                x_name: float(xs[ix] - truth[x_name]),
+                y_name: float(ys[iy] - truth[y_name]),
+            },
+        }
+        if gmin is not None and gmin > 0:
+            rec["loss_ratio"] = loss / gmin
+        elif gmin == 0.0:
+            rec["loss_ratio"] = 0.0 if loss == 0.0 else None
+        recs.append(rec)
+    recs.sort(key=lambda r: (float(r["loss"]), abs(float(r["delta_to_truth"][y_name]))))
+    return recs
 
 
 def apply_structure(cfg: ScatterometryConfig, cd: float, depth: float, swa: float) -> ScatterometryConfig:
@@ -283,6 +411,8 @@ def plot_landscape(
     out_path: Path,
     dpi: int,
     scale: str = "linear",
+    extra_minima: list[tuple[float, float]] | None = None,
+    expected_y: list[float] | None = None,
 ) -> None:
     import matplotlib
 
@@ -312,6 +442,18 @@ def plot_landscape(
     if np.any(np.isfinite(chi2)):
         iy, ix = np.unravel_index(int(np.nanargmin(chi2)), chi2.shape)
         ax0.plot(xs[ix], ys[iy], "o", ms=6, mfc="none", mec="#00bfbf", mew=1.5, label="min loss")
+    extras = extra_minima or []
+    drawn_extra = False
+    for x_m, y_m in extras:
+        if abs(x_m - truth_xy[0]) < 1e-9 and abs(y_m - truth_xy[1]) < 1e-9:
+            continue
+        ax0.plot(x_m, y_m, "s", ms=5, mfc="none", mec="#c51b8a", mew=1.2)
+        drawn_extra = True
+    if drawn_extra:
+        ax0.plot([], [], "s", ms=5, mfc="none", mec="#c51b8a", label="local min")
+    if y_name == "depth_nm":
+        for yv in expected_y or []:
+            ax0.axhline(yv, color="0.75", ls=":", lw=0.8, zorder=0)
     ax0.set_xlabel(x_name)
     ax0.set_ylabel(y_name)
     ax0.legend(fontsize=8, loc="best")
@@ -356,16 +498,58 @@ def plot_landscape_pair(
     title: str,
     out_path: Path,
     dpi: int,
+    extra_minima: list[tuple[float, float]] | None = None,
+    expected_y: list[float] | None = None,
 ) -> None:
     """Write the linear PNG and a sibling ``*_log.png``; do not overwrite names."""
     plot_landscape(
         xs, ys, chi2, x_name=x_name, y_name=y_name, truth_xy=truth_xy,
         title=title, out_path=out_path, dpi=dpi, scale="linear",
+        extra_minima=extra_minima, expected_y=expected_y,
     )
     plot_landscape(
         xs, ys, chi2, x_name=x_name, y_name=y_name, truth_xy=truth_xy,
         title=f"{title}  (log)", out_path=log_png_path(out_path), dpi=dpi, scale="log",
+        extra_minima=extra_minima, expected_y=expected_y,
     )
+
+
+def plot_depth_cut(
+    ys: np.ndarray,
+    z: np.ndarray,
+    *,
+    truth_depth: float,
+    expected_y: list[float] | None,
+    title: str,
+    out_path: Path,
+    dpi: int,
+) -> None:
+    """Loss vs depth at the truth CD. Zeros (noiseless truth) are omitted on the log axis."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    z = np.asarray(z, dtype=float)
+    fig, ax = plt.subplots(figsize=(6.4, 3.8))
+    z_plot = np.where(np.isfinite(z) & (z > 0), z, np.nan)
+    ax.semilogy(ys, z_plot, color="#1d4ed8", lw=1.4)
+    ax.axvline(truth_depth, color="k", ls="--", lw=1.0, label="truth")
+    for yv in expected_y or []:
+        ax.axvline(yv, color="0.6", ls=":", lw=1.0)
+    if expected_y:
+        ax.axvline(np.nan, color="0.6", ls=":", lw=1.0, label=r"$\lambda/(2\cos\theta)$")
+    for i in local_minima_1d(z):
+        if np.isfinite(z[i]) and z[i] > 0:
+            ax.plot(ys[i], z[i], "s", ms=6, mfc="none", mec="#c51b8a", mew=1.3)
+    ax.set_xlabel("depth_nm")
+    ax.set_ylabel("inverse loss")
+    ax.set_title(title)
+    ax.legend(fontsize=8, loc="best")
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi, facecolor="w")
+    plt.close(fig)
 
 
 def replot_directory(out_dir: Path, *, dpi: int = 150) -> list[Path]:
@@ -387,20 +571,42 @@ def replot_directory(out_dir: Path, *, dpi: int = 150) -> list[Path]:
         ys = np.asarray(npz["y"], dtype=float)
         truth_xy = (float(truth[x_name]), float(truth[y_name]))
         n_filled = int(payload.get("n_filled") or 0)
+        fringe = payload.get("height_fringe") or {}
+        expected_y = list(fringe.get("expected_second_depth_nm") or []) if y_name == "depth_nm" else []
         for mask in payload.get("masks") or {}:
             grid_path = out_dir / f"chi2_{slice_name}_{mask}.npy"
             if not grid_path.is_file():
                 continue
             grid = np.asarray(np.load(grid_path), dtype=float)
+            extra = [
+                (float(m[x_name]), float(m[y_name]))
+                for m in describe_local_minima(
+                    xs, ys, grid,
+                    x_name=x_name, y_name=y_name, truth=truth,
+                    fixed=dict(payload.get("fixed") or {}),
+                )
+            ]
             out_png = out_dir / f"chi2_{slice_name}_{mask}.png"
             plot_landscape_pair(
                 xs, ys, grid,
                 x_name=x_name, y_name=y_name, truth_xy=truth_xy,
                 title=f"{slice_name}  {mask}  inverse loss  n={n_filled}",
                 out_path=out_png, dpi=dpi,
+                extra_minima=extra, expected_y=expected_y,
             )
             written.append(out_png)
             written.append(log_png_path(out_png))
+            if y_name == "depth_nm" and x_name == "cd_nm":
+                ix_cd = int(np.argmin(np.abs(xs - float(truth[x_name]))))
+                cut_png = out_dir / f"chi2_{slice_name}_{mask}_depth_cut.png"
+                plot_depth_cut(
+                    ys, grid[:, ix_cd],
+                    truth_depth=float(truth[y_name]),
+                    expected_y=expected_y,
+                    title=f"{slice_name}  {mask}  depth cut @ CD={xs[ix_cd]:g} nm",
+                    out_path=cut_png, dpi=dpi,
+                )
+                written.append(cut_png)
     return written
 
 
@@ -442,6 +648,8 @@ def summarize(
         "swa_deg": float(cfg.structure.swa_deg),
     }
     p_ref = np.array([cfg.structure.get_param(n) for n in cfg.inverse.param_names], dtype=float)
+    fringe = height_fringe_report(cfg)
+    expected_y = list(fringe["expected_second_depth_nm"]) if spec.y_name == "depth_nm" else []
     payload = {
         "slice": spec.slice,
         "x_name": spec.x_name,
@@ -450,6 +658,7 @@ def summarize(
         "truth": truth,
         "noiseless": spec.noiseless,
         "z_axis": "inverse_loss",
+        "height_fringe": fringe,
         "n_conditions": len(expand_measurement_conditions(cfg)),
         "n_points": int(params.shape[0]),
         "n_filled": int(np.count_nonzero(filled)),
@@ -457,6 +666,7 @@ def summarize(
     }
     do_plot = bool(cfg.eval.plot)
     dpi = int(cfg.eval.plot_dpi)
+    ix_cd = int(np.argmin(np.abs(xs - truth["cd_nm"]))) if spec.x_name == "cd_nm" else None
     for name, (work, wsqrt) in objectives.items():
         grid = np.full((ny, nx), np.nan)
         for i, ok in enumerate(filled):
@@ -471,7 +681,10 @@ def summarize(
             "loss_min": None,
             "at": None,
             "sum_w": float(np.sum(np.asarray(wsqrt) ** 2)),
+            "n_local_minima": 0,
+            "local_minima": [],
         }
+        extra_xy: list[tuple[float, float]] = []
         if np.any(np.isfinite(grid)):
             iy, ix = np.unravel_index(int(np.nanargmin(grid)), grid.shape)
             rec["loss_min"] = float(grid[iy, ix])
@@ -480,12 +693,37 @@ def summarize(
                 spec.x_name: float(xs[ix] - truth[spec.x_name]),
                 spec.y_name: float(ys[iy] - truth[spec.y_name]),
             }
+            mins = describe_local_minima(
+                xs, ys, grid,
+                x_name=spec.x_name, y_name=spec.y_name, truth=truth, fixed=spec.fixed,
+            )
+            rec["local_minima"] = mins
+            rec["n_local_minima"] = len(mins)
+            extra_xy = [(float(m[spec.x_name]), float(m[spec.y_name])) for m in mins]
+            if spec.y_name == "depth_nm" and ix_cd is not None:
+                cut = grid[:, ix_cd]
+                cut_recs = []
+                for j in local_minima_1d(cut):
+                    cut_recs.append(
+                        {
+                            "depth_nm": float(ys[j]),
+                            "loss": float(cut[j]),
+                            "delta_depth_nm": float(ys[j] - truth["depth_nm"]),
+                        }
+                    )
+                rec["depth_cut"] = {
+                    "cd_nm": float(xs[ix_cd]),
+                    "n_minima": len(cut_recs),
+                    "minima": cut_recs,
+                }
         payload["masks"][name] = rec
         print(
             f"  {name:<12} n={rec['n_rows']:4d}  "
             f"min_loss={rec['loss_min'] if rec['loss_min'] is None else format(rec['loss_min'], '.4g')}  "
-            f"at={rec['at']}"
+            f"at={rec['at']}  local_minima={rec['n_local_minima']}"
         )
+        if rec["n_local_minima"] > 1:
+            print(f"    second={rec['local_minima'][1]}")
         if do_plot and np.any(np.isfinite(grid)):
             plot_landscape_pair(
                 xs,
@@ -497,7 +735,19 @@ def summarize(
                 title=f"{spec.slice}  {name}  inverse loss  n={int(np.count_nonzero(filled))}",
                 out_path=out_dir / f"chi2_{spec.slice}_{name}.png",
                 dpi=dpi,
+                extra_minima=extra_xy,
+                expected_y=expected_y,
             )
+            if spec.y_name == "depth_nm" and ix_cd is not None:
+                plot_depth_cut(
+                    ys,
+                    grid[:, ix_cd],
+                    truth_depth=truth["depth_nm"],
+                    expected_y=expected_y,
+                    title=f"{spec.slice}  {name}  depth cut @ CD={xs[ix_cd]:g} nm",
+                    out_path=out_dir / f"chi2_{spec.slice}_{name}_depth_cut.png",
+                    dpi=dpi,
+                )
         np.save(out_dir / f"chi2_{spec.slice}_{name}.npy", grid)
     (out_dir / f"chi2_{spec.slice}.json").write_text(
         json.dumps(_jsonable(payload), indent=2), encoding="utf-8"
@@ -528,6 +778,11 @@ def run_landscape(
     print(f"  {spec.x_name}: {spec.x.min:g} → {spec.x.max:g} step {spec.x.step:g}")
     print(f"  {spec.y_name}: {spec.y.min:g} → {spec.y.max:g} step {spec.y.step:g}")
     print(f"  fixed: {spec.fixed}")
+    fringe = height_fringe_report(cfg)
+    print(
+        f"  height fringe λ/(2 cos θ) = {fringe['period_nm_min']:.3g}–{fringe['period_nm_max']:.3g} nm; "
+        f"expected second depths {fringe['expected_second_depth_nm']}"
+    )
 
     reset_runner()
     rng = np.random.default_rng(seed)
@@ -601,7 +856,7 @@ def main() -> None:
     parser.add_argument(
         "--config",
         default=None,
-        help="config_chi2_p80.yaml / config_chi2_p300.yaml / config_chi2_p300_d150.yaml",
+        help="config_chi2_p80.yaml / config_chi2_p300.yaml / config_chi2_p300_d150.yaml / config_chi2_p80_wide_depth.yaml",
     )
     parser.add_argument("--slice", choices=SLICES, default=None)
     parser.add_argument("--workers", type=int, default=None)
@@ -637,6 +892,11 @@ def main() -> None:
         print(f"  y {spec.y_name} {ys[0]:g}…{ys[-1]:g}")
         print(f"  fixed {spec.fixed}  noiseless={noiseless}  masks={list(spec.masks)}")
         print(f"  out={landscape_out_dir(cfg, noiseless)}")
+        fringe = height_fringe_report(cfg)
+        print(
+            f"  height fringe λ/(2 cos θ) = {fringe['period_nm_min']:.3g}–{fringe['period_nm_max']:.3g} nm; "
+            f"expected second depths {fringe['expected_second_depth_nm']}"
+        )
         return
     run_landscape(
         cfg,
