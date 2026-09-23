@@ -118,6 +118,7 @@ python3 run_chi2_landscape.py --config config_chi2_p80.yaml --dry-run
 python3 run_chi2_landscape.py --config config_chi2_p80.yaml --workers 8
 python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
 python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --workers 4
+python3 run_chi2_landscape.py --config config_chi2_p80_wide_depth.yaml --workers 8
 python3 run_chi2_landscape.py --replot ../runs/inverse/chi2_landscape
 ```
 
