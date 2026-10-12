@@ -768,6 +768,8 @@ def plot_crlb_vs_n0(
     out_path: Path,
     dpi: int,
 ) -> None:
+    if not sweep or not n0_vals:
+        return
     import matplotlib.pyplot as plt
 
     n_p = len(names)

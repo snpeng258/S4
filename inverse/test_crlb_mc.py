@@ -95,6 +95,20 @@ def test_summarize_efficiency():
     assert "rho_lswa_rswa" not in out
 
 
+def test_azimuth_density_windows_match_fim_rows():
+    cfg = load_config(Path(__file__).with_name("config_fim_azimuth_density_p80.yaml"))
+    for mask in ("phi90", "d10", "d5", "d2", "d1", "prop"):
+        assert layout_pairs(cfg, mask) == fim_mask_pairs(cfg, mask), mask
+    assert layout_pairs(cfg, "d1") == layout_pairs(cfg, "prop")
+    d10 = apply_mask(cfg, "d10")
+    assert d10.inverse.order_collection == "prop"
+    assert d10.optical.recipe.azimuths_deg == [80.0, 90.0]
+    work = apply_experiment(cfg, "d5", "A")
+    assert work.inverse.use_ga is False
+    assert work.inverse.use_role_weights is False
+    assert work.optical.recipe.azimuths_deg == [80.0, 85.0, 90.0]
+
+
 def test_unified_swa_from_legacy_yaml():
     cfg = _cfg_p80()
     assert abs(cfg.structure.swa_deg - 89.45) < 1e-9
