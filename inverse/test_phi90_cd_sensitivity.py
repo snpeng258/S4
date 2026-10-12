@@ -1,6 +1,7 @@
 """90°/0° zeroth-order CD sensitivity helpers (no S4)."""
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +11,7 @@ import yaml
 from config import load_config
 from run_phi90_cd_sensitivity import (
     Phi90Spec,
+    dark_wavelengths_nm,
     dry_run_text,
     fresnel_rs,
     harmonic_markers,
@@ -71,6 +73,18 @@ def test_two_beam_fringe_period():
     assert hs.size >= 3
     period = reflection_height_period_nm(wl, ang)
     assert abs(float(np.median(np.diff(hs))) - period) / period < 0.02
+
+
+def test_dark_wavelength_is_spectral_min_at_fixed_height():
+    h, ang = 40.0, 70.0
+    predicted = dark_wavelengths_nm(h, ang)
+    assert predicted[0] == pytest.approx(4.0 * h * abs(math.cos(math.radians(ang))))
+    target = next(w for w in predicted if 8.0 < w < 25.0)
+    wls = np.linspace(target - 3.0, target + 3.0, 3001)
+    R = np.array([two_beam_R0(w, h, 0.5, ang, 0.40, 0.10) for w in wls])
+    assert abs(wls[int(np.argmin(R))] - target) < 0.05
+    R_other_cd = np.array([two_beam_R0(w, h, 0.3, ang, 0.40, 0.10) for w in wls])
+    assert abs(wls[int(np.argmin(R_other_cd))] - target) < 0.05
 
 
 def test_two_beam_phase_independent_of_fill():

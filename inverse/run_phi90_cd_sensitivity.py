@@ -60,6 +60,31 @@ def reflection_height_period_nm(wl_nm: float, angle_deg: float) -> float:
     return float(wl_nm) / (2.0 * abs(c))
 
 
+def dark_wavelengths_nm(
+    depth_nm: float,
+    angle_deg: float,
+    *,
+    material_phase_rad: float = 0.0,
+    m_max: int = 20,
+) -> list[float]:
+    """Wavelengths of two-beam dark fringes: 4π h cosθ / λ + φ = (2m+1)π.
+
+    The path 2 h cosθ is geometric; scanning λ converts that fixed length into
+    phase, so the observable is a spectral dip in R, not a spatial image.
+    """
+    four_h_cos = 4.0 * float(depth_nm) * abs(math.cos(math.radians(float(angle_deg))))
+    shift = float(material_phase_rad) / math.pi
+    out: list[float] = []
+    for m in range(0, int(m_max) + 1):
+        den = (2 * m + 1) - shift
+        if den <= 1e-12:
+            continue
+        wl = four_h_cos / den
+        if wl > 0:
+            out.append(float(wl))
+    return out
+
+
 @dataclass(frozen=True)
 class Phi90Spec:
     azimuths: np.ndarray
@@ -489,6 +514,7 @@ def summarize(
             "at_min_wl": reflection_height_period_nm(float(spec.wavelengths[0]), spec.angle_deg),
             "at_max_wl": reflection_height_period_nm(float(spec.wavelengths[-1]), spec.angle_deg),
         },
+        "spectral_dark_fringes_nm": dark_wavelengths_nm(spec.truth_depth, spec.angle_deg),
         "sensitivity": sens,
         "note": (
             "φ=90° CD row should be flatter than φ=0° (fringe phase set by height, "

@@ -14,6 +14,28 @@
 
 \(\lambda=12\)–\(16\,\mathrm{nm}\)，步长 0.2 nm（21 点）。灰虚线标 H55–61 奇次（800 nm 基波）。图上白虚线是真值。两列共用该行的色标，方便看 \(0^\circ\) vs \(90^\circ\)。
 
+## 暗纹位置和波长轴
+
+图里的颜色是零级反射率（衍射效率），不是样品表面的空间像。「暗条纹」就是 \(R_0\) 低的地方。
+
+台面金和槽底之间多走的真空光程是几何量 \(2h\cos\theta\)。反射率写成
+
+\[
+R_0 \approx \bigl|f\,r_{\mathrm{Au}}+(1-f)\,r_{\mathrm{SiO_2}}e^{i 4\pi h \cos\theta/\lambda}\bigr|^2,\qquad f=\mathrm{CD}/\mathrm{pitch}.
+\]
+
+相位 \(\psi=4\pi h\cos\theta/\lambda=2\pi\times(2h\cos\theta)/\lambda\)：固定 \(h,\theta\) 时，扫 \(\lambda\) 就是在扫「这段光程里装了多少个波长」。相消时 \(\psi+\varphi=(2m+1)\pi\)，暗纹波长
+
+\[
+\lambda_m=\frac{4h\cos\theta}{2m+1-\varphi/\pi}.
+\]
+
+\(f\) 只进振幅（条纹有多黑），不进 \(\lambda_m\)。所以 Fig. 1d（\(y=\)CD，\(x=\lambda\)，\(h\) 钉死）里暗带是**竖条**：谷的波长不随 CD 走。Fig. 1b（\(y=h\)）里同一条件变成斜带，因为 \(h/\lambda\) 为常才相消。Fig. 1c 在 \(\varphi=0^\circ\) 会弯，是掠入射把邻居阴影耦进有效光程，不是波长轴和几何对不上。
+
+本配置 \(h=40\,\mathrm{nm}\)、\(\theta=70^\circ\)、忽略材料相位时，前几条暗纹大约在 \(55,\ 18,\ 11,\ 8\,\mathrm{nm}\)。\(\lambda=12\)–\(16\,\mathrm{nm}\) 落在 \(11\) 与 \(18\) 之间，CD 行的 \(90^\circ\) 列可能看不到一整条黑带，只表现为比 \(0^\circ\) 更不随 CD 走。json 的 `spectral_dark_fringes_nm` 按上式列出。
+
+金在 14.5 nm 趋肤深度约 16 nm，光几乎不穿过金线；pitch/\(\lambda\sim 5\)–\(20\)，不是准静态 \(d\ll\lambda\)，Haggans–Li–Kostuk 那层有效介质薄膜不适用于这里的零级。
+
 预期（先跑再下结论）：
 
 - **槽深行**两边都应看到随 \(\lambda\)、\(h\) 走的干涉条纹，周期大约 \(\Delta h\sim\lambda/(2\cos\theta)\approx 18\)–\(23\,\mathrm{nm}\)。
