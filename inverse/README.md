@@ -120,9 +120,12 @@ python3 run_chi2_landscape.py --config config_chi2_p300.yaml --workers 4
 python3 run_chi2_landscape.py --config config_chi2_p300_d150.yaml --workers 4
 python3 run_chi2_landscape.py --config config_chi2_p80_wide_depth.yaml --workers 8
 python3 run_chi2_landscape.py --replot ../runs/inverse/chi2_landscape
+python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p80.yaml --dry-run
+python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p80.yaml --workers 8
+python3 run_phi90_cd_sensitivity.py --replot ../runs/inverse/phi90_cd_sensitivity/p80
 ```
 
-紧凑 recipe 上把 FIM/CRLB 和带噪反演对上：见 [`docs/CRLB_MC.md`](docs/CRLB_MC.md)。\(\chi^2\) 全局切片（S4-8 Fig. 4）：见 [`docs/CHI2_LANDSCAPE.md`](docs/CHI2_LANDSCAPE.md)。服务器上按文档开 `tmux` 即可，不必同步原对话。
+紧凑 recipe 上把 FIM/CRLB 和带噪反演对上：见 [`docs/CRLB_MC.md`](docs/CRLB_MC.md)。\(\chi^2\) 全局切片（S4-8 Fig. 4）：见 [`docs/CHI2_LANDSCAPE.md`](docs/CHI2_LANDSCAPE.md)。90°/0° 零级对 CD / 槽深 / 侧壁角（S4-4 Fig. 1 analog）：见 [`docs/PHI90_CD_SENSITIVITY.md`](docs/PHI90_CD_SENSITIVITY.md)。服务器上按文档开 `tmux` 即可，不必同步原对话。
 
 ## 输出
 
