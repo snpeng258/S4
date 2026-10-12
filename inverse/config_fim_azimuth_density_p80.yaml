@@ -1,0 +1,122 @@
+# 方位角采样密度：先 CRLB，再蒙特卡罗。两步分开跑，不要同时写这个输出目录。
+#
+# 窗口两端固定为 80° 和 90°，只改变步长。最密网格算一张雅可比，
+# 粗网格是它的行子集。观测量是可传播的 m∈{-1,0,1}，权重是 1/σ，
+# 不含解耦角色权重。蒙特卡罗只用 A：从真值出发的 LM，40 次。
+#
+#   python3 fim_study.py --config config_fim_azimuth_density_p80.yaml --layout-only
+#   python3 fim_study.py --config config_fim_azimuth_density_p80.yaml
+#
+# CRLB 结束后，每个步长单独开一个进程：
+#   python3 run_crlb_mc.py --config config_fim_azimuth_density_p80.yaml --mask phi90 --mode A
+#   python3 run_crlb_mc.py --config config_fim_azimuth_density_p80.yaml --mask d10 --mode A
+#   python3 run_crlb_mc.py --config config_fim_azimuth_density_p80.yaml --mask d5 --mode A
+#   python3 run_crlb_mc.py --config config_fim_azimuth_density_p80.yaml --mask d2 --mode A
+#   python3 run_crlb_mc.py --config config_fim_azimuth_density_p80.yaml --mask d1 --mode A
+#
+# 密度掩膜（都含在 1° 网格里）：
+#   phi90  只留 90°
+#   d10    80, 90
+#   d5     80, 85, 90
+#   d2     80, 82, 84, 86, 88, 90
+#   d1     80..90 共 11 点
+#   prop   全部可测行；应与 d1 行集相同
+
+structure:
+  pitch_nm: 80
+  cd_nm: 40.0
+  depth_nm: 40.0
+  swa_deg: 89.45
+  n_slices: 10
+  grating_material: Au
+  substrate_material: SiO2
+
+optical:
+  wl_nm: 14.55
+  angle_deg: 70
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 31
+  order_min: -15
+  order_max: 15
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      - {min: 55, max: 61, odd_only: true}
+    angles_deg: [70]
+    azimuths_deg: [80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse/fim_azimuth_density/p80
+  cache_size: 128
+
+inverse:
+  method: ga_lm
+  # 密度比较在 fim.masks。A 模式会把窗口收成 prop，并关掉 GA 与角色权重。
+  order_collection: prop
+  use_role_weights: false
+  param_names: [cd_nm, depth_nm, swa_deg]
+  lm_max_nfev: 200
+  lm_ftol: 1.0e-8
+  lm_xtol: 1.0e-8
+  lm_verbose: 0
+  noise:
+    apply: true
+    zero:
+      camera: DoBEAM2000-2
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 5.0
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 125.0
+      t_exp_s: 0.01
+    first:
+      camera: XV4040BSI-HG
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 2.5
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 0.01
+      t_exp_s: 1.0
+
+library:
+  file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
+  build_workers: 1
+  condition_workers: 8
+
+eval:
+  task: fim_study
+  mode: all
+  n_trials: 40
+  noise_n0_electrons: [1.0e6]
+  plot: true
+  plot_dpi: 150
+
+fim:
+  eps_frac: 0.01
+  keep_orders: [-1, 0, 1]
+  masks: [phi90, d10, d5, d2, d1, prop]
+  # 固定这一档噪声。不扫 N0，也不再另算 a=0。
+  n0_electrons: [1.0e6]
+  flicker_a: [null]
+  n0_sweep_masks: []
+  corr_masks: [phi90, d10, d5, d2, d1]
+  param_scales:
+    cd_nm: 1.0
+    depth_nm: 1.0
+    swa_deg: 1.0
+  azimuth_windows:
+    phi90: [90]
+    d10: [80, 90]
+    d5: [80, 85, 90]
+    d2: [80, 82, 84, 86, 88, 90]
+    d1: [80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+  azimuth_tol_deg: 0.5
+  rcond: 1.0e-12

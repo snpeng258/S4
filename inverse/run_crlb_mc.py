@@ -68,13 +68,34 @@ def _cell_dir(cfg: ScatterometryConfig, mask: str, mode: str) -> Path:
     return _out_root(cfg) / f"{mask}_{mode}"
 
 
+def study_masks(cfg: ScatterometryConfig) -> tuple[str, ...]:
+    return tuple(str(m) for m in cfg.fim.masks)
+
+
+def known_masks(cfg: ScatterometryConfig) -> tuple[str, ...]:
+    names: list[str] = []
+    for name in (*FIM_MASK_MODES, *cfg.fim.masks, *cfg.fim.azimuth_windows):
+        if name not in names:
+            names.append(str(name))
+    return tuple(names)
+
+
 def apply_mask(cfg: ScatterometryConfig, mask: str) -> ScatterometryConfig:
-    if mask not in FIM_MASK_MODES:
-        raise ValueError(f"mask must be one of {FIM_MASK_MODES}, got {mask!r}")
+    if mask in FIM_MASK_MODES:
+        out = cfg.copy()
+        out.inverse.order_collection = mask
+        if mask == "decoupling":
+            out.inverse.decoupling.enabled = True
+        return out
+    windows = cfg.fim.azimuth_windows
+    if mask not in windows:
+        raise ValueError(f"mask must be one of {known_masks(cfg)}, got {mask!r}")
+    if cfg.optical.recipe is None:
+        raise ValueError(f"azimuth window {mask!r} requires optical.recipe")
     out = cfg.copy()
-    out.inverse.order_collection = mask
-    if mask == "decoupling":
-        out.inverse.decoupling.enabled = True
+    out.inverse.order_collection = "prop"
+    out.inverse.decoupling.enabled = False
+    out.optical.recipe.azimuths_deg = [float(a) for a in windows[mask]]
     return out
 
 
@@ -239,7 +260,13 @@ def metrics_for_mask(
     }
 
 
-def run_fim(cfg: ScatterometryConfig, workers: int, masks: tuple[str, ...] = FIM_MASK_MODES) -> dict:
+def run_fim(
+    cfg: ScatterometryConfig,
+    workers: int,
+    masks: tuple[str, ...] | None = None,
+) -> dict:
+    if masks is None:
+        masks = study_masks(cfg)
     J, r0 = _acquire_jacobian(cfg, workers)
     payload = {
         "structure": {n: cfg.structure.get_param(n) for n in ("pitch_nm", *cfg.inverse.param_names)},
@@ -448,7 +475,7 @@ def run_layout(cfg: ScatterometryConfig) -> None:
     n_cond = len(expand_measurement_conditions(cfg))
     print(f"conditions={n_cond}  pitch={cfg.structure.pitch_nm}  NG={cfg.optical.NG}")
     print(f"{'mask':<12} {'inv':>5} {'fim':>5} match")
-    for mask in FIM_MASK_MODES:
+    for mask in study_masks(cfg):
         inv = layout_pairs(cfg, mask)
         fim = fim_mask_pairs(cfg, mask)
         ok = inv == fim
@@ -491,7 +518,7 @@ def run_summarize(cfg: ScatterometryConfig) -> None:
         hdr += f"  {short+'_std':>8} {short+'_rmse':>9} {short+'_crlb':>9}"
     print(hdr)
     for mode in ("A", "B"):
-        for mask in FIM_MASK_MODES:
+        for mask in study_masks(cfg):
             path = root / f"{mask}_{mode}" / "summary.json"
             if not path.is_file():
                 continue
@@ -514,7 +541,7 @@ def run_summarize(cfg: ScatterometryConfig) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Compact-recipe FIM vs Monte-Carlo inverse")
     parser.add_argument("--config", default=None, help="config_crlb_mc_p80.yaml / p300.yaml")
-    parser.add_argument("--mask", choices=FIM_MASK_MODES, default=None)
+    parser.add_argument("--mask", default=None)
     parser.add_argument(
         "--mode",
         choices=("layout", "fim", "probe", "A", "B", "summarize"),
@@ -544,6 +571,8 @@ def main() -> None:
         return
     if args.mask is None:
         raise SystemExit("--mask is required for mode A / B")
+    if args.mask not in known_masks(cfg):
+        raise SystemExit(f"--mask {args.mask!r} not in {known_masks(cfg)}")
     n_trials = int(args.n_trials or DEFAULT_TRIALS[args.mode])
     run_mc(cfg, args.mask, args.mode, n_trials, workers, args.seed)
 
