@@ -73,8 +73,8 @@ def test_p700_paper_grid_and_s4_count():
     assert spec.cd.size == 16
     assert spec.depth.size == 21
     assert spec.swa.size == 19
-    assert spec.truth_cd == pytest.approx(350.0)
-    assert spec.truth_depth == pytest.approx(100.0)
+    assert spec.truth_cd == pytest.approx(300.0)
+    assert spec.truth_depth == pytest.approx(80.0)
     assert n_s4_calls(spec) == 2 * 25 * (16 + 21 + 19)
     assert n_s4_calls(spec) == 2800
     text = dry_run_text(cfg, spec, 4)

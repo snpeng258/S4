@@ -1,4 +1,5 @@
-# 原理论证二：S4-4 Fig. 1 对应参数（700 nm 硅槽，θ=78°，λ=11–35 nm）
+# 原理论证二：S4-4 Fig. 1 对应参数
+# 周期 700 nm（主库）；图注 a/b 钉 CD=300 nm，c/d 钉 GH=80 nm；θ=78°，λ=11–35 nm
 # See docs/PHI90_CD_SENSITIVITY.md
 #
 #   python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p700.yaml --dry-run
@@ -6,8 +7,8 @@
 
 structure:
   pitch_nm: 700
-  cd_nm: 350.0
-  depth_nm: 100.0
+  cd_nm: 300.0
+  depth_nm: 80.0
   swa_deg: 90.0
   n_slices: 10
   grating_material: Si
