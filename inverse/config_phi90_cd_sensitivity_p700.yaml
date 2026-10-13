@@ -9,7 +9,7 @@ structure:
   cd_nm: 350.0
   depth_nm: 100.0
   swa_deg: 90.0
-  n_slices: 1
+  n_slices: 10
   grating_material: Si
   substrate_material: Si
 
@@ -98,11 +98,12 @@ fim:
 phi90_cd:
   workers: 4
   checkpoint_every: 40
-  include_swa: false
+  include_swa: true
   azimuths_deg: [0, 90]
   wl_nm: {min: 11.0, max: 35.0, step: 1.0}
   cd_nm: {min: 200, max: 500, step: 20.0}
   depth_nm: {min: 50, max: 150, step: 5.0}
+  swa_deg: {min: 85, max: 94, step: 0.5}
   two_beam:
     top: Si
     floor: Si

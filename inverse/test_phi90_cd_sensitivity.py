@@ -63,21 +63,23 @@ def test_p700_paper_grid_and_s4_count():
     assert cfg.structure.grating_material == "Si"
     assert cfg.structure.substrate_material == "Si"
     assert cfg.structure.swa_deg == pytest.approx(90.0)
+    assert cfg.structure.n_slices == 10
     assert cfg.optical.angle_deg == pytest.approx(78.0)
     assert cfg.optical.NG == 201
-    assert spec.include_swa is False
+    assert spec.include_swa is True
     assert spec.wavelengths.size == 25
     assert spec.wavelengths[0] == pytest.approx(11.0)
     assert spec.wavelengths[-1] == pytest.approx(35.0)
     assert spec.cd.size == 16
     assert spec.depth.size == 21
+    assert spec.swa.size == 19
     assert spec.truth_cd == pytest.approx(350.0)
     assert spec.truth_depth == pytest.approx(100.0)
-    assert n_s4_calls(spec) == 2 * 25 * (16 + 21)
-    assert n_s4_calls(spec) == 1850
+    assert n_s4_calls(spec) == 2 * 25 * (16 + 21 + 19)
+    assert n_s4_calls(spec) == 2800
     text = dry_run_text(cfg, spec, 4)
-    assert "S4=1850" in text
-    assert "SWA off" in text
+    assert "S4=2800" in text
+    assert "SWA 85" in text
     assert "pitch 700" in text
 
 
