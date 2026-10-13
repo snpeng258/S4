@@ -101,16 +101,22 @@ class Phi90Spec:
     truth_swa: float
     pitch: float
     angle_deg: float
+    include_swa: bool
     out_dir: Path
     dpi: int
 
 
 def parse_phi90(cfg: ScatterometryConfig, raw: dict) -> Phi90Spec:
     block = dict(raw.get("phi90_cd") or {})
+    truth_swa = float(cfg.structure.swa_deg)
     wl = axis_from_spec(block.get("wl_nm"), GridAxisConfig(12.0, 16.0, 0.2))
     cd = axis_from_spec(block.get("cd_nm"), GridAxisConfig(32.0, 48.0, 2.0))
     depth = axis_from_spec(block.get("depth_nm"), GridAxisConfig(24.0, 56.0, 2.0))
-    swa = axis_from_spec(block.get("swa_deg"), GridAxisConfig(85.0, 94.0, 0.5))
+    include_swa = bool(block.get("include_swa", "swa_deg" in block))
+    if include_swa:
+        swa = axis_from_spec(block.get("swa_deg"), GridAxisConfig(85.0, 94.0, 0.5))
+    else:
+        swa = GridAxisConfig(truth_swa, truth_swa, 1.0)
     az = np.asarray(block.get("azimuths_deg") or [0.0, 90.0], dtype=float)
     two = dict(block.get("two_beam") or {})
     out = Path(cfg.paths.output_dir)
@@ -129,16 +135,19 @@ def parse_phi90(cfg: ScatterometryConfig, raw: dict) -> Phi90Spec:
         two_beam_floor=str(two.get("floor") or cfg.structure.substrate_material),
         truth_cd=float(cfg.structure.cd_nm),
         truth_depth=float(cfg.structure.depth_nm),
-        truth_swa=float(cfg.structure.swa_deg),
+        truth_swa=truth_swa,
         pitch=float(cfg.structure.pitch_nm),
         angle_deg=float(cfg.optical.angle_deg),
+        include_swa=include_swa,
         out_dir=out,
         dpi=int(getattr(cfg.eval, "plot_dpi", 150) or 150),
     )
 
 
 def n_s4_calls(spec: Phi90Spec) -> int:
-    n_y = int(spec.cd.size + spec.depth.size + spec.swa.size)
+    n_y = int(spec.cd.size + spec.depth.size)
+    if spec.include_swa:
+        n_y += int(spec.swa.size)
     return int(spec.azimuths.size * spec.wavelengths.size * n_y)
 
 
@@ -365,11 +374,22 @@ def build_tasks(spec: Phi90Spec, filled_depth, filled_cd, filled_swa) -> list[tu
                     tasks.append(
                         (KIND_CD, i_az, i_y, i_wl, float(cd), truth_depth, truth_swa, float(wl), float(az))
                     )
-            for i_y, swa in enumerate(spec.swa):
-                if not filled_swa[i_az, i_y, i_wl]:
-                    tasks.append(
-                        (KIND_SWA, i_az, i_y, i_wl, truth_cd, truth_depth, float(swa), float(wl), float(az))
-                    )
+            if spec.include_swa:
+                for i_y, swa in enumerate(spec.swa):
+                    if not filled_swa[i_az, i_y, i_wl]:
+                        tasks.append(
+                            (
+                                KIND_SWA,
+                                i_az,
+                                i_y,
+                                i_wl,
+                                truth_cd,
+                                truth_depth,
+                                float(swa),
+                                float(wl),
+                                float(az),
+                            )
+                        )
     return tasks
 
 
@@ -390,6 +410,20 @@ def _harmonic_vlines(ax, harmonics: list[tuple[float, str]], x0: float, x1: floa
             labeled = True
 
 
+def overlay_wavelengths(
+    spec: Phi90Spec, harmonics: list[tuple[float, str]], n: int = 4
+) -> list[tuple[float, str]]:
+    in_win = [(w, name) for w, name in harmonics if spec.wavelengths[0] <= w <= spec.wavelengths[-1]]
+    if len(in_win) >= n:
+        pick = np.linspace(0, len(in_win) - 1, n).astype(int)
+        return [in_win[i] for i in pick]
+    if in_win:
+        return in_win[:n]
+    wls = spec.wavelengths
+    pick = np.linspace(0, wls.size - 1, min(n, wls.size)).astype(int)
+    return [(float(wls[i]), f"{wls[i]:.3g} nm") for i in pick]
+
+
 def plot_corazza_analog(
     path: Path,
     spec: Phi90Spec,
@@ -398,13 +432,19 @@ def plot_corazza_analog(
     R_swa: np.ndarray,
     harmonics: list[tuple[float, str]],
 ) -> None:
-    fig, axes = plt.subplots(3, 2, figsize=(9.4, 11.4), sharex=True, constrained_layout=True)
     rows = [
-        ("grating height (nm)", spec.depth, R_depth, spec.truth_depth),
-        ("CD (nm)", spec.cd, R_cd, spec.truth_cd),
-        ("SWA (deg)", spec.swa, R_swa, spec.truth_swa),
+        ("Groove height / nm", spec.depth, R_depth, spec.truth_depth),
+        ("CD / nm", spec.cd, R_cd, spec.truth_cd),
     ]
+    if spec.include_swa:
+        rows.append(("SWA (deg)", spec.swa, R_swa, spec.truth_swa))
+    n_rows = len(rows)
+    fig, axes = plt.subplots(
+        n_rows, 2, figsize=(9.4, 3.8 * n_rows), sharex=True, constrained_layout=True
+    )
+    axes = np.atleast_2d(axes)
     wl = spec.wavelengths
+    mark_harmonics = harmonics if len(harmonics) <= 6 else []
     for i, (ylabel, y, R, truth) in enumerate(rows):
         finite = np.isfinite(R)
         vmin = float(np.nanmin(R)) if finite.any() else 0.0
@@ -424,15 +464,15 @@ def plot_corazza_analog(
                 interpolation="nearest",
             )
             ax.axhline(truth, color="white", ls="--", lw=0.7, alpha=0.85)
-            _harmonic_vlines(ax, harmonics, float(wl[0]), float(wl[-1]))
+            _harmonic_vlines(ax, mark_harmonics, float(wl[0]), float(wl[-1]))
             if i == 0:
                 ax.set_title(rf"azimuth ${az:g}^\circ$")
             if j == 0:
                 ax.set_ylabel(ylabel)
-            if i == 2:
-                ax.set_xlabel("wavelength (nm)")
+            if i == n_rows - 1:
+                ax.set_xlabel("Wavelength / nm")
             fig.colorbar(im, ax=ax, fraction=0.046, pad=0.03)
-    fig.suptitle(r"zeroth-order $R_0(\lambda)$  (truth CD / GH / SWA dashed)", fontsize=11)
+    fig.suptitle(r"zeroth-order $R_0(\lambda)$  (truth CD / GH dashed)", fontsize=11)
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=spec.dpi)
     plt.close(fig)
@@ -446,11 +486,7 @@ def plot_two_beam_depth90(
     lua_path: Path,
 ) -> None:
     i90 = nearest_index(spec.azimuths, 90.0)
-    marks = [(wl, name) for wl, name in harmonics if spec.wavelengths[0] <= wl <= spec.wavelengths[-1]]
-    if not marks:
-        mid = spec.wavelengths[spec.wavelengths.size // 2]
-        marks = [(float(mid), f"{mid:.2f} nm")]
-    marks = marks[:4]
+    marks = overlay_wavelengths(spec, harmonics, n=4)
     fill = spec.truth_cd / spec.pitch
     n = len(marks)
     fig, axes = plt.subplots(1, n, figsize=(3.1 * n, 3.4), sharey=True, constrained_layout=True)
@@ -508,6 +544,7 @@ def summarize(
         "truth": {"cd_nm": spec.truth_cd, "depth_nm": spec.truth_depth, "swa_deg": spec.truth_swa},
         "pitch_nm": spec.pitch,
         "angle_deg": spec.angle_deg,
+        "include_swa": spec.include_swa,
         "fill_factor": spec.truth_cd / spec.pitch,
         "harmonics": [{"wl_nm": w, "label": n} for w, n in harmonics],
         "height_fringe_nm": {
@@ -517,8 +554,8 @@ def summarize(
         "spectral_dark_fringes_nm": dark_wavelengths_nm(spec.truth_depth, spec.angle_deg),
         "sensitivity": sens,
         "note": (
-            "φ=90° CD row should be flatter than φ=0° (fringe phase set by height, "
-            "fill only sets contrast). SWA row is extra vs Corazza Fig. 1."
+            "φ=90° CD row should be flatter than φ=0° on the paper-scale Si grating "
+            "(fringe phase set by height, fill only sets contrast)."
         ),
     }
     path = _json_path(spec)
@@ -538,9 +575,10 @@ def summarize(
     for az, row in sens.items():
         ratio = row["cd_over_depth"]
         ratio_s = f"{ratio:.3g}" if ratio is not None else "n/a"
+        swa_s = f"  SWA={row['rms_dR_dSWA']:.3g}" if spec.include_swa else ""
         print(
             f"  φ={az}°  CD={row['rms_dR_dCD']:.3g}  "
-            f"depth={row['rms_dR_ddepth']:.3g}  SWA={row['rms_dR_dSWA']:.3g}  "
+            f"depth={row['rms_dR_ddepth']:.3g}{swa_s}  "
             f"CD/depth={ratio_s}"
         )
     return report
@@ -563,6 +601,7 @@ def spec_from_npz(cfg: ScatterometryConfig, raw: dict, data: dict, out_dir: Path
         truth_swa=float(data.get("truth_swa", spec.truth_swa)),
         pitch=float(data.get("pitch", spec.pitch)),
         angle_deg=float(data.get("angle_deg", spec.angle_deg)),
+        include_swa=spec.include_swa,
         out_dir=out_dir,
         dpi=spec.dpi,
     )
@@ -668,12 +707,17 @@ def dry_run_text(cfg: ScatterometryConfig, spec: Phi90Spec, workers: int) -> str
     return (
         f"dry-run φ={[float(a) for a in spec.azimuths]}  λ {spec.wavelengths[0]:g}…{spec.wavelengths[-1]:g} "
         f"({spec.wavelengths.size})\n"
-        f"  CD {spec.cd[0]:g}…{spec.cd[-1]:g} n={spec.cd.size}  "
-        f"depth {spec.depth[0]:g}…{spec.depth[-1]:g} n={spec.depth.size}  "
-        f"SWA {spec.swa[0]:g}…{spec.swa[-1]:g} n={spec.swa.size}\n"
-        f"  S4={n}  workers={workers}  out={spec.out_dir}\n"
-        f"  harmonics {hlab}\n"
-        f"  height fringe λ/(2 cos θ) = {pmin:.3g}–{pmax:.3g} nm"
+        f"  pitch {spec.pitch:g} nm  θ={spec.angle_deg:g}°  "
+        f"CD {spec.cd[0]:g}…{spec.cd[-1]:g} n={spec.cd.size}  "
+        f"depth {spec.depth[0]:g}…{spec.depth[-1]:g} n={spec.depth.size}"
+        + (
+            f"  SWA {spec.swa[0]:g}…{spec.swa[-1]:g} n={spec.swa.size}\n"
+            if spec.include_swa
+            else "  SWA off (Fig. 1 analog)\n"
+        )
+        + f"  S4={n}  workers={workers}  out={spec.out_dir}\n"
+        + f"  harmonics {hlab if len(harmonics) <= 8 else f'{len(harmonics)} lines {harmonics[0][1]}–{harmonics[-1][1]}'}\n"
+        + f"  height fringe λ/(2 cos θ) = {pmin:.3g}–{pmax:.3g} nm"
     )
 
 
@@ -684,7 +728,7 @@ def main() -> None:
     parser.add_argument(
         "--config",
         default=str(HERE / "config_phi90_cd_sensitivity_p80.yaml"),
-        help="config_phi90_cd_sensitivity_p80.yaml",
+        help="config_phi90_cd_sensitivity_p80.yaml or config_phi90_cd_sensitivity_p700.yaml",
     )
     parser.add_argument("--workers", type=int, default=None)
     parser.add_argument("--no-resume", action="store_true")

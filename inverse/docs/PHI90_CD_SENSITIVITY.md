@@ -52,42 +52,51 @@ R_0 \approx \bigl|f\,r_{\mathrm{Au}}+(1-f)\,r_{\mathrm{SiO_2}}e^{i 4\pi h \cos\t
 
 ## 配置
 
-| | 80 nm 方槽 |
-|---|---|
-| 文件 | `config_phi90_cd_sensitivity_p80.yaml` |
-| 真值 | CD 40 / depth 40 / SWA \(89.45^\circ\) |
-| `NG` | 31 |
-| 方位角 | \(0^\circ,\ 90^\circ\) |
-| 网格 | λ 21 ×（CD 9 + depth 17 + SWA 19） |
-| S4 次数 | \(2\times 21\times 45=1890\) |
-| workers | 8 |
-| 输出 | `../runs/inverse/phi90_cd_sensitivity/p80/` |
+| | 原理论证一：80 nm Au 方槽 | 原理论证二：S4-4 Fig. 1 |
+|---|---|---|
+| 文件 | `config_phi90_cd_sensitivity_p80.yaml` | `config_phi90_cd_sensitivity_p700.yaml` |
+| 材料 | Au 线 / SiO₂ 底 | 硅槽刻在硅上（矩形，SWA \(90^\circ\)） |
+| 真值 | CD 40 / depth 40 / SWA \(89.45^\circ\) | CD 350 / GH 100 / SWA \(90^\circ\) |
+| 光学 | θ=70°，TE，λ 12–16 nm | θ=78°，TE，λ 11–35 nm |
+| `NG` | 31 | 201（文中 \(N=100\)，\(2N+1\)） |
+| 方位角 | \(0^\circ,\ 90^\circ\) | \(0^\circ,\ 90^\circ\) |
+| 网格 | λ 21 ×（CD 9 + depth 17 + SWA 19） | λ 25 ×（CD 16 + GH 21），无 SWA 行 |
+| S4 次数 | \(2\times 21\times 45=1890\) | \(2\times 25\times 37=1850\) |
+| workers | 8 | 4（每步 NG 更大） |
+| 输出 | `../runs/inverse/phi90_cd_sensitivity/p80/` | `../runs/inverse/phi90_cd_sensitivity/p700/` |
 
-光学主参数与 χ² 景观相同（θ=70°、TE、Au/SiO₂），但这里**不**跑 H55–61×五方位那 20 个条件：每个点只有一个 \((\lambda,\varphi)\)。recipe 只用来在图上标谐波。
+原理论证二对 Fig. 1 的轴：槽深 50–150 nm（步长 5）、CD 200–500 nm（步长 20）、波长 11–35 nm（步长 1）。钉死 CD=350（占空比 0.5）、GH=100（实验槽深 80–130 的中段）。未加文中 1.2 nm 原生氧化层。图是 2×2，与原文一致。
+
+80 nm 组光学与 χ² 景观相同（θ=70°、TE、Au/SiO₂），但**不**跑 H55–61×五方位那 20 个条件：每个点只有一个 \((\lambda,\varphi)\)。recipe 只用来在图上标谐波。700 nm 组 recipe 只标明 Ne 谐波覆盖 11–35 nm，扫描网格用 `phi90_cd.wl_nm`。
 
 ## 怎么跑
 
-不要写进 `chi2_landscape/` 或 `crlb_mc/`。先 `--dry-run` 核对 `S4=1890`。
+不要写进 `chi2_landscape/` 或 `crlb_mc/`。80 nm 与 700 nm 写到不同目录。先 `--dry-run` 核对 S4 次数。
 
 ```bash
 cd inverse
 
 python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p80.yaml --dry-run
+python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p700.yaml --dry-run
 python3 -m pytest test_phi90_cd_sensitivity.py -q
 python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p80.yaml --workers 8
+python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p700.yaml --workers 4
 ```
 
 中断后重跑会读同目录的 `phi90_cd_sensitivity.npz`。不要两个终端写同一个输出目录。已有 npz 时不必再跑 S4：
 
 ```bash
 python3 run_phi90_cd_sensitivity.py --replot ../runs/inverse/phi90_cd_sensitivity/p80
+python3 run_phi90_cd_sensitivity.py --replot ../runs/inverse/phi90_cd_sensitivity/p700 --config config_phi90_cd_sensitivity_p700.yaml
 ```
 
 ## 输出
 
 - `phi90_cd_sensitivity.npz` — \(R_0\) 三维数组（方位 × 形貌 × 波长）
 - `phi90_cd_sensitivity.json` — 网格、谐波、高度条纹周期、灵敏度表
-- `fig_phi90_cd_sensitivity.png` — 3×2（depth / CD / SWA × \(0^\circ\) / \(90^\circ\)）
-- `fig_two_beam_depth90.png` — H55–61 上 S4 vs 双光束
+- `fig_phi90_cd_sensitivity.png` — 80 nm 为 3×2（含 SWA）；700 nm 为 2×2（Fig. 1 analog）
+- `fig_two_beam_depth90.png` — φ=90° 上 S4 vs 双光束
 
-看图时先看 CD 行的 \(90^\circ\) 列是否比 \(0^\circ\) 更平，再看 `sensitivity` 里 `cd_over_depth`。SWA 行留给后面分析。
+80 nm 结果先看 CD 行的 \(90^\circ\) 列是否比 \(0^\circ\) 更平，再看 `sensitivity` 里 `cd_over_depth`。SWA 行留给后面分析。
+
+700 nm 是为了复现原文 Fig. 1：\(h=100\,\mathrm{nm}\)、\(\theta=78^\circ\) 时暗纹大约在 \(28,\ 17,\ 12\,\mathrm{nm}\)（忽略材料相位），落在 11–35 nm 窗口里。CD 行的 \(90^\circ\) 列应对竖条；槽深行应对斜带。和 80 nm Au 线对不上，是因为那里 CD~\(\lambda\)，不是文中 200–500 nm 宽硅台面。

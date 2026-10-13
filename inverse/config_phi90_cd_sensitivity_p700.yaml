@@ -1,0 +1,108 @@
+# 原理论证二：S4-4 Fig. 1 对应参数（700 nm 硅槽，θ=78°，λ=11–35 nm）
+# See docs/PHI90_CD_SENSITIVITY.md
+#
+#   python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p700.yaml --dry-run
+#   python3 run_phi90_cd_sensitivity.py --config config_phi90_cd_sensitivity_p700.yaml --workers 4
+
+structure:
+  pitch_nm: 700
+  cd_nm: 350.0
+  depth_nm: 100.0
+  swa_deg: 90.0
+  n_slices: 1
+  grating_material: Si
+  substrate_material: Si
+
+optical:
+  wl_nm: 20.0
+  angle_deg: 78
+  azimuth_deg: 90
+  polarization: TE
+  pol_s_amp: 1.0
+  pol_s_phase_deg: 0
+  pol_p_amp: 0.0
+  pol_p_phase_deg: 0
+  NG: 201
+  order_min: -15
+  order_max: 15
+  recipe:
+    fundamental_nm: 800
+    harmonic_order_ranges:
+      - {min: 23, max: 73, odd_only: true}
+    angles_deg: [78]
+    azimuths_deg: [0, 90]
+
+paths:
+  s4_bin: null
+  lua_script: lua/grating_slice_reflection.lua
+  materials_db: ../shared
+  output_dir: ../runs/inverse/phi90_cd_sensitivity/p700
+  cache_size: 64
+
+inverse:
+  method: ga_lm
+  order_collection: decoupling
+  use_role_weights: false
+  decoupling:
+    enabled: true
+    azimuth_tol_deg: 0.5
+    roles:
+      depth_anchor: { azimuth_deg: 90, orders: [0] }
+      swa:          { azimuth_deg: 90, orders: [-1, 1] }
+      lateral:
+        azimuths_deg: [0]
+        orders: [0]
+    static_weights:
+      depth_anchor: 1.0
+      swa: 0.8
+      lateral: 1.0
+      aux: 0.2
+    cd_anchor: ga
+  param_names: [cd_nm, depth_nm, swa_deg]
+  noise:
+    apply: false
+    zero:
+      camera: DoBEAM2000-2
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 5.0
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 125.0
+      t_exp_s: 0.01
+    first:
+      camera: XV4040BSI-HG
+      relative_a: 0.01
+      n0_electrons: 1.0e6
+      readout_e_rms: 2.5
+      n_roi_pixels: 400
+      dark_e_per_pixel_s: 0.01
+      t_exp_s: 1.0
+
+library:
+  file: ../data/inverse/spectra_hhg_swa05_phi5_swa1.npz
+  build_workers: 8
+  condition_workers: 1
+
+eval:
+  task: inverse
+  plot: true
+  plot_dpi: 150
+
+fim:
+  keep_orders: [0]
+  masks: [m0_all, only90]
+  azimuth_tol_deg: 0.5
+  azimuth_windows:
+    only90: [90]
+
+phi90_cd:
+  workers: 4
+  checkpoint_every: 40
+  include_swa: false
+  azimuths_deg: [0, 90]
+  wl_nm: {min: 11.0, max: 35.0, step: 1.0}
+  cd_nm: {min: 200, max: 500, step: 20.0}
+  depth_nm: {min: 50, max: 150, step: 5.0}
+  two_beam:
+    top: Si
+    floor: Si

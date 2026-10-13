@@ -29,6 +29,7 @@ from run_phi90_cd_sensitivity import (
 
 HERE = Path(__file__).resolve().parent
 CFG = HERE / "config_phi90_cd_sensitivity_p80.yaml"
+CFG_P700 = HERE / "config_phi90_cd_sensitivity_p700.yaml"
 LUA = HERE.parent / "shared" / "materials.lua"
 
 
@@ -53,6 +54,31 @@ def test_p80_grid_and_s4_count():
     text = dry_run_text(cfg, spec, 8)
     assert "S4=1890" in text
     assert "H55" in text
+
+
+def test_p700_paper_grid_and_s4_count():
+    cfg = load_config(CFG_P700)
+    spec = parse_phi90(cfg, yaml.safe_load(CFG_P700.read_text(encoding="utf-8")) or {})
+    assert cfg.structure.pitch_nm == 700.0
+    assert cfg.structure.grating_material == "Si"
+    assert cfg.structure.substrate_material == "Si"
+    assert cfg.structure.swa_deg == pytest.approx(90.0)
+    assert cfg.optical.angle_deg == pytest.approx(78.0)
+    assert cfg.optical.NG == 201
+    assert spec.include_swa is False
+    assert spec.wavelengths.size == 25
+    assert spec.wavelengths[0] == pytest.approx(11.0)
+    assert spec.wavelengths[-1] == pytest.approx(35.0)
+    assert spec.cd.size == 16
+    assert spec.depth.size == 21
+    assert spec.truth_cd == pytest.approx(350.0)
+    assert spec.truth_depth == pytest.approx(100.0)
+    assert n_s4_calls(spec) == 2 * 25 * (16 + 21)
+    assert n_s4_calls(spec) == 1850
+    text = dry_run_text(cfg, spec, 4)
+    assert "S4=1850" in text
+    assert "SWA off" in text
+    assert "pitch 700" in text
 
 
 def test_harmonic_markers_h55_61():
@@ -142,6 +168,7 @@ def test_sensitivity_cd_null_at_90():
         truth_swa=89.45,
         pitch=80.0,
         angle_deg=70.0,
+        include_swa=True,
         out_dir=HERE,
         dpi=80,
     )
@@ -168,6 +195,7 @@ def test_replot_from_npz(tmp_path: Path):
         truth_swa=89.45,
         pitch=80.0,
         angle_deg=70.0,
+        include_swa=True,
         out_dir=tmp_path,
         dpi=80,
     )
